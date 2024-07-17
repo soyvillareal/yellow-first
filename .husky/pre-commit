@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+chmod +x .husky/pre-commit
+
+npx lint-staged
+npx pretty-quick --staged

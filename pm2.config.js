@@ -1,0 +1,37 @@
+module.exports = {
+  apps: [
+    {
+      name: 'yellow-first-dev',
+      script: 'npm',
+      args: 'run start:dev',
+      time: true,
+      instances: 1,
+      autorestart: true,
+      max_restarts: 25,
+      watch: false,
+      max_memory_restart: '1G',
+    },
+    {
+      name: 'yellow-first-staging',
+      script: 'npm',
+      args: 'run start:staging',
+      time: true,
+      instances: 1,
+      autorestart: true,
+      max_restarts: 25,
+      watch: false,
+      max_memory_restart: '1G',
+    },
+    {
+      name: 'yellow-first-prod',
+      script: 'npm',
+      args: 'run start:prod',
+      time: true,
+      instances: 1,
+      autorestart: true,
+      max_restarts: 25,
+      watch: false,
+      max_memory_restart: '1G',
+    },
+  ],
+};
