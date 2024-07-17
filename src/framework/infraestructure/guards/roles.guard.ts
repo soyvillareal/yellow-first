@@ -8,7 +8,7 @@ import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
 import { CommonUseCase } from 'src/common/application/common.usecase';
 
 @Injectable()
-export class RoleSuperGuard implements CanActivate {
+export class RoleAdminGuard implements CanActivate {
   private readonly commonUseCase: CommonUseCase;
 
   constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {
@@ -18,16 +18,7 @@ export class RoleSuperGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
-    req.haveUsers = true;
-
     try {
-      const countUsers = await this.usersService.countUsers();
-
-      if (countUsers === 0) {
-        req.haveUsers = false;
-        return true;
-      }
-
       const token = this.commonUseCase.extractJWTToken(req);
 
       if (!token) {
@@ -39,7 +30,7 @@ export class RoleSuperGuard implements CanActivate {
       });
 
       req.user = payload;
-      return payload && payload.role === ERoles.SUPER;
+      return payload && payload.role === ERoles.ADMIN;
     } catch (error) {
       console.log(error.message);
       throw new UnauthorizedException('No valid token!');

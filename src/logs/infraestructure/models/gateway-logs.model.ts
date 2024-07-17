@@ -1,12 +1,12 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { IWebHookLogsEntity } from 'src/logs/domain/entities/logs.entity';
+import { IGatewayLogsEntity } from 'src/logs/domain/entities/logs.entity';
 import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
 
 import { LogsModel } from './logs.model';
 
-@Entity({ name: 'webhook_logs' })
-export class WebHookLogsModel implements IWebHookLogsEntity {
+@Entity({ name: 'gateway_logs' })
+export class GatewayLogsModel implements IGatewayLogsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

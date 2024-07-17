@@ -3,16 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { logsRepository } from 'src/logs/domain/repository/logs.repository';
-import { TCreateLog, TCreateWebHookLog, TLog, TWebHookLog } from 'src/logs/domain/entities/logs.entity';
+import { TCreateGatewayLog, TCreateLog, TGatewayLog, TLog } from 'src/logs/domain/entities/logs.entity';
 
 import { LogsModel } from '../models/logs.model';
-import { WebHookLogsModel } from '../models/webhook-logs.model';
+import { GatewayLogsModel } from '../models/gateway-logs.model';
 
 @Injectable()
 export class LogsService implements logsRepository {
   constructor(
     @InjectRepository(LogsModel) private readonly logsModel: Repository<LogsModel>,
-    @InjectRepository(WebHookLogsModel) private readonly webHookLogsModel: Repository<WebHookLogsModel>,
+    @InjectRepository(GatewayLogsModel) private readonly gatewayLogsModel: Repository<GatewayLogsModel>,
   ) {}
 
   public createLog = async ({ userId, request, response, priority }: TCreateLog): Promise<TLog | null> => {
@@ -33,16 +33,16 @@ export class LogsService implements logsRepository {
     }
   };
 
-  public createWebHookLog = async ({ logId, request, response, type }: TCreateWebHookLog): Promise<TWebHookLog | null> => {
+  public createWebHookLog = async ({ logId, request, response, type }: TCreateGatewayLog): Promise<TGatewayLog | null> => {
     try {
-      const createdWebHookLog = this.webHookLogsModel.create({
+      const createdWebHookLog = this.gatewayLogsModel.create({
         logId,
         request,
         response,
         type,
       });
 
-      const savedWebHookLog = await this.webHookLogsModel.save(createdWebHookLog);
+      const savedWebHookLog = await this.gatewayLogsModel.save(createdWebHookLog);
 
       return savedWebHookLog;
     } catch (error) {

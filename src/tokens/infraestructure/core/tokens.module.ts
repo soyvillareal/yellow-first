@@ -7,8 +7,9 @@ import config from 'src/framework/infraestructure/core/config';
 import { UsersModel } from 'src/users/infraestructure/models/users.model';
 import { FrameworkService } from 'src/framework/infraestructure/services/framework.service';
 import { LogsModel } from 'src/logs/infraestructure/models/logs.model';
-import { WebHookLogsModel } from 'src/logs/infraestructure/models/webhook-logs.model';
+import { GatewayLogsModel } from 'src/logs/infraestructure/models/gateway-logs.model';
 import { LogsService } from 'src/logs/infraestructure/services/logs.service';
+import { UsersService } from 'src/users/infraestructure/services/users.service';
 
 import { TokensModel } from '../models/tokens.model';
 import { TokensController } from '../controllers/tokens.controller';
@@ -16,7 +17,7 @@ import { TokensService } from '../services/token.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TokensModel, UsersModel, LogsModel, WebHookLogsModel]),
+    TypeOrmModule.forFeature([TokensModel, UsersModel, LogsModel, GatewayLogsModel]),
     JwtModule.registerAsync({
       inject: [config.KEY],
       useFactory: async (configServie: ConfigType<typeof config>) => {
@@ -28,7 +29,7 @@ import { TokensService } from '../services/token.service';
     }),
   ],
   controllers: [TokensController],
-  providers: [TokensService, LogsService, FrameworkService],
+  providers: [UsersService, TokensService, LogsService, FrameworkService],
   exports: [],
 })
 export class TokensModule {}

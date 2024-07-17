@@ -29,7 +29,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         secret: config.secret_key,
       });
 
-      if (payload.hasOwnProperty('userId') === false || payload.hasOwnProperty('projectName') === false) {
+      if (payload.hasOwnProperty('userId') === false) {
         throw new UnauthorizedException('Invalid token');
       }
 

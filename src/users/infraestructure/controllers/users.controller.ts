@@ -6,31 +6,29 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  Patch,
   Post,
-  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
-import { ApiResponseCase, IHeaderHaveUsers } from 'src/framework/domain/entities/framework.entity';
-import { ICreateUserResponse, IGetInfoUser } from 'src/users/domain/entities/users.entity';
-import { RoleSuperGuard } from 'src/framework/infraestructure/guards/roles.guard';
+import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
+import { ERoles, ICreateUserResponse, IGetInfoUser } from 'src/users/domain/entities/users.entity';
+import { RoleAdminGuard } from 'src/framework/infraestructure/guards/roles.guard';
 import { DApiResponseCase } from 'src/common/infraestructure/decorators/common.decorator';
 import { JwtAuthGuard } from 'src/framework/infraestructure/guards/jwt.guard';
 import { FrameworkService } from 'src/framework/infraestructure/services/framework.service';
 import { paramsWithUUIDDto } from 'src/common/infraestructure/dtos/common.dto';
 
 import { UsersUseCase } from '../../aplication/users.usecase';
-import { createUserDto, updateUserDto } from '../dtos/users.dto';
+import { createUserDto } from '../dtos/users.dto';
 import { UserByUsernameExistsPipe } from '../core/users-by-username.pipe';
 import { UsersService } from '../services/users.service';
 
 @ApiTags('Users')
 @Controller('user')
 @ApiBearerAuth()
-@UseGuards(RoleSuperGuard)
+@UseGuards(RoleAdminGuard)
 @UseInterceptors(FrameworkService)
 export class UsersController {
   private readonly usersUseCase: UsersUseCase;
@@ -81,93 +79,11 @@ export class UsersController {
       },
     },
   })
-  async createUser(
-    @Body(UserByUsernameExistsPipe) user: createUserDto,
-    @Req()
-    req: IHeaderHaveUsers,
-  ): Promise<ApiResponseCase<ICreateUserResponse>> {
+  async createUser(@Body(UserByUsernameExistsPipe) user: createUserDto): Promise<ApiResponseCase<ICreateUserResponse>> {
     try {
       return {
         message: 'User created successfully!',
-        data: await this.usersUseCase.createUser(
-          {
-            username: user.username,
-            password: user.password,
-          },
-          req.haveUsers,
-        ),
-      };
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Patch('update/:id')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'UUID del usuario a actualizar',
-  })
-  @ApiOperation({
-    summary: 'Actualizar un usuario',
-    description: 'Este servicio actualizará un usuario en la base de datos.',
-    tags: ['Users'],
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.OK,
-    description: '¡Usuario actualizado con éxito!',
-    dataDto: updateUserDto,
-    schema: {
-      example: {
-        statusCode: 200,
-        message: 'User updated successfully!',
-        data: {
-          id: 'b1b9b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b',
-          username: 'User1',
-          project: 'project_one',
-        },
-      },
-    },
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.BAD_REQUEST,
-    description: '¡No se pudo encontrar el usuario a actualizar!',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', enum: [HttpStatus.BAD_REQUEST] },
-        message: {
-          type: 'string',
-          enum: ['User not found!'],
-        },
-      },
-    },
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.CONFLICT,
-    description: '¡El nombre de usuario ya se encuentra registrado en la base de datos!',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', enum: [HttpStatus.CONFLICT] },
-        message: {
-          type: 'string',
-          enum: ['User already exists!'],
-        },
-      },
-    },
-  })
-  async updateUser(
-    @Param() params: paramsWithUUIDDto,
-    @Body() user: updateUserDto,
-  ): Promise<ApiResponseCase<ICreateUserResponse>> {
-    try {
-      return {
-        message: 'User updated successfully!',
-        data: await this.usersUseCase.updateUser(params.id, {
+        data: await this.usersUseCase.createUser({
           username: user.username,
           password: user.password,
         }),
@@ -201,9 +117,7 @@ export class UsersController {
         data: {
           id: 'b1b9b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b',
           username: 'User1',
-          origin: 'origin',
-          role: 'SUPER',
-          projectName: 'project_one',
+          role: ERoles.ADMIN,
           updatedAt: '2024-04-18T19:16:06.838Z',
           createdAt: '2024-04-18T19:16:06.838Z',
         },

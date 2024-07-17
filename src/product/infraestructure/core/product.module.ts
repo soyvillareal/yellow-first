@@ -8,7 +8,7 @@ import config from 'src/framework/infraestructure/core/config';
 import { LogsService } from 'src/logs/infraestructure/services/logs.service';
 import { UsersModel } from 'src/users/infraestructure/models/users.model';
 import { LogsModel } from 'src/logs/infraestructure/models/logs.model';
-import { WebHookLogsModel } from 'src/logs/infraestructure/models/webhook-logs.model';
+import { GatewayLogsModel } from 'src/logs/infraestructure/models/gateway-logs.model';
 import { FrameworkService } from 'src/framework/infraestructure/services/framework.service';
 import { UsersService } from 'src/users/infraestructure/services/users.service';
 
@@ -19,7 +19,7 @@ import { ProductService } from '../services/product.service';
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([ProductModel, UsersModel, LogsModel, WebHookLogsModel]),
+    TypeOrmModule.forFeature([ProductModel, UsersModel, LogsModel, GatewayLogsModel]),
     JwtModule.registerAsync({
       inject: [config.KEY],
       useFactory: async (configServie: ConfigType<typeof config>) => {

@@ -72,8 +72,6 @@ export class TokensController {
   ): Promise<ApiResponseCase<IGenerateTokenResponse>> {
     request.user = {
       userId: body.id,
-      origin: body.origin,
-      projectName: body.projectName,
       role: body.role,
       username: body.username,
     };

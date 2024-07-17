@@ -19,7 +19,7 @@ export type TCreateLog = Pick<ILogsEntity, 'userId' | 'request' | 'response' | '
 
 export type TLog = Pick<ILogsEntity, 'id' | 'request' | 'response' | 'priority' | 'createdAt'>;
 
-export interface IWebHookLogsEntity {
+export interface IGatewayLogsEntity {
   id: number;
   logId: number;
   request: TPartialRequest | null;
@@ -28,6 +28,6 @@ export interface IWebHookLogsEntity {
   createdAt: Date;
 }
 
-export type TCreateWebHookLog = Pick<IWebHookLogsEntity, 'logId' | 'request' | 'response' | 'type'>;
+export type TCreateGatewayLog = Pick<IGatewayLogsEntity, 'logId' | 'request' | 'response' | 'type'>;
 
-export type TWebHookLog = Pick<ILogsEntity, 'id' | 'request' | 'response' | 'createdAt'>;
+export type TGatewayLog = Pick<ILogsEntity, 'id' | 'request' | 'response' | 'createdAt'>;

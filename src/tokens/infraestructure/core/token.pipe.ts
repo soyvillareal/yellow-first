@@ -42,12 +42,6 @@ export class TokenValidationPipe implements PipeTransform {
       throw new HttpException('Invalid username or password!', HttpStatus.UNAUTHORIZED);
     }
 
-    const countTokens = await this.tokensService.countTokens(userFound.id);
-
-    if (userFound.tokenLimit !== 0 && countTokens >= userFound.tokenLimit) {
-      throw new HttpException('You have exceeded the limit of tokens', HttpStatus.TOO_MANY_REQUESTS);
-    }
-
     return userFound;
   }
 }

@@ -7,7 +7,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as basicAuth from 'express-basic-auth';
 import moment from 'moment-timezone';
 
-import { NotFoundExceptionFilter } from './framework/infraestructure/core/404-exception.filter';
 import { AppModule } from './framework/infraestructure/core/app.module';
 
 async function bootstrap() {
@@ -25,7 +24,7 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: process.env.BODY_LIMIT });
 
   app.use(
-    [`/${process.env.SWAGGER_PATH}`],
+    [process.env.SWAGGER_SUFFIX],
     basicAuth.default({
       challenge: true,
       users: {
@@ -45,7 +44,7 @@ async function bootstrap() {
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerOptions);
-  SwaggerModule.setup(process.env.SWAGGER_CLIENT_PATH, app, swaggerDocument);
+  SwaggerModule.setup(process.env.SWAGGER_SUFFIX, app, swaggerDocument);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -53,7 +52,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new NotFoundExceptionFilter());
   app.use(morgan.default(customFormat));
   await app.listen(process.env.PORT_APP);
 }

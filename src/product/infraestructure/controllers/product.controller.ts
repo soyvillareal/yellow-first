@@ -39,15 +39,15 @@ export class ProductController {
   })
   async getProducts(@Query() query: PageOptionsDto): Promise<ApiResponseCase<IPageMetaResponse<TGetProduct[]>>> {
     try {
-      const { data: leads } = await this.productUseCase.getProducts({
+      const products = await this.productUseCase.getProducts({
         limit: query.limit,
         page: query.page,
         order: query.order,
       });
 
       return {
-        message: 'Lead created successfully!',
-        data: leads,
+        message: 'Products obtained successfully!',
+        data: products,
       };
     } catch (error) {
       console.log('errorCatch: ', error);

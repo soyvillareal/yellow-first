@@ -1,25 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { usersRepository } from 'src/users/domain/repository/users.repository';
-import {
-  ICreateUser,
-  IFindUserById,
-  IGetInfoByUsername,
-  IGetInfoUser,
-  IUpdateUser,
-  IUsersEntity,
-} from 'src/users/domain/entities/users.entity';
+import { ICreateUser, IGetInfoByUsername, IGetInfoUser, IUsersEntity } from 'src/users/domain/entities/users.entity';
 
 import { UsersModel } from '../models/users.model';
 
 @Injectable()
 export class UsersService implements usersRepository {
-  constructor(
-    @InjectRepository(UsersModel) private readonly userModel: Repository<UsersModel>,
-    @InjectDataSource() private readonly dataSource: DataSource,
-  ) {}
+  constructor(@InjectRepository(UsersModel) private readonly userModel: Repository<UsersModel>) {}
 
   async createUser({ username, password, role }: ICreateUser): Promise<IUsersEntity | null> {
     try {
@@ -27,27 +17,6 @@ export class UsersService implements usersRepository {
         username,
         password,
         role,
-      });
-
-      const savedUser = await this.userModel.save(createdUser);
-
-      return savedUser;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  }
-
-  async updateUser(id: string, { username, password }: IUpdateUser): Promise<IUsersEntity | null> {
-    try {
-      const findOrFailUser = await this.userModel.findOneOrFail({
-        where: { id },
-      });
-
-      const createdUser = this.userModel.create({
-        ...findOrFailUser,
-        username,
-        password,
       });
 
       const savedUser = await this.userModel.save(createdUser);
@@ -103,37 +72,6 @@ export class UsersService implements usersRepository {
     } catch (error) {
       console.log(error);
       return null;
-    }
-  }
-
-  async findUserById(userId: string): Promise<IFindUserById | null> {
-    try {
-      const userFound = await this.userModel.findOne({
-        select: {
-          username: true,
-        },
-        where: { id: userId },
-      });
-
-      if (userFound === null) {
-        return undefined;
-      }
-
-      return userFound;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  }
-
-  async countUsers(): Promise<number> {
-    try {
-      const usersCount = await this.userModel.count();
-
-      return usersCount;
-    } catch (error) {
-      console.log(error);
-      return 0;
     }
   }
 

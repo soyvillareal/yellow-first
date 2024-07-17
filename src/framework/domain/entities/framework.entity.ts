@@ -19,10 +19,6 @@ export interface IHeaderUserTokenData extends Request {
   user: IUserTokenData;
 }
 
-export interface IHeaderHaveUsers {
-  haveUsers: boolean;
-}
-
 export type TPartialRequest = Partial<Request>;
 
 export interface IResponseApi<T = []> {

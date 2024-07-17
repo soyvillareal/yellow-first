@@ -1,4 +1,4 @@
-import { IPageOptions } from 'src/common/domain/entities/common.entity';
+import { IPageMetaResponse, IPageOptions } from 'src/common/domain/entities/common.entity';
 import { CommonUseCase } from 'src/common/application/common.usecase';
 
 import { TGetProduct } from '../domain/entities/product.entity';
@@ -11,7 +11,7 @@ export class ProductUseCase {
     this.commonUseCase = new CommonUseCase();
   }
 
-  async getProducts({ limit, page, order }: IPageOptions): Promise<any> {
+  async getProducts({ limit, page, order }: IPageOptions): Promise<IPageMetaResponse<TGetProduct[]>> {
     const products = await this.productRepository.getProducts({
       limit,
       order,

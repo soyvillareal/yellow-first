@@ -10,12 +10,12 @@ import { UsersModule } from 'src/users/infraestructure/core/users.module';
 import { TharotLiteModule } from 'src/payment-gateway/infraestructure/core/payment-gateway.module';
 import { InventoryModule } from 'src/inventory/infraestructure/core/inventory.module';
 import { LogsModule } from 'src/logs/infraestructure/core/logs.module';
-import { AuthModule } from 'src/auth/infraestructure/core/auth.module';
 import { UsersService } from 'src/users/infraestructure/services/users.service';
 import { UsersModel } from 'src/users/infraestructure/models/users.model';
 import { StockModel } from 'src/inventory/infraestructure/models/stock.model';
 import { TransactionModel } from 'src/inventory/infraestructure/models/transaction.model';
 import { ProductService } from 'src/product/infraestructure/services/product.service';
+import { ProductModel } from 'src/product/infraestructure/models/product.model';
 
 import config from './config';
 import { ProductsModule } from '../../../product/infraestructure/core/product.module';
@@ -30,8 +30,7 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
     LogsModule,
     InventoryModule,
     TharotLiteModule,
-    AuthModule,
-    TypeOrmModule.forFeature([UsersModel, StockModel, TransactionModel]),
+    TypeOrmModule.forFeature([ProductModel, UsersModel, StockModel, TransactionModel]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
