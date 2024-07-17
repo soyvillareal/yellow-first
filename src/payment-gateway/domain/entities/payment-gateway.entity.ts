@@ -184,3 +184,22 @@ export interface ITransactionsResponse {
   taxes: ITransactionsResponseTaxes[];
   tip_in_cents: string | null;
 }
+
+export interface ITransactionPayload {
+  productId: string;
+  cardToken: string;
+}
+
+export interface IGenerateCardTokenPayload {
+  number: string;
+  cvc: string;
+  expMonth: string;
+  expYear: string;
+  cardHolder: string;
+}
+
+export interface IGeneratePaymentSourcesPayload {
+  customerEmail: string;
+  type: string;
+  cardToken: string;
+}

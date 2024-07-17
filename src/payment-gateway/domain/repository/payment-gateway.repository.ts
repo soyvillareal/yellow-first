@@ -10,7 +10,7 @@ import {
   TResponseOkOrError,
 } from '../entities/payment-gateway.entity';
 
-export interface apiGatewayRepository {
+export interface paymentGatewayRepository {
   merchants: () => Promise<IResponseAG<TResponseOkOrError<IMerchantsResponse>>>;
   tokensCards: (payload: ITokensCardsPayload) => Promise<IResponseAG<TResponseOkOrError<ITokensCardsResponse>>>;
   paymentResource: (payload: IPaymentResourcePayload) => Promise<IResponseAG<TResponseOkOrError<IPaymentResourceResponse>>>;

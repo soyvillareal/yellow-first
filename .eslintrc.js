@@ -99,7 +99,8 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/distribuciones/**/*.ts'],
+      files: ['src/**/*.ts'],
+      excludedFiles: ['src/main.ts'],
       rules: {
         'hexagonal-architecture/enforce': ['error'],
       },

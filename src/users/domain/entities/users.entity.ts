@@ -5,9 +5,11 @@ export enum ERoles {
 
 export interface IUsersEntity {
   id: string;
+  email: string;
   username: string;
   password: string;
   role: ERoles;
+  paymentSourceHolder: number;
   updatedAt: Date;
   createdAt: Date;
 }
