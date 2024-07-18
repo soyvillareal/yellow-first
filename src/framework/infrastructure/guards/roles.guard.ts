@@ -11,7 +11,10 @@ import { CommonUseCase } from 'src/common/application/common.usecase';
 export class RoleAdminGuard implements CanActivate {
   private readonly commonUseCase: CommonUseCase;
 
-  constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {
     this.commonUseCase = new CommonUseCase();
   }
 

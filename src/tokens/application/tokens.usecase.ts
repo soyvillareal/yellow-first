@@ -6,7 +6,10 @@ import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
 
 import { tokensRepository } from '../domain/repository/tokens.repository';
 export class TokensUseCase {
-  constructor(private readonly tokensRepository: tokensRepository, private readonly configService: ConfigService) {}
+  constructor(
+    private readonly tokensRepository: tokensRepository,
+    private readonly configService: ConfigService,
+  ) {}
 
   async generateToken(user: IGetInfoByUsername): Promise<string> {
     const signToken: IUserTokenData = {
@@ -15,7 +18,13 @@ export class TokensUseCase {
       role: user.role,
     };
 
-    const token = sign(signToken, this.configService.get<string>('config.secret_key'), { algorithm: 'HS256' });
+    const token = sign(
+      signToken,
+      this.configService.get<string>('config.secret_key', {
+        infer: true,
+      }),
+      { algorithm: 'HS256' },
+    );
 
     const createdLead = await this.tokensRepository.createToken({
       token: token,

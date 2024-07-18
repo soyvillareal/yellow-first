@@ -4,7 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 
-import { apiGatewayRepository } from 'src/payment-gateway/domain/repository/payment-gateway.repository';
+import { paymentGatewayRepository } from 'src/payment-gateway/domain/repository/payment-gateway.repository';
 import {
   IMerchantsResponse,
   IPaymentResourcePayload,
@@ -18,17 +18,26 @@ import {
 } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 
 @Injectable()
-export class PaymentGatewayService implements apiGatewayRepository {
+export class PaymentGatewayService implements paymentGatewayRepository {
   private readonly hostname: string = '';
   private readonly publicKey: string = '';
   private readonly privateKey: string = '';
   private readonly headers: Request['headers'] = {
     'Content-Type': 'application/json',
   };
-  constructor(private http: HttpService, private readonly configService: ConfigService) {
-    this.hostname = this.configService.get<string>('config.api_gateway');
-    this.publicKey = this.configService.get<string>('config.public_key');
-    this.privateKey = this.configService.get<string>('config.private_key');
+  constructor(
+    private http: HttpService,
+    private readonly configService: ConfigService,
+  ) {
+    this.hostname = this.configService.get<string>('config.api_gateway', {
+      infer: true,
+    });
+    this.publicKey = this.configService.get<string>('config.public_key', {
+      infer: true,
+    });
+    this.privateKey = this.configService.get<string>('config.private_key', {
+      infer: true,
+    });
   }
 
   async merchants(): Promise<IResponseAG<TResponseOkOrError<IMerchantsResponse>>> {

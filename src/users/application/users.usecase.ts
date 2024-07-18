@@ -9,6 +9,7 @@ export class UsersUseCase {
       username: user.username,
       password: user.password,
       role: ERoles.CLIENT,
+      email: user.email,
     });
 
     return {

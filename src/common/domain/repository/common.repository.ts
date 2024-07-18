@@ -1,3 +1,1 @@
-export interface commonRepository {
-  getTableColumns: (table: string) => Promise<string[]>;
-}
+export interface commonRepository {}

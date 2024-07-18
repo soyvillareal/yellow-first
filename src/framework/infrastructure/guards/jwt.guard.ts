@@ -10,7 +10,10 @@ import { UsersService } from 'src/users/infrastructure/services/users.service';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   private readonly commonUseCase: CommonUseCase;
-  constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {
     super();
     this.commonUseCase = new CommonUseCase();
   }

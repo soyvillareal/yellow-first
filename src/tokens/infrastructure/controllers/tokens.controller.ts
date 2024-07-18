@@ -20,7 +20,10 @@ import { TokenValidationPipe } from '../core/token.pipe';
 export class TokensController {
   private readonly tokensUseCase: TokensUseCase;
 
-  constructor(private readonly tokensService: TokensService, private readonly configService: ConfigService) {
+  constructor(
+    private readonly tokensService: TokensService,
+    private readonly configService: ConfigService,
+  ) {
     this.tokensUseCase = new TokensUseCase(this.tokensService, this.configService);
   }
 

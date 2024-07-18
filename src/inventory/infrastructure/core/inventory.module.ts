@@ -14,7 +14,7 @@ import { TransactionModel } from '../models/transaction.model';
     TypeOrmModule.forFeature([StockModel, TransactionModel]),
     JwtModule.registerAsync({
       inject: [config.KEY],
-      useFactory: async (configServie: ConfigType<typeof config>) => {
+      useFactory: (configServie: ConfigType<typeof config>) => {
         return {
           secret: configServie.secret_key,
           signOptions: { expiresIn: configServie.jwt_expires_in },

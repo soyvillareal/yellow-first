@@ -12,7 +12,10 @@ import { generateTokenDto } from '../dtos/tokens.dto';
 
 @Injectable()
 export class TokenValidationPipe implements PipeTransform {
-  constructor(private readonly usersService: UsersService, private readonly tokensService: TokensService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly tokensService: TokensService,
+  ) {}
 
   async transform(credentials: ICredentialsToken): Promise<IGetInfoByUsername> {
     const planCredentialsClass = plainToClass(generateTokenDto, credentials);

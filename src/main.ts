@@ -2,8 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as morgan from 'morgan';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-// eslint-disable-next-line import/no-extraneous-dependencies
-// import { NestExpressApplication } from '@nestjs/platform-express';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as basicAuth from 'express-basic-auth';
 import moment from 'moment-timezone';
 
@@ -11,7 +10,7 @@ import { AppModule } from './framework/infrastructure/core/app.module';
 
 async function bootstrap() {
   const customFormat = ':method :url';
-  const app = await NestFactory.create<any>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
 
@@ -55,4 +54,4 @@ async function bootstrap() {
   app.use(morgan.default(customFormat));
   await app.listen(process.env.PORT_APP);
 }
-bootstrap();
+void bootstrap();
