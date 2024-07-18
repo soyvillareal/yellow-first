@@ -8,54 +8,56 @@ import { FrameworkService } from 'src/framework/infrastructure/services/framewor
 import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/services/payment-gateway.service';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { ICardTokenizationResponse, ITransactionResponse } from 'src/inventory/domain/entities/inventory.entity';
+import { ICardTokenizationResponse, ITransactionResponse } from 'src/transaction/domain/entities/transaction.entity';
 
-import { InventoryService } from '../services/inventory.service';
-import { InventoryUseCase } from '../../application/inventory.usecase';
-import { CardTokenizeDto, CreateTransactionDto } from '../dtos/inventory.dto';
+import { TransactionService } from '../services/transaction.service';
+import { TransactionUseCase } from '../../application/transaction.usecase';
+import { CardTokenizeDto, CreatePaymentDto } from '../dtos/transaction.dto';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(FrameworkService)
-@Controller('inventory')
-export class InventoryController {
-  private readonly inventoryUseCase: InventoryUseCase;
+@Controller('transaction')
+export class TransactionController {
+  private readonly transactionUseCase: TransactionUseCase;
 
   constructor(
-    private readonly inventoryService: InventoryService,
+    private readonly inventoryService: TransactionService,
     private readonly productService: ProductService,
     private readonly userService: UsersService,
     private readonly paymentGatewayService: PaymentGatewayService,
+    private readonly configService: ConfigService,
   ) {
-    this.inventoryUseCase = new InventoryUseCase(
+    this.transactionUseCase = new TransactionUseCase(
       this.inventoryService,
       this.productService,
       this.userService,
       this.paymentGatewayService,
+      this.configService,
     );
   }
 
-  @Post('transaction')
+  @Post('payment')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Crea una transacción',
-    description: 'Este servicio creará una transacción.',
+    summary: 'Genera un pago',
+    description: 'Este servicio generará un pago.',
     tags: ['Transactions'],
   })
-  async createTransaction(
-    @Body() body: CreateTransactionDto,
+  async createPayment(
+    @Body() body: CreatePaymentDto,
     @Req() req: IHeaderUserTokenData,
   ): Promise<ApiResponseCase<ITransactionResponse>> {
     try {
-      const { transactionId } = await this.inventoryUseCase.transaction(req.user.userId, {
-        paymentSourceId: body.paymentSourceId,
+      const { transactionId } = await this.transactionUseCase.createPayment(req.user.userId, {
         productId: body.productId,
-        signature: body.signature,
+        installments: body.installments,
       });
 
       return {
-        message: 'Transaction created successfully!',
+        message: 'Payment created successfully!',
         data: {
           transactionId,
         },
@@ -65,7 +67,7 @@ export class InventoryController {
     }
   }
 
-  @Post('transaction')
+  @Post('card-tokenize')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Crea una transacción',
@@ -77,7 +79,7 @@ export class InventoryController {
     @Req() req: IHeaderUserTokenData,
   ): Promise<ApiResponseCase<ICardTokenizationResponse>> {
     try {
-      const { tokenId } = await this.inventoryUseCase.cardTokenization(req.user.userId, {
+      const { tokenId } = await this.transactionUseCase.cardTokenization(req.user.userId, {
         cardHolder: body.cardHolder,
         cvc: body.cvc,
         expMonth: body.expMonth,
@@ -92,6 +94,7 @@ export class InventoryController {
         },
       };
     } catch (error) {
+      console.error(error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

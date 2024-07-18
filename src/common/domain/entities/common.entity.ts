@@ -60,3 +60,9 @@ export interface IDApiResponseCase<T, K> {
 export interface IParamsWithUUID {
   id: string;
 }
+
+export interface IGenerateSignature {
+  reference: string;
+  amountInCents: number;
+  currency: string;
+}

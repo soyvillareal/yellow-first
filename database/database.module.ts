@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, type ConfigType } from '@nestjs/config';
 
-import config from 'src/framework/infrastructure/core/config';
+import config from 'src/framework/application/config';
 @Global()
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import config from 'src/framework/infrastructure/core/config';
     }),
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
-      useFactory: async (configService: ConfigType<typeof config>) => {
+      useFactory: (configService: ConfigType<typeof config>) => {
         return {
           type: configService.database.type,
           host: configService.database.host,

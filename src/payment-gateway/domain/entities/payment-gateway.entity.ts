@@ -1,16 +1,6 @@
 import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
 
-export interface IFieldsTL {
-  id: string;
-  name: string;
-  values: string[];
-}
-
-export interface IFormDataTL {
-  created_time: string;
-  id: string;
-  fields: IFieldsTL[];
-}
+export type TCardTypes = 'CARD' | 'NEQUI' | 'BANCOLOMBIA' | 'BANCOLOMBIA_TRANSFER' | 'CLAVE' | 'DAVIPLATA';
 
 export interface IOkResponseGA<T, K = Record<string, unknown>> {
   status?: 'CREATED' | 'DECLINED' | 'ERROR';
@@ -111,10 +101,10 @@ export interface IPublicData {
 }
 
 export interface IPaymentResourceResponse {
-  id: 25671;
+  id: number;
   public_data: IPublicData;
   token: string;
-  type: 'NEQUI' | 'CARD';
+  type: TCardTypes;
   status: 'AVAILABLE' | 'PENDING' | 'VOIDED';
   customer_email: string;
 }
@@ -138,7 +128,7 @@ export interface IPaymentMethodsExtra {
   name: string;
   brand: string;
   exp_year: string;
-  card_type: string;
+  card_type: 'CREDIT' | 'DEBIT';
   exp_month: string;
   last_four: string;
   card_holder: string;
@@ -162,6 +152,8 @@ export interface ITransactionsResponseTaxes {
   amount_in_cents: number;
 }
 
+export type TTransactionStatus = 'APPROVED' | 'PENDING' | 'DECLINED' | 'VOIDED';
+
 export interface ITransactionsResponse {
   id: string;
   created_at: string;
@@ -170,9 +162,9 @@ export interface ITransactionsResponse {
   reference: string;
   customer_email: string;
   currency: string;
-  payment_method_type: string;
+  payment_method_type: TCardTypes;
   payment_method: IPaymentMethodsTransactionsResponse;
-  status: 'APPROVED' | 'PENDING' | 'DECLINED' | 'VOIDED';
+  status: TTransactionStatus;
   status_message: string | null;
   billing_data: null;
   shipping_address: 'string' | null;
@@ -190,6 +182,65 @@ export interface ITransactionPayload {
   cardToken: string;
 }
 
+export interface IMerchantTransaction {
+  id: number;
+  name: string;
+  legal_name: string;
+  contact_name: string;
+  phone_number: string;
+  logo_url: string | null;
+  legal_id_type: string;
+  email: string;
+  legal_id: string;
+  public_key: string;
+}
+
+export interface IThreeDsAuth {
+  three_ds_auth: {
+    current_step: string;
+    current_step_status: string;
+  };
+}
+
+export interface ITransactionExtra extends IPaymentMethodsExtra {
+  three_ds_auth: IThreeDsAuth;
+  external_identifier: string;
+  processor_response_code: string;
+}
+
+export interface ITransactionPaymentMethod {
+  type: TCardTypes;
+  extra: ITransactionExtra;
+  installments: number;
+}
+
+export interface IGetTransactionsResponse {
+  id: string;
+  created_at: string;
+  finalized_at: string;
+  amount_in_cents: number;
+  reference: string;
+  customer_email: string;
+  currency: string;
+  payment_method_type: TCardTypes;
+  payment_method: ITransactionPaymentMethod;
+  status: TTransactionStatus;
+  status_message: string | null;
+  billing_data: null;
+  shipping_address: string | null;
+  redirect_url: string | null;
+  payment_source_id: number;
+  payment_link_id: number | null;
+  customer_data: ITransactionsResponseCustomer | null;
+  bill_id: number | null;
+  taxes: ITransactionsResponseTaxes[];
+  tip_in_cents: null;
+  merchant: IMerchantTransaction;
+  entries: [];
+  disbursement: null;
+  refunds: [];
+}
+
 export interface IGenerateCardTokenPayload {
   number: string;
   cvc: string;
@@ -200,6 +251,6 @@ export interface IGenerateCardTokenPayload {
 
 export interface IGeneratePaymentSourcesPayload {
   customerEmail: string;
-  type: string;
+  type: TCardTypes;
   cardToken: string;
 }

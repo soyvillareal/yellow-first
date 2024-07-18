@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 
-import { ApiGatewayService } from '../../../payment-gateway/infrastructure/services/payment-gateway.service';
+import { PaymentGatewayService } from '../../../payment-gateway/infrastructure/services/payment-gateway.service';
 
 @Module({
   imports: [HttpModule],
   controllers: [],
-  providers: [ApiGatewayService],
+  providers: [PaymentGatewayService],
   exports: [],
 })
-export class TharotLiteModule {}
+export class PaymentGatewayModule {}

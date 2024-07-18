@@ -6,19 +6,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokensModule } from 'src/tokens/infrastructure/core/tokens.module';
 import { UsersModule } from 'src/users/infrastructure/core/users.module';
-import { TharotLiteModule } from 'src/payment-gateway/infrastructure/core/payment-gateway.module';
-import { InventoryModule } from 'src/inventory/infrastructure/core/inventory.module';
+import { PaymentGatewayModule } from 'src/payment-gateway/infrastructure/core/payment-gateway.module';
+import { TransactionModule } from 'src/transaction/infrastructure/core/transaction.module';
 import { LogsModule } from 'src/logs/infrastructure/core/logs.module';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
-import { StockModel } from 'src/inventory/infrastructure/models/stock.model';
-import { TransactionModel } from 'src/inventory/infrastructure/models/transaction.model';
+import { StockModel } from 'src/transaction/infrastructure/models/stock.model';
+import { TransactionModel } from 'src/transaction/infrastructure/models/transaction.model';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { ProductsModule } from 'src/product/infrastructure/core/product.module';
 import { DatabaseModule } from 'src/../database/database.module';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
-import config from './config';
+import config from '../../application/config';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Module({
@@ -28,8 +28,8 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
     TokensModule,
     UsersModule,
     LogsModule,
-    InventoryModule,
-    TharotLiteModule,
+    TransactionModule,
+    PaymentGatewayModule,
     TypeOrmModule.forFeature([ProductModel, UsersModel, StockModel, TransactionModel]),
     ConfigModule.forRoot({
       isGlobal: true,

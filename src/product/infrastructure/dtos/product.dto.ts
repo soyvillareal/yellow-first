@@ -35,9 +35,9 @@ export class getProductDto implements TGetProduct {
     description: 'Precio del producto',
     example: 100,
     required: true,
-    type: 'number',
+    type: 'string',
   })
-  price: number;
+  price: string;
 
   @ApiProperty({
     description: 'Stock del producto',

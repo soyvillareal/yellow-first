@@ -1,8 +1,8 @@
 export enum ETransactionStatus {
-  COMPLETED = 'COMPLETED',
+  APPROVED = 'APPROVED',
   PENDING = 'PENDING',
   DECLINED = 'DECLINED',
-  FAILED = 'FAILED',
+  VOIDED = 'VOIDED',
 }
 
 export interface IStockEntity {
@@ -18,18 +18,18 @@ export type TCreateStock = Pick<IStockEntity, 'productId' | 'quantity'>;
 export interface ITransactionEntity {
   id: number;
   userId: string;
+  reference: string;
   productId: string;
   status: ETransactionStatus;
   amount: number;
   createdAt: Date;
 }
 
-export type TCreateTransaction = Pick<ITransactionEntity, 'userId' | 'productId' | 'amount'>;
+export type TCreateTransaction = Pick<ITransactionEntity, 'userId' | 'reference' | 'productId' | 'amount'>;
 
-export interface ITransactionPayload {
+export interface ICreatePaymentPayload {
   productId: string;
-  paymentSourceId: number;
-  signature: string;
+  installments: number;
 }
 
 export interface ITransactionResponse {
@@ -39,8 +39,8 @@ export interface ITransactionResponse {
 export interface ICardTokenizationPayload {
   number: string;
   cvc: string;
-  expMonth: string;
-  expYear: string;
+  expMonth: number;
+  expYear: number;
   cardHolder: string;
 }
 

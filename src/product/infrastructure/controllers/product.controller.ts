@@ -12,6 +12,7 @@ import { IPageMetaResponse } from 'src/common/domain/entities/common.entity';
 import { ProductService } from '../services/product.service';
 import { ProductUseCase } from '../../application/product.usecase';
 import { productPaginatedDto } from '../dtos/product.dto';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Products')
 @ApiBearerAuth()
@@ -21,8 +22,11 @@ import { productPaginatedDto } from '../dtos/product.dto';
 export class ProductController {
   private readonly productUseCase: ProductUseCase;
 
-  constructor(private readonly productService: ProductService) {
-    this.productUseCase = new ProductUseCase(this.productService);
+  constructor(
+    private readonly productService: ProductService,
+    private readonly configService: ConfigService,
+  ) {
+    this.productUseCase = new ProductUseCase(this.productService, this.configService);
   }
 
   @Get('list')
@@ -50,7 +54,6 @@ export class ProductController {
         data: products,
       };
     } catch (error) {
-      console.log('errorCatch: ', error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

@@ -1,4 +1,5 @@
 import {
+  IGetTransactionsResponse,
   IMerchantsResponse,
   IPaymentResourcePayload,
   IPaymentResourceResponse,
@@ -15,4 +16,5 @@ export interface paymentGatewayRepository {
   tokensCards: (payload: ITokensCardsPayload) => Promise<IResponseAG<TResponseOkOrError<ITokensCardsResponse>>>;
   paymentResource: (payload: IPaymentResourcePayload) => Promise<IResponseAG<TResponseOkOrError<IPaymentResourceResponse>>>;
   transactions: (payload: ITransactionsPayload) => Promise<IResponseAG<TResponseOkOrError<ITransactionsResponse>>>;
+  getTransactionById: (transactionId: string) => Promise<IResponseAG<TResponseOkOrError<IGetTransactionsResponse>>>;
 }

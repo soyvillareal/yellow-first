@@ -89,7 +89,6 @@ export class TokensController {
         },
       };
     } catch (error) {
-      console.log('errorCatch: ', error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

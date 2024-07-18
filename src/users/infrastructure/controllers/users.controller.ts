@@ -86,6 +86,7 @@ export class UsersController {
         data: await this.usersUseCase.createUser({
           username: user.username,
           password: user.password,
+          email: user.email,
         }),
       };
     } catch (error) {

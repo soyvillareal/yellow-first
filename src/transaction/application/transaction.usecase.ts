@@ -2,31 +2,34 @@ import { usersRepository } from 'src/users/domain/repository/users.repository';
 
 import { PaymentGatewayUseCase } from '../../payment-gateway/application/payment-gateway.usecase';
 import { productRepository } from '../../product/domain/repository/product.repository';
-import { inventoryRepository } from '../domain/repository/inventory.repository';
+import { transactionRepository } from '../domain/repository/transaction.repository';
 import { paymentGatewayRepository } from '../../payment-gateway/domain/repository/payment-gateway.repository';
 import {
   ETransactionStatus,
   ICardTokenizationPayload,
   ICardTokenizationResponse,
-  ITransactionPayload,
+  ICreatePaymentPayload,
   ITransactionResponse,
-} from '../domain/entities/inventory.entity';
+} from '../domain/entities/transaction.entity';
+import { CardData } from '../domain/valueobject/transaction.value';
+import { CommonUseCase } from 'src/common/application/common.usecase';
+import { ConfigService } from '@nestjs/config';
 
-export class InventoryUseCase {
+export class TransactionUseCase {
+  protected readonly commonUseCase: CommonUseCase;
   protected readonly paymentGatewayUseCase: PaymentGatewayUseCase;
   constructor(
-    private readonly inventoryRepository: inventoryRepository,
+    private readonly transactionRepository: transactionRepository,
     private readonly productRepository: productRepository,
     private readonly userRepository: usersRepository,
     private readonly paymentGatewayRepository: paymentGatewayRepository,
+    private readonly configService: ConfigService,
   ) {
+    this.commonUseCase = new CommonUseCase(this.configService);
     this.paymentGatewayUseCase = new PaymentGatewayUseCase(this.paymentGatewayRepository);
   }
 
-  async transaction(
-    userId: string,
-    { productId, paymentSourceId, signature }: ITransactionPayload,
-  ): Promise<ITransactionResponse> {
+  async createPayment(userId: string, { productId, installments }: ICreatePaymentPayload): Promise<ITransactionResponse> {
     const user = await this.userRepository.getInfoById(userId);
 
     if (user === null || user === undefined) {
@@ -47,25 +50,34 @@ export class InventoryUseCase {
       throw new Error('Product out of stock!');
     }
 
-    const createdTransaction = await this.inventoryRepository.createTransaction({
+    const transactionReference = this.commonUseCase.createReference(10, 20);
+
+    const createdTransaction = await this.transactionRepository.createTransaction({
       userId,
+      reference: transactionReference,
       productId,
-      amount: product.price,
+      amount: parseInt(product.price),
     });
 
     if (createdTransaction === null) {
       throw new Error('Whoops! Something went wrong.');
     }
 
+    const signature = await this.commonUseCase.generateSignature({
+      amountInCents: parseInt(product.price),
+      currency: 'COP',
+      reference: transactionReference,
+    });
+
     const gatewayTransaction = await this.paymentGatewayRepository.transactions({
-      amount_in_cents: product.price,
+      amount_in_cents: parseInt(product.price),
       currency: 'COP',
       customer_email: user.email,
-      payment_source_id: paymentSourceId,
-      reference: product.reference,
+      payment_source_id: user.paymentSourceHolder,
+      reference: transactionReference,
       signature,
       payment_method: {
-        installments: 1,
+        installments,
       },
     });
 
@@ -73,14 +85,10 @@ export class InventoryUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    let transactionStatus = ETransactionStatus.FAILED;
-    if (gatewayTransaction.response.status === 'CREATED') {
-      transactionStatus = ETransactionStatus.COMPLETED;
-    } else if (gatewayTransaction.response.status === 'DECLINED') {
-      transactionStatus = ETransactionStatus.DECLINED;
-    }
-
-    const updatedTransaction = await this.inventoryRepository.updateTransactionStatus(product.stock - 1, transactionStatus);
+    const updatedTransaction = await this.transactionRepository.updateTransactionStatus(
+      createdTransaction.id,
+      ETransactionStatus[gatewayTransaction.response.data.status],
+    );
 
     if (updatedTransaction === false) {
       throw new Error('Whoops! Something went wrong.');
@@ -95,13 +103,15 @@ export class InventoryUseCase {
     userId: string,
     { number, cvc, expMonth, expYear, cardHolder }: ICardTokenizationPayload,
   ): Promise<ICardTokenizationResponse> {
+    const cardData = new CardData(expMonth, expYear);
+
     const user = await this.userRepository.getInfoById(userId);
 
     const cardToken = await this.paymentGatewayUseCase.generateCardToken({
       number,
       cvc,
-      expMonth,
-      expYear,
+      expMonth: cardData.monthToString(),
+      expYear: cardData.yearToString(),
       cardHolder,
     });
 
@@ -110,6 +120,12 @@ export class InventoryUseCase {
       cardToken,
       type: 'CARD',
     });
+
+    const updatedUser = await this.userRepository.updatePaymentSourceHolder(userId, paymentSource);
+
+    if (updatedUser === false) {
+      throw new Error('We could not update the payment source holder!');
+    }
 
     return {
       tokenId: paymentSource,

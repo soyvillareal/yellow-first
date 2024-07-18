@@ -45,12 +45,12 @@ export class ProductService implements productRepository {
   async getProductById(productId: string): Promise<TGetProductById | undefined | null> {
     try {
       const project = await this.productModel.findOne({
-        where: {
-          id: productId,
-        },
         select: {
           price: true,
           stock: true,
+        },
+        where: {
+          id: productId,
         },
       });
 

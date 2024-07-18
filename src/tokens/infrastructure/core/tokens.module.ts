@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
-import config from 'src/framework/infrastructure/core/config';
+import config from 'src/framework/application/config';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
 import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';

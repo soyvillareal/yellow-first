@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { paymentGatewayRepository } from 'src/payment-gateway/domain/repository/payment-gateway.repository';
 import {
+  IGetTransactionsResponse,
   IMerchantsResponse,
   IPaymentResourcePayload,
   IPaymentResourceResponse,
@@ -16,6 +17,7 @@ import {
   ITransactionsResponse,
   TResponseOkOrError,
 } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
+import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
 
 @Injectable()
 export class PaymentGatewayService implements paymentGatewayRepository {
@@ -42,7 +44,7 @@ export class PaymentGatewayService implements paymentGatewayRepository {
 
   async merchants(): Promise<IResponseAG<TResponseOkOrError<IMerchantsResponse>>> {
     try {
-      const response = this.http.post(`${this.hostname}/merchants/${this.publicKey}`);
+      const response = this.http.get(`${this.hostname}/merchants/${this.publicKey}`);
 
       const lastValue = await lastValueFrom(response);
 
@@ -60,15 +62,6 @@ export class PaymentGatewayService implements paymentGatewayRepository {
 
   async tokensCards(payload: ITokensCardsPayload): Promise<IResponseAG<TResponseOkOrError<ITokensCardsResponse>>> {
     const { number, exp_year, card_holder, cvc, exp_month } = payload;
-
-    // const merchantsResponse = await this.merchants();
-
-    // if ('error' in merchantsResponse.response) {
-    //   return {
-    //     type: merchantsResponse.type,
-    //     response: merchantsResponse.response,
-    //   };
-    // }
 
     const bodyTokensCards = {
       number,
@@ -164,7 +157,7 @@ export class PaymentGatewayService implements paymentGatewayRepository {
     };
 
     try {
-      const response = this.http.post(`${this.hostname}/payment_sources`, bodyTransactions, {
+      const response = this.http.post(`${this.hostname}/transactions`, bodyTransactions, {
         headers: {
           ...this.headers,
           Authorization: `Bearer ${this.privateKey}`,
@@ -184,6 +177,40 @@ export class PaymentGatewayService implements paymentGatewayRepository {
       return {
         request,
         type: 'transactions',
+        response: error.response.data,
+      };
+    }
+  }
+
+  async getTransactionById(transactionId: string): Promise<IResponseAG<TResponseOkOrError<IGetTransactionsResponse>>> {
+    const request: TPartialRequest = {
+      headers: this.headers,
+      params: {
+        transactionId,
+      },
+    };
+
+    try {
+      const response = this.http.get(`${this.hostname}/transactions/${transactionId}`, {
+        headers: {
+          ...this.headers,
+          Authorization: `Bearer ${this.privateKey}`,
+        },
+      });
+
+      const lastValue = await lastValueFrom(response);
+
+      const responseData = lastValue.data;
+
+      return {
+        request,
+        type: 'getTransactions',
+        response: responseData,
+      };
+    } catch (error) {
+      return {
+        request,
+        type: 'getTransactions',
         response: error.response.data,
       };
     }

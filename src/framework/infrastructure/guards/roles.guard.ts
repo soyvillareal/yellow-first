@@ -2,10 +2,9 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtService } from '@nestjs/jwt';
 
 import { ERoles } from 'src/users/domain/entities/users.entity';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { config } from 'src/framework/infrastructure/core/config';
 import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
 import { CommonUseCase } from 'src/common/application/common.usecase';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RoleAdminGuard implements CanActivate {
@@ -13,9 +12,9 @@ export class RoleAdminGuard implements CanActivate {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {
-    this.commonUseCase = new CommonUseCase();
+    this.commonUseCase = new CommonUseCase(this.configService);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,7 +28,9 @@ export class RoleAdminGuard implements CanActivate {
       }
 
       const payload = await this.jwtService.verifyAsync<IUserTokenData>(token, {
-        secret: config.secret_key,
+        secret: this.configService.get<string>('config.secret_key', {
+          infer: true,
+        }),
       });
 
       req.user = payload;

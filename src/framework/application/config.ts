@@ -62,6 +62,9 @@ export const config = {
   private_key: configService.get<string>('PRIVATE_KEY', {
     infer: true,
   }),
+  integrity_key: configService.get<string>('INTEGRITY_KEY', {
+    infer: true,
+  }),
 };
 
 export default registerAs('config', () => config);

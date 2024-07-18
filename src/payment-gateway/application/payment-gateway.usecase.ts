@@ -43,10 +43,16 @@ export class PaymentGatewayUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    if (paymentSource.response.status !== 'CREATED') {
+    return paymentSource.response.data.id;
+  }
+
+  async checkTransactionStatus(transactionId: string): Promise<string> {
+    const transaction = await this.paymentGatewayRepository.getTransactionById(transactionId);
+
+    if ('error' in transaction.response) {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    return paymentSource.response.data.id;
+    return transaction.response.data.status;
   }
 }

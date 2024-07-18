@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColum
 
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
-import { IStockEntity } from '../../domain/entities/inventory.entity';
+import { IStockEntity } from '../../domain/entities/transaction.entity';
 
 @Entity({ name: 'stock' })
 export class StockModel extends BaseEntity implements IStockEntity {

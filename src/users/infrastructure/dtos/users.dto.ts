@@ -5,6 +5,20 @@ import { ICreateUserDTO } from 'src/users/domain/entities/users.entity';
 
 export class createUserDto implements ICreateUserDTO {
   @IsNotEmpty({
+    message: 'The email is required',
+  })
+  @MaxLength(255, {
+    message: 'The email must be less than 255 characters',
+  })
+  @ApiProperty({
+    description: 'Email of the user',
+    example: 'john.doe@example.com',
+    required: true,
+    maxLength: 255,
+  })
+  email: string;
+
+  @IsNotEmpty({
     message: 'The name is required',
   })
   @MaxLength(60, {

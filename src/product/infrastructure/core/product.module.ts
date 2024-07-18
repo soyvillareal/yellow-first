@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
-import config from 'src/framework/infrastructure/core/config';
+import config from 'src/framework/application/config';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';

@@ -8,9 +8,6 @@ export class ProductModel implements IProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  reference: string;
-
   @Column({ type: 'uuid', nullable: false })
   userId: string;
 
@@ -21,7 +18,7 @@ export class ProductModel implements IProductEntity {
   description: string;
 
   @Column({ type: 'numeric', precision: 10, scale: 2, nullable: false })
-  price: number;
+  price: string;
 
   @Column({ type: 'int', nullable: false })
   stock: number;

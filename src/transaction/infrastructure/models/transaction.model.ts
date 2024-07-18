@@ -3,7 +3,7 @@ import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColu
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
-import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/inventory.entity';
+import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
 
 @Entity({ name: 'transaction' })
 export class TransactionModel extends BaseEntity implements ITransactionEntity {
@@ -12,6 +12,9 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
 
   @Column({ type: 'uuid', nullable: false })
   userId: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: false })
+  reference: string;
 
   @Column({ type: 'uuid', nullable: false })
   productId: string;

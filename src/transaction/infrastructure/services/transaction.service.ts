@@ -9,14 +9,14 @@ import {
   ITransactionEntity,
   TCreateStock,
   TCreateTransaction,
-} from 'src/inventory/domain/entities/inventory.entity';
-import { inventoryRepository } from 'src/inventory/domain/repository/inventory.repository';
+} from 'src/transaction/domain/entities/transaction.entity';
+import { transactionRepository } from 'src/transaction/domain/repository/transaction.repository';
 
 import { StockModel } from '../models/stock.model';
 import { TransactionModel } from '../models/transaction.model';
 
 @Injectable()
-export class InventoryService implements inventoryRepository {
+export class TransactionService implements transactionRepository {
   constructor(
     @InjectRepository(StockModel) private readonly stockModel: Repository<StockModel>,
     @InjectRepository(TransactionModel) private readonly transactionModel: Repository<TransactionModel>,
@@ -60,9 +60,9 @@ export class InventoryService implements inventoryRepository {
     }
   }
 
-  async createTransaction({ userId, productId, amount }: TCreateTransaction): Promise<ITransactionEntity | null> {
+  async createTransaction({ userId, reference, productId, amount }: TCreateTransaction): Promise<ITransactionEntity | null> {
     try {
-      const createdTransaction = this.transactionModel.create({ userId, productId, amount });
+      const createdTransaction = this.transactionModel.create({ userId, reference, productId, amount });
 
       const savedTransaction = await this.transactionModel.save(createdTransaction);
 
@@ -86,7 +86,7 @@ export class InventoryService implements inventoryRepository {
         status,
       });
 
-      const savedTransaction = await this.stockModel.save(createdTransaction);
+      const savedTransaction = await this.transactionModel.save(createdTransaction);
 
       return isNotEmpty(savedTransaction);
     } catch (error) {

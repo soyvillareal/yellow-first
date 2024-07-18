@@ -4,8 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
 import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
-import { config } from 'src/framework/infrastructure/core/config';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
@@ -13,9 +13,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {
     super();
-    this.commonUseCase = new CommonUseCase();
+    this.commonUseCase = new CommonUseCase(this.configService);
   }
 
   async canActivate(context: ExecutionContext) {
@@ -29,7 +30,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync<IUserTokenData>(token, {
-        secret: config.secret_key,
+        secret: this.configService.get<string>('config.secret_key', {
+          infer: true,
+        }),
       });
 
       if (payload.hasOwnProperty('userId') === false) {
