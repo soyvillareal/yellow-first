@@ -27,6 +27,7 @@ import { CardTokenizeDto, CreatePaymentDto, GatewayEventDto } from '../dtos/tran
 import { ConfigService } from '@nestjs/config';
 import { IGatewayEventHeaders } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
+import { ValidateTokenGuard } from '../guard/transaction.guard';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -56,6 +57,7 @@ export class TransactionController {
 
   @Post('payment')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(ValidateTokenGuard)
   @ApiOperation({
     summary: 'Genera un pago',
     description: 'Este servicio generará un pago.',

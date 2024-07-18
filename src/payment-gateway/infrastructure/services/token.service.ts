@@ -78,4 +78,30 @@ export class GatewayTokenService implements gatewayTokenRepository {
       return null;
     }
   }
+
+  async lastTokenIdByUserId(userId: string): Promise<string | undefined | null> {
+    try {
+      const token = await this.gatewayTokenModel.findOne({
+        select: {
+          id: true,
+        },
+        where: {
+          userId,
+          createdAt: LessThan(moment().add(10, 'minutes').toDate()),
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      if (token === null) {
+        return undefined;
+      }
+
+      return token.id;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }

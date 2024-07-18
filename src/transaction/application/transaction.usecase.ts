@@ -47,12 +47,6 @@ export class TransactionUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    const tokenExists = await this.transactionRepository.tokenExistsInTransaction(lastToken.id);
-
-    if (tokenExists === true) {
-      throw new Error('Whoops! Something went wrong.');
-    }
-
     const product = await this.productRepository.getProductById(productId);
 
     if (product === null) {
