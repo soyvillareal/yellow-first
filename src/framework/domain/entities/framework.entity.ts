@@ -6,7 +6,7 @@ import { ERoles } from 'src/users/domain/entities/users.entity';
 
 export interface ApiResponseCase<T = []> {
   message?: string | undefined;
-  data: T;
+  data?: T;
 }
 
 export interface IUserTokenData {

@@ -65,6 +65,9 @@ export const config = {
   integrity_key: configService.get<string>('INTEGRITY_KEY', {
     infer: true,
   }),
+  events_key: configService.get<string>('EVENTS_KEY', {
+    infer: true,
+  }),
 };
 
 export default registerAs('config', () => config);

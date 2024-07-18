@@ -4,6 +4,7 @@ import { UsersModel } from 'src/users/infrastructure/models/users.model';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
 import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
+import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
 
 @Entity({ name: 'transaction' })
 export class TransactionModel extends BaseEntity implements ITransactionEntity {
@@ -13,7 +14,13 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
   @Column({ type: 'uuid', nullable: false })
   userId: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 30, nullable: false })
+  gatewayId: string;
+
+  @Column({ type: 'uuid', nullable: false })
+  gatewayTokenId: string;
+
+  @Column({ type: 'uuid', nullable: false })
   reference: string;
 
   @Column({ type: 'uuid', nullable: false })
@@ -55,4 +62,18 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
     foreignKeyConstraintName: 'fk_transaction_user',
   })
   users: UsersModel;
+
+  @ManyToOne(() => GatewayTokenModel, {
+    onDelete: 'RESTRICT',
+    onUpdate: 'CASCADE',
+    nullable: false,
+    eager: false,
+    cascade: true,
+  })
+  @JoinColumn({
+    name: 'gatewayTokenId',
+    referencedColumnName: 'id',
+    foreignKeyConstraintName: 'fk_transaction_gatewaytoken',
+  })
+  tokens: GatewayTokenModel;
 }

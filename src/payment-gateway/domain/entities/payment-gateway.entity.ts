@@ -110,7 +110,9 @@ export interface IPaymentResourceResponse {
 }
 
 export interface IPaymentMethodsTransactionsPayload {
+  type: TCardTypes;
   installments?: number;
+  token?: string;
 }
 
 export interface ITransactionsPayload {
@@ -118,10 +120,13 @@ export interface ITransactionsPayload {
   currency: string;
   signature: string;
   customer_email: string;
+  acceptance_token?: string;
   payment_method?: IPaymentMethodsTransactionsPayload;
   reference: string;
-  payment_source_id: number;
+  payment_source_id?: number;
 }
+
+export type TCreateTransactions = Omit<ITransactionsPayload, 'acceptance_token'>;
 
 export interface IPaymentMethodsExtra {
   bin: string;
@@ -167,7 +172,7 @@ export interface ITransactionsResponse {
   status: TTransactionStatus;
   status_message: string | null;
   billing_data: null;
-  shipping_address: 'string' | null;
+  shipping_address: string | null;
   redirect_url: string | null;
   payment_source_id: number;
   payment_link_id: number | null;
@@ -249,8 +254,49 @@ export interface IGenerateCardTokenPayload {
   cardHolder: string;
 }
 
-export interface IGeneratePaymentSourcesPayload {
-  customerEmail: string;
-  type: TCardTypes;
+export interface IGenerateCardTokenResponse {
   cardToken: string;
+  brand: string;
+  lastFour: string;
+  expMonth: string;
+  expYear: string;
+  cardHolder: string;
+  expiredAt: string;
+  validityEndsAt: string;
+}
+
+export interface IGatewayEventTransaction {
+  id: string;
+  amount_in_cents: number;
+  reference: string;
+  customer_email: string;
+  currency: string;
+  payment_method_type: TCardTypes;
+  redirect_url: string | null;
+  status: TTransactionStatus;
+  shipping_address: string | null;
+  payment_link_id: number | null;
+  payment_source_id: null;
+}
+
+export interface IGatewayEventSignature {
+  properties: ['transaction.id', 'transaction.status', 'transaction.amount_in_cents'];
+  checksum: string;
+}
+
+export interface IGatewayEventData {
+  transaction: IGatewayEventTransaction;
+}
+
+export interface IGatewayEvent {
+  event: 'transaction.updated' | 'nequi_token.updated';
+  data: IGatewayEventData;
+  environment: 'test' | 'prod';
+  signature: IGatewayEventSignature;
+  timestamp: number;
+  sent_at: string;
+}
+
+export interface IGatewayEventHeaders extends Record<string, string> {
+  'X-Event-Checksum': string;
 }

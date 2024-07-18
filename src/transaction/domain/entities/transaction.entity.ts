@@ -5,19 +5,11 @@ export enum ETransactionStatus {
   VOIDED = 'VOIDED',
 }
 
-export interface IStockEntity {
-  id: number;
-  productId: string;
-  quantity: number;
-  updatedAt: Date;
-  createdAt: Date;
-}
-
-export type TCreateStock = Pick<IStockEntity, 'productId' | 'quantity'>;
-
 export interface ITransactionEntity {
   id: number;
   userId: string;
+  gatewayId: string;
+  gatewayTokenId: string;
   reference: string;
   productId: string;
   status: ETransactionStatus;
@@ -25,15 +17,14 @@ export interface ITransactionEntity {
   createdAt: Date;
 }
 
-export type TCreateTransaction = Pick<ITransactionEntity, 'userId' | 'reference' | 'productId' | 'amount'>;
+export type TCreateTransaction = Pick<
+  ITransactionEntity,
+  'userId' | 'gatewayTokenId' | 'gatewayId' | 'reference' | 'productId' | 'amount'
+>;
 
 export interface ICreatePaymentPayload {
   productId: string;
   installments: number;
-}
-
-export interface ITransactionResponse {
-  transactionId: number;
 }
 
 export interface ICardTokenizationPayload {
@@ -44,6 +35,6 @@ export interface ICardTokenizationPayload {
   cardHolder: string;
 }
 
-export interface ICardTokenizationResponse {
-  tokenId: number;
+export interface IUpdateTransactionResponse {
+  recieve: boolean;
 }

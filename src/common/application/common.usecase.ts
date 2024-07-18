@@ -43,9 +43,9 @@ export class CommonUseCase {
       infer: true,
     });
 
-    const cadenaConcatenada = reference + amountInCents + currency + integrityKey;
+    const concatenatedString = reference + amountInCents + currency + integrityKey;
 
-    const encondedText = new TextEncoder().encode(cadenaConcatenada);
+    const encondedText = new TextEncoder().encode(concatenatedString);
     const hashBuffer = await crypto.subtle.digest('SHA-256', encondedText);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -53,14 +53,29 @@ export class CommonUseCase {
     return hashHex;
   }
 
-  public createReference(min: number, max: number): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    const length = Math.floor(Math.random() * (max - min + 1) + min);
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  public async verifySignature(
+    signature: string,
+    payload: {
+      transaction: {
+        id: string;
+        status: string;
+        amountInCents: number;
+      };
+      timestamp: number;
+    },
+  ): Promise<boolean> {
+    const eventsKey = this.configRepository.get<string>('config.events_key', {
+      infer: true,
+    });
+
+    const concatenatedString =
+      payload.transaction.id + payload.transaction.status + payload.transaction.amountInCents + payload.timestamp + eventsKey;
+
+    const encondedText = new TextEncoder().encode(concatenatedString);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encondedText);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex === signature;
   }
 }

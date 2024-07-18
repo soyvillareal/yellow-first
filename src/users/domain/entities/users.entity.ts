@@ -9,12 +9,11 @@ export interface IUsersEntity {
   username: string;
   password: string;
   role: ERoles;
-  paymentSourceHolder: number;
   updatedAt: Date;
   createdAt: Date;
 }
 
-export type ICreateUser = Omit<IUsersEntity, 'id' | 'paymentSourceHolder' | 'updatedAt' | 'createdAt'>;
+export type ICreateUser = Omit<IUsersEntity, 'id' | 'updatedAt' | 'createdAt'>;
 
 export type IGetInfoUser = Omit<IUsersEntity, 'password'>;
 
@@ -22,4 +21,4 @@ export type IGetInfoByUsername = Pick<IUsersEntity, 'id' | 'username' | 'passwor
 
 export type ICreateUserResponse = Pick<IUsersEntity, 'id' | 'username'>;
 
-export type ICreateUserDTO = Omit<ICreateUser, 'role' | 'paymentSourceHolder'>;
+export type ICreateUserDTO = Omit<ICreateUser, 'role'>;

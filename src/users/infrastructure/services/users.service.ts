@@ -6,7 +6,6 @@ import { usersRepository } from 'src/users/domain/repository/users.repository';
 import { ICreateUser, IGetInfoByUsername, IGetInfoUser, IUsersEntity } from 'src/users/domain/entities/users.entity';
 
 import { UsersModel } from '../models/users.model';
-import { isNotEmpty } from 'class-validator';
 
 @Injectable()
 export class UsersService implements usersRepository {
@@ -38,7 +37,6 @@ export class UsersService implements usersRepository {
           email: true,
           username: true,
           role: true,
-          paymentSourceHolder: true,
           updatedAt: true,
           createdAt: true,
         },
@@ -50,28 +48,6 @@ export class UsersService implements usersRepository {
       }
 
       return userFound;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  }
-
-  async updatePaymentSourceHolder(userId: string, paymentSourceId: number): Promise<boolean | null> {
-    try {
-      const findOrFailUser = await this.userModel.findOneOrFail({
-        where: {
-          id: userId,
-        },
-      });
-
-      const createdUser = this.userModel.create({
-        ...findOrFailUser,
-        paymentSourceHolder: paymentSourceId,
-      });
-
-      const savedUser = await this.userModel.save(createdUser);
-
-      return isNotEmpty(savedUser);
     } catch (error) {
       console.log(error);
       return null;

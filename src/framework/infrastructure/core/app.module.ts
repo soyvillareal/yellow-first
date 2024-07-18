@@ -11,7 +11,6 @@ import { TransactionModule } from 'src/transaction/infrastructure/core/transacti
 import { LogsModule } from 'src/logs/infrastructure/core/logs.module';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
-import { StockModel } from 'src/transaction/infrastructure/models/stock.model';
 import { TransactionModel } from 'src/transaction/infrastructure/models/transaction.model';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { ProductsModule } from 'src/product/infrastructure/core/product.module';
@@ -30,7 +29,7 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
     LogsModule,
     TransactionModule,
     PaymentGatewayModule,
-    TypeOrmModule.forFeature([ProductModel, UsersModel, StockModel, TransactionModel]),
+    TypeOrmModule.forFeature([ProductModel, UsersModel, TransactionModel]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

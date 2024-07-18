@@ -139,7 +139,16 @@ export class PaymentGatewayService implements paymentGatewayRepository {
   }
 
   async transactions(payload: ITransactionsPayload): Promise<IResponseAG<TResponseOkOrError<ITransactionsResponse>>> {
-    const { reference, currency, amount_in_cents, customer_email, payment_source_id, signature, payment_method } = payload;
+    const {
+      reference,
+      currency,
+      amount_in_cents,
+      customer_email,
+      acceptance_token,
+      payment_source_id,
+      signature,
+      payment_method,
+    } = payload;
 
     const bodyTransactions = {
       reference,
@@ -148,6 +157,7 @@ export class PaymentGatewayService implements paymentGatewayRepository {
       customer_email,
       payment_source_id,
       signature,
+      acceptance_token,
       payment_method,
     };
 

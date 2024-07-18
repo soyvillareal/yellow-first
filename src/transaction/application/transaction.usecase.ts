@@ -1,3 +1,7 @@
+import { ConfigService } from '@nestjs/config';
+import { v4 as uuidv4 } from 'uuid';
+
+import { CommonUseCase } from 'src/common/application/common.usecase';
 import { usersRepository } from 'src/users/domain/repository/users.repository';
 
 import { PaymentGatewayUseCase } from '../../payment-gateway/application/payment-gateway.usecase';
@@ -7,13 +11,13 @@ import { paymentGatewayRepository } from '../../payment-gateway/domain/repositor
 import {
   ETransactionStatus,
   ICardTokenizationPayload,
-  ICardTokenizationResponse,
   ICreatePaymentPayload,
-  ITransactionResponse,
+  IUpdateTransactionResponse,
 } from '../domain/entities/transaction.entity';
 import { CardData } from '../domain/valueobject/transaction.value';
-import { CommonUseCase } from 'src/common/application/common.usecase';
-import { ConfigService } from '@nestjs/config';
+import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
+import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
+import moment from 'moment';
 
 export class TransactionUseCase {
   protected readonly commonUseCase: CommonUseCase;
@@ -23,16 +27,29 @@ export class TransactionUseCase {
     private readonly productRepository: productRepository,
     private readonly userRepository: usersRepository,
     private readonly paymentGatewayRepository: paymentGatewayRepository,
+    private readonly gatewayTokenRepository: gatewayTokenRepository,
     private readonly configService: ConfigService,
   ) {
     this.commonUseCase = new CommonUseCase(this.configService);
     this.paymentGatewayUseCase = new PaymentGatewayUseCase(this.paymentGatewayRepository);
   }
 
-  async createPayment(userId: string, { productId, installments }: ICreatePaymentPayload): Promise<ITransactionResponse> {
+  async createPayment(userId: string, { productId, installments }: ICreatePaymentPayload): Promise<void> {
     const user = await this.userRepository.getInfoById(userId);
 
     if (user === null || user === undefined) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    const lastToken = await this.gatewayTokenRepository.getLastTokenByUserId(userId);
+
+    if (lastToken === null || lastToken === undefined) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    const tokenExists = await this.transactionRepository.tokenExistsInTransaction(lastToken.id);
+
+    if (tokenExists === true) {
       throw new Error('Whoops! Something went wrong.');
     }
 
@@ -50,10 +67,31 @@ export class TransactionUseCase {
       throw new Error('Product out of stock!');
     }
 
-    const transactionReference = this.commonUseCase.createReference(10, 20);
+    const transactionReference = uuidv4();
+
+    const signature = await this.commonUseCase.generateSignature({
+      amountInCents: parseInt(product.price),
+      currency: 'COP',
+      reference: transactionReference,
+    });
+
+    const transactionId = await this.paymentGatewayUseCase.createTransaction({
+      amount_in_cents: parseInt(product.price),
+      currency: 'COP',
+      customer_email: user.email,
+      reference: transactionReference,
+      signature,
+      payment_method: {
+        type: 'CARD',
+        installments,
+        token: lastToken.token,
+      },
+    });
 
     const createdTransaction = await this.transactionRepository.createTransaction({
       userId,
+      gatewayTokenId: lastToken.id,
+      gatewayId: transactionId,
       reference: transactionReference,
       productId,
       amount: parseInt(product.price),
@@ -63,49 +101,20 @@ export class TransactionUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    const signature = await this.commonUseCase.generateSignature({
-      amountInCents: parseInt(product.price),
-      currency: 'COP',
-      reference: transactionReference,
-    });
+    const newStock = product.stock - 1;
 
-    const gatewayTransaction = await this.paymentGatewayRepository.transactions({
-      amount_in_cents: parseInt(product.price),
-      currency: 'COP',
-      customer_email: user.email,
-      payment_source_id: user.paymentSourceHolder,
-      reference: transactionReference,
-      signature,
-      payment_method: {
-        installments,
-      },
-    });
+    const updatedStockInArticle = await this.productRepository.updateStockInProduct(productId, newStock);
 
-    if ('error' in gatewayTransaction.response) {
+    if (updatedStockInArticle === false) {
       throw new Error('Whoops! Something went wrong.');
     }
-
-    const updatedTransaction = await this.transactionRepository.updateTransactionStatus(
-      createdTransaction.id,
-      ETransactionStatus[gatewayTransaction.response.data.status],
-    );
-
-    if (updatedTransaction === false) {
-      throw new Error('Whoops! Something went wrong.');
-    }
-
-    return {
-      transactionId: createdTransaction.id,
-    };
   }
 
   async cardTokenization(
     userId: string,
     { number, cvc, expMonth, expYear, cardHolder }: ICardTokenizationPayload,
-  ): Promise<ICardTokenizationResponse> {
+  ): Promise<void> {
     const cardData = new CardData(expMonth, expYear);
-
-    const user = await this.userRepository.getInfoById(userId);
 
     const cardToken = await this.paymentGatewayUseCase.generateCardToken({
       number,
@@ -115,20 +124,54 @@ export class TransactionUseCase {
       cardHolder,
     });
 
-    const paymentSource = await this.paymentGatewayUseCase.generatePaymentSources({
-      customerEmail: user.email,
-      cardToken,
-      type: 'CARD',
+    const createdToken = await this.gatewayTokenRepository.createToken({
+      userId,
+      token: cardToken.cardToken,
+      brand: cardToken.brand,
+      lastFour: cardToken.lastFour,
+      expMonth: cardToken.expMonth,
+      expYear: cardToken.expYear,
+      cardHolder: cardToken.cardHolder,
+      expiredAt: moment(cardToken.expiredAt).toDate(),
+      validityEndsAt: moment(cardToken.validityEndsAt).toDate(),
     });
 
-    const updatedUser = await this.userRepository.updatePaymentSourceHolder(userId, paymentSource);
+    if (createdToken === null) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+  }
 
-    if (updatedUser === false) {
-      throw new Error('We could not update the payment source holder!');
+  async webHookTransaction(checksum: string, { event, data, timestamp }: IGatewayEvent): Promise<IUpdateTransactionResponse> {
+    const isValid = await this.commonUseCase.verifySignature(checksum, {
+      transaction: {
+        id: data.transaction.id,
+        status: data.transaction.status,
+        amountInCents: data.transaction.amount_in_cents,
+      },
+      timestamp,
+    });
+
+    if (isValid === false) {
+      throw new Error('Invalid webhook signature!');
+    }
+
+    if (event === 'transaction.updated') {
+      const updatedTransaction = await this.transactionRepository.updateTransactionStatus(
+        data.transaction.id,
+        ETransactionStatus[data.transaction.status],
+      );
+
+      if (updatedTransaction === false) {
+        throw new Error('Whoops! Something went wrong.');
+      }
+
+      return {
+        recieve: true,
+      };
     }
 
     return {
-      tokenId: paymentSource,
+      recieve: false,
     };
   }
 }

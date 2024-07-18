@@ -20,9 +20,6 @@ export class UsersModel extends BaseEntity implements IUsersEntity {
   @Column({ type: 'enum', enum: ERoles, default: ERoles.CLIENT, nullable: false })
   role: ERoles;
 
-  @Column({ type: 'int', nullable: false, default: 0 })
-  paymentSourceHolder: number;
-
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',

@@ -7,6 +7,7 @@ import { productRepository } from 'src/product/domain/repository/product.reposit
 import { IListAndTotal, IPageFilter } from 'src/common/domain/entities/common.entity';
 
 import { ProductModel } from '../models/product.model';
+import { isNotEmpty } from 'class-validator';
 
 @Injectable()
 export class ProductService implements productRepository {
@@ -59,6 +60,28 @@ export class ProductService implements productRepository {
       }
 
       return project;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async updateStockInProduct(productId: string, stock: number): Promise<boolean | null> {
+    try {
+      const project = await this.productModel.findOneOrFail({
+        where: {
+          id: productId,
+        },
+      });
+
+      const updatedProject = this.productModel.create({
+        ...project,
+        stock,
+      });
+
+      const savedProject = await this.productModel.save(updatedProject);
+
+      return isNotEmpty(savedProject);
     } catch (error) {
       console.log(error);
       return null;

@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min } from 'class-validator';
 import moment from 'moment-timezone';
+import {
+  IGatewayEvent,
+  IGatewayEventData,
+  IGatewayEventSignature,
+} from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 
 import { ICardTokenizationPayload, ICreatePaymentPayload } from 'src/transaction/domain/entities/transaction.entity';
 
@@ -31,6 +36,15 @@ export class CreatePaymentDto implements ICreatePaymentPayload {
     required: true,
   })
   installments: number;
+}
+
+export class GatewayEventDto implements IGatewayEvent {
+  event: 'transaction.updated' | 'nequi_token.updated';
+  data: IGatewayEventData;
+  environment: 'test' | 'prod';
+  signature: IGatewayEventSignature;
+  timestamp: number;
+  sent_at: string;
 }
 
 export class CardTokenizeDto implements ICardTokenizationPayload {

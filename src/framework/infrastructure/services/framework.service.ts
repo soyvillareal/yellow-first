@@ -128,7 +128,7 @@ export class FrameworkService<T> implements frameworkRepository<T> {
           statusCode: response.statusCode,
           reqId: request.reqId,
           message: items.message,
-          data: items.data || [],
+          data: items?.data,
         };
       }),
     );
