@@ -5,7 +5,7 @@ export class CardData {
   private readonly expYear: number;
 
   constructor(expMonth: number, expYear: number) {
-    const currentYear = moment('YY').year();
+    const currentYear = moment().year();
     if (expMonth < 0) {
       throw new Error('Month must be greater than 0');
     }
