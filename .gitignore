@@ -1,20 +1,2 @@
-dist
-node_modules
-lib
-package-lock.json
-src/database/migrations/local
-
-# Ignore all .env files in the project root directory
-.env
-.env.local
-.env.dev
-.env.staging
-.env.prod
-
-ormlogs.log
-
-# Ignore mock files
-generateHash.js
-
-# Ignore macOS system files
+# misc
 .DS_Store
