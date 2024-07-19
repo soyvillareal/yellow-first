@@ -17,6 +17,9 @@ export class ProductModel implements IProductEntity {
   @Column({ type: 'varchar', length: 800, nullable: true })
   description: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  image: string;
+
   @Column({ type: 'numeric', precision: 10, scale: 2, nullable: false })
   price: string;
 

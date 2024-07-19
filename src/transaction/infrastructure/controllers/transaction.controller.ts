@@ -65,7 +65,7 @@ export class TransactionController {
   })
   async createPayment(@Body() body: CreatePaymentDto, @Req() req: IHeaderUserTokenData): Promise<ApiResponseCase<void>> {
     try {
-      await this.transactionUseCase.createPayment(req.user.userId, {
+      await this.transactionUseCase.createPayment(req.user.id, {
         productId: body.productId,
         installments: body.installments,
       });
@@ -87,7 +87,7 @@ export class TransactionController {
   })
   async cardTokenize(@Body() body: CardTokenizeDto, @Req() req: IHeaderUserTokenData): Promise<ApiResponseCase<void>> {
     try {
-      await this.transactionUseCase.cardTokenization(req.user.userId, {
+      await this.transactionUseCase.cardTokenization(req.user.id, {
         cardHolder: body.cardHolder,
         cvc: body.cvc,
         expMonth: body.expMonth,

@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TokensModule } from 'src/tokens/infrastructure/core/tokens.module';
+import { TokensModule } from 'src/session/infrastructure/core/session.module';
 import { UsersModule } from 'src/users/infrastructure/core/users.module';
 import { PaymentGatewayModule } from 'src/payment-gateway/infrastructure/core/payment-gateway.module';
 import { TransactionModule } from 'src/transaction/infrastructure/core/transaction.module';

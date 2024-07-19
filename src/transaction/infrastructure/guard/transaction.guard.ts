@@ -13,7 +13,7 @@ export class ValidateTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<IHeaderUserTokenData>();
-    const userId = request.user.userId;
+    const userId = request.user.id;
 
     const lastTokenId = await this.gatewayTokenService.lastTokenIdByUserId(userId);
 

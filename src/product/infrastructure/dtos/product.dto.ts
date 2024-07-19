@@ -32,6 +32,15 @@ export class getProductDto implements TGetProduct {
   description: string;
 
   @ApiProperty({
+    description: 'Imagen del producto',
+    example: 'https://www.example.com/uploads/oreo.jpg',
+    required: true,
+    maxLength: 255,
+    type: 'string',
+  })
+  image: string;
+
+  @ApiProperty({
     description: 'Precio del producto',
     example: 100,
     required: true,

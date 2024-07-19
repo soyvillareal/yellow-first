@@ -15,9 +15,9 @@ export interface IUsersEntity {
 
 export type ICreateUser = Omit<IUsersEntity, 'id' | 'updatedAt' | 'createdAt'>;
 
-export type IGetInfoUser = Omit<IUsersEntity, 'password'>;
+export type TGetInfoUser = Pick<IUsersEntity, 'email'>;
 
-export type IGetInfoByUsername = Pick<IUsersEntity, 'id' | 'username' | 'password' | 'role'>;
+export type IGetInfoByUsername = Pick<IUsersEntity, 'id' | 'email' | 'username' | 'password' | 'role'>;
 
 export type ICreateUserResponse = Pick<IUsersEntity, 'id' | 'username'>;
 

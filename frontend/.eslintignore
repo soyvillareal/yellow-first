@@ -1,0 +1,6 @@
+node_modules
+build
+test
+.eslintrc.cjs
+.prettierrc
+tailwind.config.js

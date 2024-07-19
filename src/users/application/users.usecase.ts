@@ -1,4 +1,4 @@
-import { ERoles, ICreateUserDTO, ICreateUserResponse, IGetInfoUser } from '../domain/entities/users.entity';
+import { ERoles, ICreateUserDTO, ICreateUserResponse } from '../domain/entities/users.entity';
 import { usersRepository } from '../domain/repository/users.repository';
 
 export class UsersUseCase {
@@ -16,19 +16,5 @@ export class UsersUseCase {
       id: createdUser.id,
       username: createdUser.username,
     };
-  }
-
-  async getUserInfo(userId: string): Promise<IGetInfoUser> {
-    const foundUser = await this.usersRepository.getInfoById(userId);
-
-    if (foundUser === null) {
-      throw new Error('Ups! Something went wrong, please try again');
-    }
-
-    if (foundUser === undefined) {
-      throw new Error('User not found!');
-    }
-
-    return foundUser;
   }
 }

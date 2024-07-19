@@ -23,6 +23,7 @@ export class ProductService implements productRepository {
           id: true,
           name: true,
           description: true,
+          image: true,
           price: true,
           stock: true,
         },

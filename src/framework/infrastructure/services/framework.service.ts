@@ -28,7 +28,7 @@ export class FrameworkService<T> implements frameworkRepository<T> {
       }
 
       const logData = await this.logsService.createLog({
-        userId: request?.user?.userId,
+        userId: request?.user?.data?.id || null,
         request: {
           headers: request.headers,
           body: request.body,
@@ -81,12 +81,12 @@ export class FrameworkService<T> implements frameworkRepository<T> {
       catchError((err) => {
         const ctx = context.switchToHttp();
         const request = ctx.getRequest();
-        let status = 500; // Código de estado por defecto
+        let status = 500; // Status code by default
         if (err instanceof HttpException) {
           status = err.getStatus();
         }
 
-        let message = err.message || 'Internal Server Error'; // Mensaje por defecto
+        let message = err.message || 'Internal Server Error'; // Message by default
         if (err.response?.message) {
           message = err.response.message;
         }

@@ -14,13 +14,14 @@ export interface IProductEntity {
   userId: string;
   name: string;
   description: string;
+  image: string;
   price: string;
   stock: number;
   updatedAt: Date;
   createdAt: Date;
 }
 
-export type TGetProduct = Pick<IProductEntity, 'id' | 'name' | 'description' | 'price' | 'stock'>;
+export type TGetProduct = Pick<IProductEntity, 'id' | 'name' | 'description' | 'image' | 'price' | 'stock'>;
 export type TGetProductById = Pick<IProductEntity, 'price' | 'stock'>;
 
 export type TWebhookLeadResponse = IResponseAG<

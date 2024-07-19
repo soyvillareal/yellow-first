@@ -2,21 +2,15 @@ import { Request } from 'express';
 
 import { ELogPriority } from 'src/logs/domain/entities/logs.entity';
 import { TWebhookLeadResponse } from 'src/product/domain/entities/product.entity';
-import { ERoles } from 'src/users/domain/entities/users.entity';
+import { TSession } from 'src/session/domain/entities/session.entity';
 
 export interface ApiResponseCase<T = []> {
   message?: string | undefined;
   data?: T;
 }
 
-export interface IUserTokenData {
-  userId: string;
-  username: string;
-  role: ERoles;
-}
-
 export interface IHeaderUserTokenData extends Request {
-  user: IUserTokenData;
+  user: TSession;
 }
 
 export type TPartialRequest = Partial<Request>;

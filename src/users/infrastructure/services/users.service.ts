@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { usersRepository } from 'src/users/domain/repository/users.repository';
-import { ICreateUser, IGetInfoByUsername, IGetInfoUser, IUsersEntity } from 'src/users/domain/entities/users.entity';
+import { ICreateUser, IGetInfoByUsername, IUsersEntity, TGetInfoUser } from 'src/users/domain/entities/users.entity';
 
 import { UsersModel } from '../models/users.model';
 
@@ -29,16 +29,11 @@ export class UsersService implements usersRepository {
     }
   }
 
-  async getInfoById(id: string): Promise<IGetInfoUser | undefined | null> {
+  async getInfoById(id: string): Promise<TGetInfoUser | undefined | null> {
     try {
       const userFound = await this.userModel.findOne({
         select: {
-          id: true,
           email: true,
-          username: true,
-          role: true,
-          updatedAt: true,
-          createdAt: true,
         },
         where: { id },
       });
@@ -59,6 +54,7 @@ export class UsersService implements usersRepository {
       const userFound = await this.userModel.findOne({
         select: {
           id: true,
+          email: true,
           username: true,
           password: true,
           role: true,

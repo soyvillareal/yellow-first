@@ -1,10 +1,10 @@
+import { ConfigService } from '@nestjs/config';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { ERoles } from 'src/users/domain/entities/users.entity';
-import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
 import { CommonUseCase } from 'src/common/application/common.usecase';
-import { ConfigService } from '@nestjs/config';
+import { TAuthSessionData } from 'src/session/domain/entities/session.entity';
 
 @Injectable()
 export class RoleAdminGuard implements CanActivate {
@@ -27,7 +27,7 @@ export class RoleAdminGuard implements CanActivate {
         throw new UnauthorizedException("Token was't provided!");
       }
 
-      const payload = await this.jwtService.verifyAsync<IUserTokenData>(token, {
+      const payload = await this.jwtService.verifyAsync<TAuthSessionData>(token, {
         secret: this.configService.get<string>('config.secret_key', {
           infer: true,
         }),

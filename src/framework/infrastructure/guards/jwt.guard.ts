@@ -1,11 +1,12 @@
+import { ConfigService } from '@nestjs/config';
+
 import { CanActivate, type ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
-import { IUserTokenData } from 'src/framework/domain/entities/framework.entity';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { ConfigService } from '@nestjs/config';
+import { TSession } from 'src/session/domain/entities/session.entity';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
@@ -29,24 +30,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync<IUserTokenData>(token, {
+      const payload = await this.jwtService.verifyAsync<TSession>(token, {
         secret: this.configService.get<string>('config.secret_key', {
           infer: true,
         }),
       });
 
-      if (payload.hasOwnProperty('userId') === false) {
-        throw new UnauthorizedException('Invalid token');
-      }
+      if (payload?.data !== undefined) {
+        if (payload?.data?.id === undefined) {
+          throw new UnauthorizedException('Invalid token');
+        }
 
-      const foundUser = await this.usersService.userExistsById(payload.userId);
+        const foundUser = await this.usersService.userExistsById(payload.data.id);
 
-      if (foundUser === null) {
-        throw new UnauthorizedException('Ups! Something went wrong, please try again');
-      }
+        if (foundUser === null) {
+          throw new UnauthorizedException('Ups! Something went wrong, please try again');
+        }
 
-      if (foundUser === false) {
-        throw new UnauthorizedException('Invalid token');
+        if (foundUser === false) {
+          throw new UnauthorizedException('Invalid token');
+        }
       }
 
       req.user = payload;

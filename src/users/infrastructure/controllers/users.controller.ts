@@ -1,24 +1,11 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Param,
-  Post,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
-import { ERoles, ICreateUserResponse, IGetInfoUser } from 'src/users/domain/entities/users.entity';
+import { ICreateUserResponse } from 'src/users/domain/entities/users.entity';
 import { RoleAdminGuard } from 'src/framework/infrastructure/guards/roles.guard';
 import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
-import { JwtAuthGuard } from 'src/framework/infrastructure/guards/jwt.guard';
 import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
-import { paramsWithUUIDDto } from 'src/common/infrastructure/dtos/common.dto';
 
 import { UsersUseCase } from '../../application/users.usecase';
 import { createUserDto } from '../dtos/users.dto';
@@ -88,62 +75,6 @@ export class UsersController {
           password: user.password,
           email: user.email,
         }),
-      };
-    } catch (error) {
-      console.log(error);
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Get('only/:id')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
-  @ApiParam({
-    name: 'id',
-    type: String,
-    description: 'UUID del usuario',
-  })
-  @ApiOperation({
-    summary: 'Obtener información del usuario',
-    description: 'Este servicio retornará la información del usuario registrado en la base de datos',
-    tags: ['Users'],
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.OK,
-    description: '¡Usuario encontrado!',
-    schema: {
-      example: {
-        statusCode: 200,
-        message: 'User found!',
-        data: {
-          id: 'b1b9b1b1-1b1b-1b1b-1b1b-1b1b1b1b1b1b',
-          username: 'User1',
-          role: ERoles.ADMIN,
-          updatedAt: '2024-04-18T19:16:06.838Z',
-          createdAt: '2024-04-18T19:16:06.838Z',
-        },
-      },
-    },
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.BAD_REQUEST,
-    description: '¡No se pudo encontrar algún usuario con el UUID proporcionado!',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', enum: [HttpStatus.BAD_REQUEST] },
-        message: {
-          type: 'string',
-          enum: ['User not found!'],
-        },
-      },
-    },
-  })
-  async getUserInfo(@Param() param: paramsWithUUIDDto): Promise<ApiResponseCase<IGetInfoUser>> {
-    try {
-      return {
-        message: 'User found!',
-        data: await this.usersUseCase.getUserInfo(param.id),
       };
     } catch (error) {
       console.log(error);

@@ -6,7 +6,7 @@ import { ProductModel } from 'src/product/infrastructure/models/product.model';
 import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
 
-@Entity({ name: 'transaction' })
+@Entity({ name: 'transactions' })
 export class TransactionModel extends BaseEntity implements ITransactionEntity {
   @PrimaryGeneratedColumn()
   id: number;
