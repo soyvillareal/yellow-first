@@ -5,13 +5,13 @@ export interface IAPIResponse<T = unknown> {
 }
 
 export enum EUserRoles {
-  ADMIN = "admin",
-  CLIENT = "client",
+  ADMIN = 'admin',
+  CLIENT = 'client',
 }
 
 export enum EPaginationOrder {
-  ASC = "ASC",
-  DESC = "DESC",
+  ASC = 'ASC',
+  DESC = 'DESC',
 }
 
 export interface IQueryValueRequest {

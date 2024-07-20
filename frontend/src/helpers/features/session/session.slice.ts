@@ -1,76 +1,73 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { equals } from "ramda";
-import { isNilOrEmpty, isNotNilOrEmpty } from "ramda-adjunct";
-import Cookies from "universal-cookie";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { equals } from 'ramda';
+import { isNilOrEmpty, isNotNilOrEmpty } from 'ramda-adjunct';
+import Cookies from 'universal-cookie';
 
-import { removeCookie, setCookie } from "../../cookie";
-import { getStorage } from "../../storage";
-import {
-  IAuthSessionResponse,
-  ISessionState,
-} from "./session.types";
+import { removeCookie, setCookie } from '../../cookie';
+import { getStorage } from '../../storage';
+import { IAuthSessionResponse, ISessionState } from './session.types';
 
 const initialState = {
   user: null,
   isAnonymous: false,
-  status: "idle",
+  status: 'idle',
 } as ISessionState;
 
 const sessionSlice = createSlice({
-  name: "session",
+  name: 'session',
   initialState,
   reducers: {
     loadSession: (state: ISessionState) => {
-      const localStorageSessionJSON = getStorage()?.getItem("session") || "";
+      const localStorageSessionJSON = getStorage()?.getItem('session') || '';
 
       if (isNotNilOrEmpty(localStorageSessionJSON)) {
         const localSessionObject = JSON.parse(
-          localStorageSessionJSON
+          localStorageSessionJSON,
         ) as IAuthSessionResponse;
         const cookies = new Cookies();
         const expiredAt = new Date(localSessionObject.expiredAt);
         const today = new Date();
 
         if (
-          equals(localSessionObject.id, cookies.get("session-id")) &&
+          equals(localSessionObject.id, cookies.get('session-id')) &&
           today <= expiredAt
         ) {
           // if session is an anonymous session, don't load user into store
           if (localSessionObject.data) {
             state.user = localSessionObject.data;
           }
-          state.status = "succeeded";
+          state.status = 'succeeded';
         } else {
-          state.status = "pending";
+          state.status = 'pending';
         }
       } else {
-        state.status = "pending";
+        state.status = 'pending';
       }
     },
     setSession: (
       state: ISessionState,
-      action: PayloadAction<IAuthSessionResponse>
+      action: PayloadAction<IAuthSessionResponse>,
     ) => {
       const session = action.payload;
       // Set session info
       setCookie(
-        "session-id",
+        'session-id',
         JSON.stringify(session.id),
-        new Date(session.expiredAt)
+        new Date(session.expiredAt),
       );
-      getStorage()?.setItem("session", JSON.stringify(session));
+      getStorage()?.setItem('session', JSON.stringify(session));
       if (session.data) {
         state.user = session.data;
       }
       state.isAnonymous = isNilOrEmpty(session.data);
-      state.status = "succeeded";
+      state.status = 'succeeded';
     },
     removeSession: (state: ISessionState) => {
       getStorage()?.clear();
-      removeCookie("session-id");
+      removeCookie('session-id');
       state.user = initialState.user;
       state.isAnonymous = initialState.isAnonymous;
-      state.status = "pending";
+      state.status = 'pending';
     },
   },
 });

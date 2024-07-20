@@ -5,7 +5,7 @@ import { isNotEmpty } from 'ramda-adjunct';
 import moment from 'moment';
 
 import Form from '@components/Form';
-import FancyCard from '@components/FancyCard';
+import FancyCard from '@components/shop/FancyCard';
 import { useCardTokenizeMutation } from '@helpers/features/transaction/transaction.api';
 import useAppDispatch from '@hooks/redux/useAppDispatch';
 import { addCardInfo } from '@helpers/features/transaction/transaction.slice';

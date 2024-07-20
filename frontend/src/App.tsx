@@ -3,16 +3,15 @@ import { Route, Routes } from 'react-router-dom';
 import useSession from '@hooks/custom/useSession';
 import useAppSelector from '@hooks/redux/useAppSelector';
 import { selectIsSessionLoading } from '@helpers/features/session/session.selector';
-import Loader from '@components/loader/Loader';
+import Loader from '@components/atoms/Loader';
 
 import RootLayout from './layouts/RootLayout';
-// import ProductLayout from "./layouts/ProductLayout";
-import CanActivate from './components/routegurad/CanActivate';
-import Products from './pages/products/Products';
-import Login from './pages/login/Login';
-import Cart from './pages/cart/Cart';
-import ThankYou from './pages/thank-you/ThankYou';
-import PageNotFound from './pages/pageNotFound/PageNotFound';
+import CanActivate from './helpers/middlewares/CanActivate';
+import Products from './pages/Products';
+import Login from './pages/Login';
+import Cart from './pages/Cart';
+import ThankYou from './pages/ThankYou';
+import PageNotFound from './pages/PageNotFound';
 
 function App() {
   const selectedIsSessionLoading = useAppSelector(selectIsSessionLoading);

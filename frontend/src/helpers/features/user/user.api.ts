@@ -1,9 +1,8 @@
-import { api } from "@helpers/api";
-import { IAPIResponse } from "@helpers/types";
-import env from "@helpers/env";
-import { RTKTags } from "@helpers/functions";
+import { api } from '@helpers/api';
+import { IAPIResponse } from '@helpers/types';
+import env from '@helpers/env';
 
-import { ICreateUserRequest, ICreateUserResponse } from "./user.types";
+import { ICreateUserRequest, ICreateUserResponse } from './user.types';
 
 export const productApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -13,7 +12,7 @@ export const productApi = api.injectEndpoints({
     >({
       query: ({ email, password, username }) => ({
         url: `${env.VITE_APP_BASE_API_URL}/user/create`,
-        method: "POST",
+        method: 'POST',
         body: {
           email,
           password,

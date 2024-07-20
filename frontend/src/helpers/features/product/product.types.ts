@@ -1,4 +1,4 @@
-import { IPaginationParameters, IQueryValueRequest } from "@helpers/types";
+import { IPaginationParameters, IQueryValueRequest } from '@helpers/types';
 
 export type TGetProductsRequest = IQueryValueRequest & IPaginationParameters;
 

@@ -1,20 +1,21 @@
-import { createSelector } from "@reduxjs/toolkit";
-import { equals } from "ramda";
-import { isNilOrEmpty, isNotNilOrEmpty } from "ramda-adjunct";
+import { createSelector } from '@reduxjs/toolkit';
+import { equals } from 'ramda';
+import { isNilOrEmpty, isNotNilOrEmpty } from 'ramda-adjunct';
 
-import { RootState } from "@helpers/store";
-import { ISessionState } from "./session.types";
+import { RootState } from '@helpers/store';
+
+import { ISessionState } from './session.types';
 
 export const selectSession = (state: RootState) => state.session;
 
 export const selectUserSession = createSelector(
   selectSession,
-  (session: ISessionState) => session.user
+  (session: ISessionState) => session.user,
 );
 
 export const selectUserId = createSelector(
   selectSession,
-  (session: ISessionState) => session.user?.id
+  (session: ISessionState) => session.user?.id,
 );
 
 /**
@@ -24,23 +25,23 @@ export const selectUserId = createSelector(
 export const selectIsSessionLoading = createSelector(
   selectSession,
   (session: ISessionState) =>
-    equals(session.status, "pending") || equals(session.status, "idle")
+    equals(session.status, 'pending') || equals(session.status, 'idle'),
 );
 
 export const selectIsUserNeedsAnonymousSession = createSelector(
   selectSession,
   (session: ISessionState) =>
-    equals(session.status, "pending") &&
+    equals(session.status, 'pending') &&
     isNilOrEmpty(session.user) &&
-    !session.isAnonymous
+    !session.isAnonymous,
 );
 
 export const selectIsUserLoggedIn = createSelector(
   selectSession,
-  (session: ISessionState) => isNotNilOrEmpty(session.user)
+  (session: ISessionState) => isNotNilOrEmpty(session.user),
 );
 
 export const selectSessionError = createSelector(
   selectSession,
-  (session: ISessionState) => session.error
+  (session: ISessionState) => session.error,
 );

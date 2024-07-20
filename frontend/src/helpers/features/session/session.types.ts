@@ -1,8 +1,8 @@
-import { EUserRoles } from "@helpers/types";
+import { EUserRoles } from '@helpers/types';
 
 export enum ESessionType {
-  ANONYMOUS = "anonymous",
-  AUTH = "auth",
+  ANONYMOUS = 'anonymous',
+  AUTH = 'auth',
 }
 
 export interface ICommonSessionData {
@@ -31,7 +31,7 @@ export interface IAuthSessionResponse extends ICommonSessionData {
 }
 
 export interface IBaseSliceState {
-  status: "idle" | "pending" | "succeeded" | "failed";
+  status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error?: string;
 }
 

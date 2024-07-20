@@ -1,11 +1,11 @@
-import { isNotNilOrEmpty } from "ramda-adjunct";
+import { isNotNilOrEmpty } from 'ramda-adjunct';
 
-import { api } from "@helpers/api";
-import { EPaginationOrder, IAPIResponse, IPageResponse } from "@helpers/types";
-import env from "@helpers/env";
-import { RTKTags } from "@helpers/functions";
+import { api } from '@helpers/api';
+import { EPaginationOrder, IAPIResponse, IPageResponse } from '@helpers/types';
+import env from '@helpers/env';
+import { RTKTags } from '@helpers/functions';
 
-import { IGetProductsResponse, TGetProductsRequest } from "./product.types";
+import { IGetProductsResponse, TGetProductsRequest } from './product.types';
 
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,9 +22,9 @@ export const userApi = api.injectEndpoints({
         url: `${
           env.VITE_APP_BASE_API_URL
         }/product/list?page=${page}&limit=${limit}&order=${order}${
-          isNotNilOrEmpty(query_value) ? `&query_value=${query_value}` : ""
+          isNotNilOrEmpty(query_value) ? `&query_value=${query_value}` : ''
         }`,
-        method: "GET",
+        method: 'GET',
       }),
       providesTags: [RTKTags.GetProducts],
     }),

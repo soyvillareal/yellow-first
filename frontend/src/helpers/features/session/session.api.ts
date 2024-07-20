@@ -1,13 +1,14 @@
-import { api } from "@helpers/api";
-import { IAPIResponse } from "@helpers/types";
-import env from "@helpers/env";
-import { RTKTagsAsArray } from "@helpers/functions";
+import { api } from '@helpers/api';
+import { IAPIResponse } from '@helpers/types';
+import env from '@helpers/env';
+import { RTKTagsAsArray } from '@helpers/functions';
+
 import {
-  IAuthSessionResponse,
-  IAuthSessionRequest,
-  ICommonSessionData,
   IAnonymousSessionRequest,
-} from "./session.types";
+  IAuthSessionRequest,
+  IAuthSessionResponse,
+  ICommonSessionData,
+} from './session.types';
 
 export const sessionApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -17,7 +18,7 @@ export const sessionApi = api.injectEndpoints({
     >({
       query: ({ seed }) => ({
         url: `${env.VITE_APP_BASE_API_URL}/session/anonymous`,
-        method: "POST",
+        method: 'POST',
         body: {
           seed,
         },
@@ -30,7 +31,7 @@ export const sessionApi = api.injectEndpoints({
     >({
       query: ({ username, password }) => ({
         url: `${env.VITE_APP_BASE_API_URL}/session/auth`,
-        method: "POST",
+        method: 'POST',
         body: {
           username,
           password,

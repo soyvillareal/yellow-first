@@ -1,10 +1,10 @@
-import { FieldValues, FormProvider } from "react-hook-form";
+import { FieldValues, FormProvider } from 'react-hook-form';
 
-import { IFormProps } from "./Form.types";
+import { IFormProps } from './Form.types';
 
 const Form = <T extends FieldValues>({
   className,
-  autoComplete = "on",
+  autoComplete = 'on',
   onSubmit,
   methods,
   children,
