@@ -72,41 +72,32 @@ const CartCard = ({
   return (
     <div
       id={id}
-      className="flex flex-col justify-between p-6 mb-6 border-b border-gray-700 sm:flex-row hover:rounded-lg hover:bg-gray-800 sm:justify-start"
+      className="flex flex-row justify-start p-6 mb-6 border-b border-gray-700 hover:rounded-lg hover:bg-gray-800"
     >
       <img
-        className="self-center w-32 h-48 sm:h-40 sm:w-18"
+        className="self-center w-14 h-38 lg:w-32 lg:h-48"
         src={image}
         alt={name}
       />
-      <div className="relative">
-        <div className="absolute bottom-0 items-center space-y-2 text-gray-100 right-16 sm:hidden">
-          <TrashIcon
-            onClick={handleClickRemoveFromCart}
-            title="Remove From Cart"
-            className="w-8 h-8 p-2 text-red-400 duration-150 bg-red-100 rounded-full cursor-pointer opacity-80 hover:text-red-500"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col items-center sm:items-start sm:flex-row sm:ml-4 sm:w-full sm:justify-between">
-        <div className="flex flex-col justify-between mt-5 align-center sm:mt-0">
-          <div className="flex flex-col items-center sm:items-start">
-            <h2 className="text-lg font-bold text-gray-100 lg:text-xl">
+      <div className="flex flex-row justify-between items-start ml-4 w-full">
+        <div className="flex flex-col justify-between align-center">
+          <div className="flex flex-col items-start">
+            <h2 className="text-lg font-bold text-gray-100 lg:text-xl line-clamp-2">
               {name}
             </h2>
-            <p className="mt-1 text-xs text-gray-200 sm:text-sm">
+            <p className="lg:block hidden mt-1 text-sm text-gray-200">
               {description}
             </p>
           </div>
-          <div className="flex flex-col items-center mt-4 space-x-4 text-gray-100 sm:flex-row">
-            <p className="text-xl before:mr-1 font-bold sm:text-2xl">
+          <div className="flex flex-row items-center mt-1 lg:mt-4 space-x-4 text-gray-400">
+            <p className="text-md lg:text-xl before:mr-1 font-bold">
               {numberWithCurrency(price)}
             </p>
           </div>
         </div>
 
-        <div className="flex sm:flex-col justify-between mt-4 sm:space-y-6 sm:mt-0 w-full h-full">
-          <div className="flex items-center sm:justify-end w-full">
+        <div className="flex flex-col justify-between mt-4 space-y-3 lg:space-y-6 mt-0 w-full h-full">
+          <div className="flex items-center justify-end w-full">
             <div className="flex items-center justify-center text-gray-100 bg-gray-800 border border-gray-700 rounded w-min">
               <button
                 onClick={handleClickDecrementQuantity}

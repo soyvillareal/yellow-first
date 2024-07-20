@@ -37,14 +37,14 @@ const InputLabel = forwardRef<
             field.onChange(e);
             props.onChange?.(e);
           }}
-          className={cn(
+          inputClassName={cn(
             'mt-3 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
             'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
             inputClassName,
           )}
           error={{
             has: fieldState.invalid || isNotNilOrEmpty(hasError),
-            message: fieldState.error?.message,
+            message: fieldState.error?.message || (hasError?.message as string),
           }}
         />
       )}

@@ -30,7 +30,7 @@ const CustomInput = forwardRef<HTMLInputElement, ICustomInputProps>(
     }, [type, showPassword]);
 
     return (
-      <div className={cn('relative w-full max-w-md', className)}>
+      <div className={cn('relative w-full', className)}>
         <Field>
           {label && (
             <Label className="text-sm/6 font-medium text-white">{label}</Label>

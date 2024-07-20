@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 import {
   selectCard,
@@ -28,6 +29,7 @@ import Address from '@components/shop/Address';
 import CardInfo from '../CardInfo';
 
 const CartCheckoutDetails = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(false);
   const selectedCartTransaction = useAppSelector(selectCartTransaction);
@@ -88,8 +90,14 @@ const CartCheckoutDetails = () => {
   }, [dispatch]);
 
   return (
-    <div className="relative mb-20 sm:w-1/3">
-      <div className="sticky left-0 right-0 w-full p-6 mt-6 border rounded-lg shadow-md top-40 md:mt-0">
+    <div className="relative mb-20 lg:w-1/3">
+      <div className="sticky left-0 right-0 w-full min-w-[330px] p-6 mt-6 border rounded-lg shadow-md top-40 md:mt-0">
+        <div className="mb-6">
+          <span className="text-white font-bold text-xl">
+            {t('cart.purchaseSummary')}
+          </span>
+        </div>
+        <hr className="my-4 mx-[-24px]" />
         <Address />
         <hr className="my-4" />
         {selectedCartTransaction.products.length > 0 &&

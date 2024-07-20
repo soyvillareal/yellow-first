@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { selectCartTransaction } from '@helpers/features/transaction/transaction.selector';
 import useAppSelector from '@hooks/redux/useAppSelector';
 import { selectUserId } from '@helpers/features/session/session.selector';
+import PageContainer from 'layouts/PageContainer';
 
 import CartCard from '../../components/shop/cart/CartCard';
 import CartCheckoutDetails from '../../components/shop/cart/CartCheckoutDetails';
@@ -12,18 +12,18 @@ const Cart = () => {
   const selectedCartTransaction = useAppSelector(selectCartTransaction);
   const selectedUserId = useAppSelector(selectUserId);
 
-  useEffect(() => {
-    document.title = 'Cart | The Book Shelf';
-  }, []);
   return (
-    <div className="mt-40 sm:mt-20 ">
-      <h1 className="my-4 font-bold tracking-tight text-center text-gray-100 md:text-xl lg:text-4xl">
-        Cart Items
-      </h1>
+    <PageContainer
+      seo={{
+        title: 'Cart',
+        subtitle: 'Your Cart',
+        description: 'Your cart items.',
+      }}
+    >
       {selectedCartTransaction.userId === selectedUserId &&
       selectedCartTransaction.products.length > 0 ? (
-        <div className="justify-center max-w-6xl px-6 mx-auto md:flex md:space-x-6 xl:px-0">
-          <div className="rounded-lg md:w-2/3">
+        <div className="flex flex-col md:flex-row justify-center max-w-6xl px-6 mx-auto md:space-x-6 xl:px-0">
+          <div className="rounded-lg lg:w-2/3">
             {selectedCartTransaction.products.map((product) => (
               <CartCard
                 key={product.id}
@@ -53,7 +53,7 @@ const Cart = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 };
 

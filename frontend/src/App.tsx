@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import useSession from '@hooks/custom/useSession';
 import useAppSelector from '@hooks/redux/useAppSelector';
 import { selectIsSessionLoading } from '@helpers/features/session/session.selector';
-import Loader from '@components/atoms/Loader';
+import ItemContainer from 'layouts/ItemContainer';
 
 import RootLayout from './layouts/RootLayout';
 import CanActivate from './helpers/middlewares/CanActivate';
@@ -18,10 +18,8 @@ function App() {
 
   useSession();
 
-  return selectedIsSessionLoading ? (
-    <Loader />
-  ) : (
-    <>
+  return (
+    <ItemContainer loading={selectedIsSessionLoading}>
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Products />} />
@@ -45,7 +43,7 @@ function App() {
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
-    </>
+    </ItemContainer>
   );
 }
 

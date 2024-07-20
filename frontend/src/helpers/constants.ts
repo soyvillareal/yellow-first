@@ -3,6 +3,12 @@ import { twMerge } from 'tailwind-merge';
 
 import { TTransactionCart } from './features/transaction/transaction.types';
 import { getStorage } from './storage';
+import { ELanguages } from './types';
+
+export const configSite = {
+  name: 'Yellow First',
+  url: 'http://localhost:3000',
+};
 
 export const currencySite = 'COP';
 
@@ -14,6 +20,11 @@ const CARDS = {
   unionpay: '^62',
   troy: '^9792',
   diners: '^(30[0-5]|36)',
+};
+
+export const languageLabels = {
+  [ELanguages.ES]: 'Español',
+  [ELanguages.EN]: 'English',
 };
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
@@ -72,3 +83,6 @@ export const cardType = (cardNumber: string) => {
   }
   return 'visa';
 };
+
+export const fillArray = (length: number) =>
+  Array.from({ length }, (_, i) => i + 1);

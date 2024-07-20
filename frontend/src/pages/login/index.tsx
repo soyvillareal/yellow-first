@@ -4,13 +4,14 @@ import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { isNotEmpty } from 'ramda-adjunct';
 
 import { setSession } from '@helpers/features/session/session.slice';
-import Form from '@components/Form';
+import Form from '@components/shop/Form';
 import { selectIsUserLoggedIn } from '@helpers/features/session/session.selector';
 import useAppDispatch from '@hooks/redux/useAppDispatch';
 import useAppSelector from '@hooks/redux/useAppSelector';
 import InputLabel from '@components/headlessUI/Form/InputLabel';
 import { useAuthSessionMutation } from '@helpers/features/session/session.api';
 import ButtonLoading from '@components/headlessUI/ButtonLoading';
+import PageContainer from 'layouts/PageContainer';
 
 import { ISigninInputs } from './Login.types';
 
@@ -20,7 +21,6 @@ const Login = () => {
   const selectedIsUserLoggedIn = useAppSelector(selectIsUserLoggedIn);
 
   useLayoutEffect(() => {
-    document.title = 'Login | The Book Shelf';
     if (selectedIsUserLoggedIn === true) {
       navigate('/');
     }
@@ -67,9 +67,15 @@ const Login = () => {
   }, [allFields]);
 
   return (
-    <>
+    <PageContainer
+      seo={{
+        title: 'Login',
+        subtitle: 'Sign in to your account',
+        description: 'Sign in to your account!',
+      }}
+    >
       <section>
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto mt-32 overflow-hidden md:mt-0 md:h-screen lg:py-0">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mt-16 mx-auto overflow-hidden">
           <div className="w-full bg-gray-800 border border-gray-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-100 md:text-2xl">
@@ -123,7 +129,7 @@ const Login = () => {
           </div>
         </div>
       </section>
-    </>
+    </PageContainer>
   );
 };
 

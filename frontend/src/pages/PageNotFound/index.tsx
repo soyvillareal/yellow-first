@@ -1,12 +1,20 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import PageContainer from 'layouts/PageContainer';
+
 const PageNotFound = () => {
   useEffect(() => {
     document.title = 'Page Unavailable | The Book Shelf';
   }, []);
   return (
-    <>
+    <PageContainer
+      seo={{
+        title: '404',
+        subtitle: 'Page Unavailable',
+        description: 'Page not found',
+      }}
+    >
       <main className="grid min-h-full px-6 py-40 place-items-center sm:py-48 lg:px-8">
         <div className="w-3/4 text-center sm:w-1/2">
           <p className="text-2xl font-semibold text-cyan-600">404</p>
@@ -28,7 +36,7 @@ const PageNotFound = () => {
           </div>
         </div>
       </main>
-    </>
+    </PageContainer>
   );
 };
 

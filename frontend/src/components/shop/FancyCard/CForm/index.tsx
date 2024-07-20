@@ -105,7 +105,7 @@ export default function CForm({
           <Field className="w-3/4">
             <Label
               htmlFor="cardMonth"
-              className="text-sm/6 font-medium text-white px-4"
+              className="text-sm/6 font-medium text-white"
             >
               Expiration Date
             </Label>
@@ -113,7 +113,7 @@ export default function CForm({
               <SelectLabel
                 ref={cardDateRef as LegacyRef<HTMLInputElement>}
                 id="cardMonth"
-                className="select w-full"
+                className="select w-full mt-3"
                 name="cardMonth"
                 value={cardMonth}
                 onChange={handleFormChange}
@@ -126,7 +126,7 @@ export default function CForm({
               />
               <SelectLabel
                 id="cardYear"
-                className="select w-full px-4"
+                className="select w-full mt-3 px-4"
                 name="cardYear"
                 value={cardYear}
                 onChange={handleFormChange}
@@ -143,7 +143,7 @@ export default function CForm({
             <InputLabel
               ref={cardCvv}
               id="cardCvv"
-              className="input w-full pr-4"
+              className="input w-full"
               type="tel"
               name="cardCvv"
               maxLength={4}

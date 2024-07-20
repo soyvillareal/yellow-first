@@ -4,7 +4,7 @@ import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { isNotEmpty } from 'ramda-adjunct';
 import moment from 'moment';
 
-import Form from '@components/Form';
+import Form from '@components/shop/Form';
 import FancyCard from '@components/shop/FancyCard';
 import { useCardTokenizeMutation } from '@helpers/features/transaction/transaction.api';
 import useAppDispatch from '@hooks/redux/useAppDispatch';
