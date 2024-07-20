@@ -45,7 +45,7 @@ export class GatewayTokenService implements gatewayTokenRepository {
     }
   }
 
-  async getLastTokenByUserId(userId: string): Promise<TGetLastTokenById | undefined | null> {
+  async getTokenById(tokenId: string): Promise<TGetLastTokenById | undefined | null> {
     try {
       const token = await this.gatewayTokenModel.findOne({
         select: {
@@ -58,13 +58,9 @@ export class GatewayTokenService implements gatewayTokenRepository {
           cardHolder: true,
           expiredAt: true,
         },
-
         where: {
-          userId,
+          id: tokenId,
           createdAt: LessThan(moment().add(10, 'minutes').toDate()),
-        },
-        order: {
-          createdAt: 'DESC',
         },
       });
 
@@ -79,26 +75,14 @@ export class GatewayTokenService implements gatewayTokenRepository {
     }
   }
 
-  async lastTokenIdByUserId(userId: string): Promise<string | undefined | null> {
+  async tokenExists(tokenId: string): Promise<boolean | null> {
     try {
-      const token = await this.gatewayTokenModel.findOne({
-        select: {
-          id: true,
-        },
-        where: {
-          userId,
-          createdAt: LessThan(moment().add(10, 'minutes').toDate()),
-        },
-        order: {
-          createdAt: 'DESC',
-        },
+      const token = await this.gatewayTokenModel.countBy({
+        id: tokenId,
+        createdAt: LessThan(moment().add(10, 'minutes').toDate()),
       });
 
-      if (token === null) {
-        return undefined;
-      }
-
-      return token.id;
+      return token > 0;
     } catch (error) {
       console.log(error);
       return null;

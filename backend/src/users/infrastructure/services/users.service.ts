@@ -58,6 +58,13 @@ export class UsersService implements usersRepository {
           username: true,
           password: true,
           role: true,
+          firstAddress: true,
+          secondAddress: true,
+          state: true,
+          city: true,
+          pincode: true,
+          phoneCode: true,
+          phoneNumber: true,
         },
         where: { username },
       });

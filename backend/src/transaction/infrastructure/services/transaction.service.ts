@@ -18,6 +18,7 @@ export class TransactionService implements transactionRepository {
     gatewayId,
     reference,
     productId,
+    quantity,
     amount,
   }: TCreateTransaction): Promise<ITransactionEntity | null> {
     try {
@@ -27,6 +28,7 @@ export class TransactionService implements transactionRepository {
         gatewayId,
         reference,
         productId,
+        quantity,
         amount,
       });
 

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min, ValidateNested } from 'class-validator';
 import moment from 'moment-timezone';
 import {
   IGatewayEvent,
@@ -7,14 +8,18 @@ import {
   IGatewayEventSignature,
 } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 
-import { ICardTokenizationPayload, ICreatePaymentPayload } from 'src/transaction/domain/entities/transaction.entity';
+import {
+  ICardTokenizationPayload,
+  ICreatePaymentPayload,
+  ICreatePaymentProducts,
+} from 'src/transaction/domain/entities/transaction.entity';
 
-export class CreatePaymentDto implements ICreatePaymentPayload {
+export class CreatePaymentProductsDto implements ICreatePaymentProducts {
   @IsNotEmpty({
-    message: 'The productId is required',
+    message: 'The id is required',
   })
   @IsUUID(4, {
-    message: 'The productId must be a valid UUID',
+    message: 'The id must be a valid UUID',
   })
   @ApiProperty({
     description: 'Id del producto',
@@ -22,7 +27,47 @@ export class CreatePaymentDto implements ICreatePaymentPayload {
     required: true,
     type: 'uuid',
   })
-  productId: string;
+  id: string;
+
+  @IsInt({
+    message: 'The quantity must be a number',
+  })
+  @Min(1, {
+    message: 'The quantity must be greater than 0',
+  })
+  @ApiProperty({
+    description: 'Cantidad del producto',
+    example: 1,
+    required: true,
+  })
+  quantity: number;
+}
+
+export class CreatePaymentDto implements ICreatePaymentPayload {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePaymentProductsDto)
+  @ApiProperty({
+    description: 'Id del producto',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+    required: true,
+    type: 'uuid',
+  })
+  products: ICreatePaymentProducts[];
+
+  @IsNotEmpty({
+    message: 'The tokenId is required',
+  })
+  @IsUUID(4, {
+    message: 'The tokenId must be a valid UUID',
+  })
+  @ApiProperty({
+    description: 'Token de la transacción',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+    required: true,
+    type: 'uuid',
+  })
+  tokenId: string;
 
   @IsNotEmpty({
     message: 'The installments is required',

@@ -85,6 +85,62 @@ export class authSessionDataDto implements TAuthSessionData {
     required: true,
   })
   role: ERoles;
+
+  @ApiProperty({
+    description: 'Dirección 1',
+    example: 'Calle 123',
+    maxLength: 255,
+    required: true,
+  })
+  firstAddress: string;
+
+  @ApiProperty({
+    description: 'Dirección 2',
+    example: 'Calle 123',
+    maxLength: 255,
+    required: true,
+  })
+  secondAddress: string;
+
+  @ApiProperty({
+    description: 'Estado',
+    example: 'Bolivar',
+    maxLength: 80,
+    required: true,
+  })
+  state: string;
+
+  @ApiProperty({
+    description: 'Ciudad',
+    example: 'Cartagena',
+    maxLength: 80,
+    required: true,
+  })
+  city: string;
+
+  @ApiProperty({
+    description: 'Código postal',
+    example: '130001',
+    maxLength: 10,
+    required: true,
+  })
+  pincode: string;
+
+  @ApiProperty({
+    description: 'Código de país',
+    example: '+1',
+    maxLength: 5,
+    required: true,
+  })
+  phoneCode: string;
+
+  @ApiProperty({
+    description: 'Número de teléfono',
+    example: '1234567890',
+    maxLength: 15,
+    required: true,
+  })
+  phoneNumber: string;
 }
 
 export class authSessionResponseDto implements TAuthSessionResponse {

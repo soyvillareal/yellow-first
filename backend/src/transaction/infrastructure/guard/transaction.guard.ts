@@ -13,15 +13,15 @@ export class ValidateTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<IHeaderUserTokenData>();
-    const userId = request.user.id;
+    const tokenId = request.body.tokenId;
 
-    const lastTokenId = await this.gatewayTokenService.lastTokenIdByUserId(userId);
+    const tokenExists = await this.gatewayTokenService.tokenExists(tokenId);
 
-    if (lastTokenId === null || lastTokenId === undefined) {
+    if (tokenExists === false || tokenExists === null) {
       throw new UnauthorizedException("You can't make a payment without a card token.");
     }
 
-    const tokenExistsInTransaction = await this.transactionService.tokenExistsInTransaction(lastTokenId);
+    const tokenExistsInTransaction = await this.transactionService.tokenExistsInTransaction(tokenId);
 
     if (tokenExistsInTransaction === true) {
       throw new UnauthorizedException("You can't make a payment without a card token.");

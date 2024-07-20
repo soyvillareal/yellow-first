@@ -20,7 +20,7 @@ export class ProductModel implements IProductEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   image: string;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'numeric', precision: 10, scale: 0, nullable: false })
   price: string;
 
   @Column({ type: 'int', nullable: false })

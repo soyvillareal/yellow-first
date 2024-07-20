@@ -29,7 +29,13 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
   @Column({ type: 'enum', enum: ETransactionStatus, default: ETransactionStatus.PENDING, nullable: false })
   status: ETransactionStatus;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2, nullable: false })
+  @Column({
+    type: 'int',
+    nullable: false,
+  })
+  quantity: number;
+
+  @Column({ type: 'numeric', precision: 10, scale: 0, nullable: false })
   amount: number;
 
   @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP', nullable: false })

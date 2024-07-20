@@ -19,7 +19,7 @@ import { FrameworkService } from 'src/framework/infrastructure/services/framewor
 import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/services/payment-gateway.service';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { IUpdateTransactionResponse } from 'src/transaction/domain/entities/transaction.entity';
+import { ICardTokenizationResponse, IUpdateTransactionResponse } from 'src/transaction/domain/entities/transaction.entity';
 
 import { TransactionService } from '../services/transaction.service';
 import { TransactionUseCase } from '../../application/transaction.usecase';
@@ -65,8 +65,9 @@ export class TransactionController {
   })
   async createPayment(@Body() body: CreatePaymentDto, @Req() req: IHeaderUserTokenData): Promise<ApiResponseCase<void>> {
     try {
-      await this.transactionUseCase.createPayment(req.user.id, {
-        productId: body.productId,
+      await this.transactionUseCase.createPayment(req.user.data.id, {
+        products: body.products,
+        tokenId: body.tokenId,
         installments: body.installments,
       });
 
@@ -85,9 +86,12 @@ export class TransactionController {
     description: 'Este servicio creará una transacción.',
     tags: ['Transactions'],
   })
-  async cardTokenize(@Body() body: CardTokenizeDto, @Req() req: IHeaderUserTokenData): Promise<ApiResponseCase<void>> {
+  async cardTokenize(
+    @Body() body: CardTokenizeDto,
+    @Req() req: IHeaderUserTokenData,
+  ): Promise<ApiResponseCase<ICardTokenizationResponse>> {
     try {
-      await this.transactionUseCase.cardTokenization(req.user.id, {
+      const cardTokenized = await this.transactionUseCase.cardTokenization(req.user.data.id, {
         cardHolder: body.cardHolder,
         cvc: body.cvc,
         expMonth: body.expMonth,
@@ -97,6 +101,7 @@ export class TransactionController {
 
       return {
         message: 'Card tokenized successfully!',
+        data: cardTokenized,
       };
     } catch (error) {
       console.error(error);

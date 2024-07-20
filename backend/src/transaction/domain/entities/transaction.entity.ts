@@ -13,17 +13,24 @@ export interface ITransactionEntity {
   reference: string;
   productId: string;
   status: ETransactionStatus;
+  quantity: number;
   amount: number;
   createdAt: Date;
 }
 
 export type TCreateTransaction = Pick<
   ITransactionEntity,
-  'userId' | 'gatewayTokenId' | 'gatewayId' | 'reference' | 'productId' | 'amount'
+  'userId' | 'gatewayTokenId' | 'gatewayId' | 'reference' | 'productId' | 'quantity' | 'amount'
 >;
 
+export interface ICreatePaymentProducts {
+  id: string;
+  quantity: number;
+}
+
 export interface ICreatePaymentPayload {
-  productId: string;
+  products: ICreatePaymentProducts[];
+  tokenId: string;
   installments: number;
 }
 
@@ -37,4 +44,13 @@ export interface ICardTokenizationPayload {
 
 export interface IUpdateTransactionResponse {
   recieve: boolean;
+}
+
+export interface ICardTokenizationResponse {
+  tokenId: string;
+  brand: string;
+  lastFour: string;
+  expMonth: string;
+  expYear: string;
+  cardHolder: string;
 }

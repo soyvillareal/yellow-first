@@ -11,13 +11,15 @@ import { paymentGatewayRepository } from '../../payment-gateway/domain/repositor
 import {
   ETransactionStatus,
   ICardTokenizationPayload,
+  ICardTokenizationResponse,
   ICreatePaymentPayload,
   IUpdateTransactionResponse,
 } from '../domain/entities/transaction.entity';
-import { CardData } from '../domain/valueobject/transaction.value';
+import { CardData, TransactionPrice } from '../domain/valueobject/transaction.value';
 import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
 import moment from 'moment';
+import { TGetProductById } from 'src/product/domain/entities/product.entity';
 
 export class TransactionUseCase {
   protected readonly commonUseCase: CommonUseCase;
@@ -34,43 +36,54 @@ export class TransactionUseCase {
     this.paymentGatewayUseCase = new PaymentGatewayUseCase(this.paymentGatewayRepository);
   }
 
-  async createPayment(userId: string, { productId, installments }: ICreatePaymentPayload): Promise<void> {
+  async createPayment(userId: string, { products, tokenId, installments }: ICreatePaymentPayload): Promise<void> {
     const user = await this.userRepository.getInfoById(userId);
 
     if (user === null || user === undefined) {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    const lastToken = await this.gatewayTokenRepository.getLastTokenByUserId(userId);
+    const cardToken = await this.gatewayTokenRepository.getTokenById(tokenId);
 
-    if (lastToken === null || lastToken === undefined) {
+    if (cardToken === null || cardToken === undefined) {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    const product = await this.productRepository.getProductById(productId);
+    let total = 0;
+    const foundProducts: Record<string, TGetProductById> = {};
 
-    if (product === null) {
-      throw new Error('Whoops! Something went wrong.');
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+
+      const foundProduct = await this.productRepository.getProductById(product.id);
+
+      if (foundProduct === null) {
+        throw new Error('Whoops! Something went wrong.');
+      }
+
+      if (foundProduct === undefined) {
+        throw new Error('Product not found!');
+      }
+
+      if (foundProduct.stock === 0) {
+        throw new Error('Product out of stock!');
+      }
+
+      foundProducts[product.id] = foundProduct;
+      total += parseInt(foundProduct.price) * product.quantity;
     }
 
-    if (product === undefined) {
-      throw new Error('Product not found!');
-    }
-
-    if (product.stock === 0) {
-      throw new Error('Product out of stock!');
-    }
-
+    const gatewayPrice = new TransactionPrice(total);
     const transactionReference = uuidv4();
 
     const signature = await this.commonUseCase.generateSignature({
-      amountInCents: parseInt(product.price),
+      amountInCents: gatewayPrice.getGatewayPrice(),
       currency: 'COP',
       reference: transactionReference,
     });
 
     const transactionId = await this.paymentGatewayUseCase.createTransaction({
-      amount_in_cents: parseInt(product.price),
+      amount_in_cents: gatewayPrice.getGatewayPrice(),
       currency: 'COP',
       customer_email: user.email,
       reference: transactionReference,
@@ -78,36 +91,43 @@ export class TransactionUseCase {
       payment_method: {
         type: 'CARD',
         installments,
-        token: lastToken.token,
+        token: cardToken.token,
       },
     });
 
-    const createdTransaction = await this.transactionRepository.createTransaction({
-      userId,
-      gatewayTokenId: lastToken.id,
-      gatewayId: transactionId,
-      reference: transactionReference,
-      productId,
-      amount: parseInt(product.price),
-    });
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
 
-    if (createdTransaction === null) {
-      throw new Error('Whoops! Something went wrong.');
-    }
+      const foundProduct = foundProducts[product.id];
 
-    const newStock = product.stock - 1;
+      const createdTransaction = await this.transactionRepository.createTransaction({
+        userId,
+        gatewayTokenId: cardToken.id,
+        gatewayId: transactionId,
+        reference: transactionReference,
+        productId: product.id,
+        quantity: product.quantity,
+        amount: parseInt(foundProduct.price),
+      });
 
-    const updatedStockInArticle = await this.productRepository.updateStockInProduct(productId, newStock);
+      if (createdTransaction === null) {
+        throw new Error('Whoops! Something went wrong.');
+      }
 
-    if (updatedStockInArticle === false) {
-      throw new Error('Whoops! Something went wrong.');
+      const newStock = foundProduct.stock - product.quantity;
+
+      const updatedStockInArticle = await this.productRepository.updateStockInProduct(product.id, newStock);
+
+      if (updatedStockInArticle === false) {
+        throw new Error('Whoops! Something went wrong.');
+      }
     }
   }
 
   async cardTokenization(
     userId: string,
     { number, cvc, expMonth, expYear, cardHolder }: ICardTokenizationPayload,
-  ): Promise<void> {
+  ): Promise<ICardTokenizationResponse> {
     const cardData = new CardData(expMonth, expYear);
 
     const cardToken = await this.paymentGatewayUseCase.generateCardToken({
@@ -133,6 +153,15 @@ export class TransactionUseCase {
     if (createdToken === null) {
       throw new Error('Whoops! Something went wrong.');
     }
+
+    return {
+      tokenId: createdToken.id,
+      brand: cardToken.brand,
+      lastFour: cardToken.lastFour,
+      expMonth: cardToken.expMonth,
+      expYear: cardToken.expYear,
+      cardHolder: cardToken.cardHolder,
+    };
   }
 
   async webHookTransaction(checksum: string, { event, data, timestamp }: IGatewayEvent): Promise<IUpdateTransactionResponse> {

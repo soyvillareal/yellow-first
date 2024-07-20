@@ -5,7 +5,20 @@ export interface ISeedAnonymousSession {
   expiredAt: Date;
 }
 
-export type TAuthSessionData = Pick<IUsersEntity, 'id' | 'username' | 'email' | 'role'>;
+export type TAuthSessionData = Pick<
+  IUsersEntity,
+  | 'id'
+  | 'username'
+  | 'email'
+  | 'role'
+  | 'firstAddress'
+  | 'secondAddress'
+  | 'state'
+  | 'city'
+  | 'pincode'
+  | 'phoneCode'
+  | 'phoneNumber'
+>;
 
 export interface IAuthSession {
   data?: TAuthSessionData;
