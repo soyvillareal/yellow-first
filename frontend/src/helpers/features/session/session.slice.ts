@@ -28,14 +28,14 @@ const sessionSlice = createSlice({
           localStorageSessionJSON
         ) as IAuthSessionResponse;
         const cookies = new Cookies();
-        const expiredAt = new Date(localSessionObject.expired_at);
+        const expiredAt = new Date(localSessionObject.expiredAt);
         const today = new Date();
 
         if (
           equals(localSessionObject.id, cookies.get("session-id")) &&
           today <= expiredAt
         ) {
-          // if session is an anonymous sessin, don't load user into store
+          // if session is an anonymous session, don't load user into store
           if (localSessionObject.data) {
             state.user = localSessionObject.data;
           }
@@ -56,7 +56,7 @@ const sessionSlice = createSlice({
       setCookie(
         "session-id",
         JSON.stringify(session.id),
-        new Date(session.expired_at)
+        new Date(session.expiredAt)
       );
       getStorage()?.setItem("session", JSON.stringify(session));
       if (session.data) {

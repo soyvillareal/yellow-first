@@ -9,7 +9,7 @@ export interface ICommonSessionData {
   id: string;
   type: ESessionType;
   jwt: string;
-  expired_at: Date;
+  expiredAt: Date;
 }
 
 export interface IUserSession {
@@ -17,6 +17,13 @@ export interface IUserSession {
   username: string;
   email: string;
   role: EUserRoles;
+  firstAddress: string;
+  secondAddress: string;
+  state: string;
+  city: string;
+  pincode: string;
+  phoneCode: string;
+  phoneNumber: string;
 }
 
 export interface IAuthSessionResponse extends ICommonSessionData {

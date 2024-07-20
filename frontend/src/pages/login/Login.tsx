@@ -1,20 +1,18 @@
-import { useLayoutEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useAuthSessionMutation } from "@helpers/features/session/session.api";
-import useAppSelector from "@hooks/redux/useAppSelector";
-import useAppDispatch from "@hooks/redux/useAppDispatch";
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { isNotEmpty } from 'ramda-adjunct';
 
-import { ISigninInputs } from "./login.types";
-import { setSession } from "@helpers/features/session/session.slice";
-import Form from "@components/Form";
-import InputLabel from "@components/Form/Input";
-import { selectIsUserLoggedIn } from "@helpers/features/session/session.selector";
+import { setSession } from '@helpers/features/session/session.slice';
+import Form from '@components/Form';
+import { selectIsUserLoggedIn } from '@helpers/features/session/session.selector';
+import useAppDispatch from '@hooks/redux/useAppDispatch';
+import useAppSelector from '@hooks/redux/useAppSelector';
+import InputLabel from '@components/headlessUI/InputLabel';
+import { useAuthSessionMutation } from '@helpers/features/session/session.api';
+import ButtonLoading from '@components/headlessUI/ButtonLoading';
 
-const testUser = {
-  email: "johndoeneog@neog.com",
-  password: "John@101",
-};
+import { ISigninInputs } from './login.types';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,26 +20,26 @@ const Login = () => {
   const selectedIsUserLoggedIn = useAppSelector(selectIsUserLoggedIn);
 
   useLayoutEffect(() => {
-    document.title = "Login | The Book Shelf";
+    document.title = 'Login | The Book Shelf';
     if (selectedIsUserLoggedIn === true) {
-      navigate("/");
+      navigate('/');
     }
   }, [navigate, selectedIsUserLoggedIn]);
 
   const dispatch = useAppDispatch();
-  const [errorCode, setErrorCode] = useState("");
+  const [errorCode, setErrorCode] = useState('');
 
-  const [
-    authSession,
-    { isLoading: isLoadingAuthSession, isSuccess: isSuccessAuthSession },
-  ] = useAuthSessionMutation();
+  const [authSession, { isLoading: isLoadingAuthSession }] =
+    useAuthSessionMutation();
 
   const methods = useForm<ISigninInputs>({
     defaultValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
   });
+
+  const allFields = useWatch({ control: methods.control });
 
   const onSubmit: SubmitHandler<ISigninInputs> = async (data) => {
     try {
@@ -55,14 +53,18 @@ const Login = () => {
       if (session.data !== undefined) {
         dispatch(setSession(session.data));
         // On success login
-        navigate("/");
+        navigate('/');
       } else {
-        setErrorCode("credentials_error");
+        setErrorCode('credentials_error');
       }
     } catch (error) {
-      setErrorCode("credentials_error");
+      setErrorCode('credentials_error');
     }
   };
+
+  useEffect(() => {
+    setErrorCode('');
+  }, [allFields]);
 
   return (
     <>
@@ -84,9 +86,7 @@ const Login = () => {
                   type="text"
                   label="Your username"
                   placeholder="abc@email.com"
-                  validate={() => {
-                    return true;
-                  }}
+                  autoComplete="username"
                   required
                 />
                 <InputLabel
@@ -94,15 +94,21 @@ const Login = () => {
                   type="password"
                   label="Password"
                   placeholder="••••••••"
-                  validate={() => true}
+                  autoComplete="password"
                   required
                 />
-                <button
+                {isNotEmpty(errorCode) && (
+                  <p className="!mt-[10px] text-sm text-left text-red-600">
+                    * Usuario y/o contraseña incorrectos
+                  </p>
+                )}
+                <ButtonLoading
                   type="submit"
                   className="w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-900 focus:ring-4 focus:outline-none hover:bg-cyan-950 focus:ring-cyan-950"
+                  loading={isLoadingAuthSession}
                 >
                   Sign in
-                </button>
+                </ButtonLoading>
                 <p className="text-sm font-light text-gray-400">
                   Don't have an account yet?
                   <Link

@@ -36,6 +36,7 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
+    'prettier',
     'import',
     'filenames',
     'fp',

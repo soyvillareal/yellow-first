@@ -1,11 +1,62 @@
-import { IGetProductsResponse } from "../product/product.types";
+import { IGetProductsResponse } from '../product/product.types';
 
 export type TTransactionCart = IGetProductsResponse & {
   quantity?: number;
 };
 
+export interface ITransactionAddToCartPayload {
+  userId: string;
+  product: TTransactionCart;
+}
+
+export interface ITransactionAddToCart {
+  userId: string | null;
+  products: TTransactionCart[];
+}
+
+export interface ITransactionRemoveCartPayload {
+  userId: string;
+  productId: string;
+}
+
+export interface ITransactionAddCardInfo {
+  tokenId: string;
+  brand: string;
+  lastFour: string;
+  expMonth: string;
+  expYear: string;
+  cardHolder: string;
+  expiredAt: string;
+}
+
+export interface ITransactionAddCardPayload {
+  userId: string;
+  cardInfo: ITransactionAddCardInfo;
+}
+
+export interface ITransactionAddCard {
+  userId: string | null;
+  cardInfo: ITransactionAddCardInfo | null;
+}
+
 export interface ITransactionState {
-  cart: TTransactionCart[];
+  cart: ITransactionAddToCart;
+  card: ITransactionAddCard;
+}
+
+export interface ITransactionChangeQuantityById {
+  userId: string;
+  productId: string;
+  type: 'increment' | 'decrement';
+}
+
+export interface ICardTokenizeResponse {
+  tokenId: string;
+  brand: string;
+  lastFour: string;
+  expMonth: string;
+  expYear: string;
+  cardHolder: string;
 }
 
 export interface ICardTokenizeRequest {
@@ -16,7 +67,13 @@ export interface ICardTokenizeRequest {
   cardHolder: string;
 }
 
+export interface IPaymentProducts {
+  id: string;
+  quantity: number;
+}
+
 export interface IPaymentRequest {
-  productId: string;
-  tokenHash: string;
+  products: IPaymentProducts[];
+  tokenId: string;
+  installments: number;
 }

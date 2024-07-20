@@ -1,5 +1,5 @@
 export interface IAPIResponse<T = unknown> {
-  statusCode: string;
+  statusCode: number;
   message: string;
   data?: T;
 }

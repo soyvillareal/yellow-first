@@ -1,19 +1,18 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { BooksContext } from "../../contexts/BooksProvider";
 
 const ThankYou = () => {
   const location = useLocation();
   const finalAmount = location?.state?.finalAmount;
-  const {booksState:{orders}}=useContext(BooksContext)
+  // const {booksState:{orders}}=useContext(BooksContext)
   const navigate = useNavigate();
   useEffect(() => {
+    const orders = [];
   document.title="Thank You | The Book Shelf"
     if (orders.length===0) {
       navigate("/products");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orders]);
+  }, []);
   return (
     <div className="relative px-6 isolate pt-14 lg:px-8">
       <div

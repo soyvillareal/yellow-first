@@ -1,23 +1,27 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from 'react-router-dom';
 
-import RootLayout from "./layouts/RootLayout";
-import ProductLayout from "./layouts/ProductLayout";
+import useSession from '@hooks/custom/useSession';
+import useAppSelector from '@hooks/redux/useAppSelector';
+import { selectIsSessionLoading } from '@helpers/features/session/session.selector';
+import Loader from '@components/loader/Loader';
 
-import CanActivate from "./components/routegurad/CanActivate";
-
-import Products from "./pages/products/Products";
-import Login from "./pages/login/Login";
-import Cart from "./pages/cart/Cart";
-import Checkout from "./pages/checkout/Checkout";
-import ThankYou from "./pages/thank-you/ThankYou";
-import PageNotFound from "./pages/pageNotFound/PageNotFound";
-import useSession from "@hooks/custom/useSession";
+import RootLayout from './layouts/RootLayout';
+// import ProductLayout from "./layouts/ProductLayout";
+import CanActivate from './components/routegurad/CanActivate';
+import Products from './pages/products/Products';
+import Login from './pages/login/Login';
+import Cart from './pages/cart/Cart';
+import ThankYou from './pages/thank-you/ThankYou';
+import PageNotFound from './pages/pageNotFound/PageNotFound';
 
 function App() {
+  const selectedIsSessionLoading = useAppSelector(selectIsSessionLoading);
 
   useSession();
 
-  return (
+  return selectedIsSessionLoading ? (
+    <Loader />
+  ) : (
     <>
       <Routes>
         <Route path="/" element={<RootLayout />}>
@@ -32,14 +36,6 @@ function App() {
             }
           />
           <Route
-            path="checkout"
-            element={
-              <CanActivate>
-                <Checkout />
-              </CanActivate>
-            }
-          />
-          <Route
             path="thank-you"
             element={
               <CanActivate>
@@ -47,10 +43,6 @@ function App() {
               </CanActivate>
             }
           />
-          <Route path="products" element={<ProductLayout />}>
-            <Route index element={<Products />} />
-            <Route path=":category" element={<Products />} />
-          </Route>
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>

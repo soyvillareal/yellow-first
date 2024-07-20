@@ -1,19 +1,27 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from 'react';
 
-import { useAnonymousSessionMutation } from "@helpers/features/session/session.api";
-import { selectIsUserNeedsAnonymousSession } from "@helpers/features/session/session.selector";
+import { useAnonymousSessionMutation } from '@helpers/features/session/session.api';
+import {
+  selectIsUserNeedsAnonymousSession,
+  selectUserId,
+} from '@helpers/features/session/session.selector';
 import {
   loadSession,
   setSession,
-} from "@helpers/features/session/session.slice";
-import useAppDispatch from "@hooks/redux/useAppDispatch";
-import useAppSelector from "@hooks/redux/useAppSelector";
+} from '@helpers/features/session/session.slice';
+import useAppDispatch from '@hooks/redux/useAppDispatch';
+import useAppSelector from '@hooks/redux/useAppSelector';
+import {
+  loadCardinfo,
+  loadProductsToCart,
+} from '@helpers/features/transaction/transaction.slice';
 
 export default function useSession() {
   const dispatch = useAppDispatch();
 
+  const selectedUserId = useAppSelector(selectUserId);
   const userNeedsAnonymousSession = useAppSelector(
-    selectIsUserNeedsAnonymousSession
+    selectIsUserNeedsAnonymousSession,
   );
   const [getAnonymousSession, { isLoading: isLoadingAnonymousSession }] =
     useAnonymousSessionMutation();
@@ -21,17 +29,17 @@ export default function useSession() {
   const loadAnonymousSession = useCallback(async () => {
     // load session from api
     const anonSession = await getAnonymousSession({
-      seed: "empty",
+      seed: 'empty',
     }).unwrap();
     // set session in store
     if (anonSession?.data !== undefined) {
       dispatch(
         setSession({
           jwt: anonSession.data.jwt,
-          expired_at: anonSession.data.expired_at,
+          expiredAt: anonSession.data.expiredAt,
           id: anonSession.data.id,
           type: anonSession.data.type,
-        })
+        }),
       );
     }
   }, [dispatch, getAnonymousSession]);
@@ -40,6 +48,13 @@ export default function useSession() {
     dispatch(loadSession());
   }, [dispatch]);
 
+  const loadCartSession = useCallback(() => {
+    if (selectedUserId !== undefined) {
+      dispatch(loadProductsToCart(selectedUserId));
+      dispatch(loadCardinfo(selectedUserId));
+    }
+  }, [dispatch, selectedUserId]);
+
   useEffect(() => {
     // Load session into the store
     if (userNeedsAnonymousSession && isLoadingAnonymousSession === false) {
@@ -47,6 +62,7 @@ export default function useSession() {
       loadAnonymousSession();
     } else {
       loadAuthSession();
+      loadCartSession();
     }
   }, [
     userNeedsAnonymousSession,
@@ -54,5 +70,6 @@ export default function useSession() {
     isLoadingAnonymousSession,
     loadAnonymousSession,
     loadAuthSession,
+    loadCartSession,
   ]);
 }

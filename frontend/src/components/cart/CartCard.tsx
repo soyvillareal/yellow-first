@@ -1,14 +1,16 @@
-import { useCallback, useMemo } from "react";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { useCallback, useMemo } from 'react';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
-import { IGetProductsResponse } from "@helpers/features/product/product.types";
-import useAppDispatch from "@hooks/redux/useAppDispatch";
+import { IGetProductsResponse } from '@helpers/features/product/product.types';
+import useAppDispatch from '@hooks/redux/useAppDispatch';
 import {
   changeQuantityById,
   removeFromCart,
-} from "@helpers/features/transaction/transaction.slice";
-import useAppSelector from "@hooks/redux/useAppSelector";
-import { selectQuantityTransactionById } from "@helpers/features/transaction/transaction.selector";
+} from '@helpers/features/transaction/transaction.slice';
+import useAppSelector from '@hooks/redux/useAppSelector';
+import { selectQuantityTransactionById } from '@helpers/features/transaction/transaction.selector';
+import { selectUserId } from '@helpers/features/session/session.selector';
+import { numberWithCurrency } from '@helpers/constants';
 
 const CartCard = ({
   id,
@@ -19,31 +21,45 @@ const CartCard = ({
   stock,
 }: IGetProductsResponse) => {
   const dispatch = useAppDispatch();
+  const selectedUserId = useAppSelector(selectUserId);
   const selectedQuantityTransactionById = useAppSelector(
-    selectQuantityTransactionById(id)
+    selectQuantityTransactionById(id),
   );
 
   const handleClickRemoveFromCart = useCallback(() => {
-    dispatch(removeFromCart(id));
-  }, [dispatch, id]);
+    if (selectedUserId !== undefined) {
+      dispatch(
+        removeFromCart({
+          userId: selectedUserId,
+          productId: id,
+        }),
+      );
+    }
+  }, [dispatch, id, selectedUserId]);
 
   const handleClickDecrementQuantity = useCallback(() => {
-    dispatch(
-      changeQuantityById({
-        id,
-        type: "decrement",
-      })
-    );
-  }, [dispatch, id]);
+    if (selectedUserId !== undefined) {
+      dispatch(
+        changeQuantityById({
+          userId: selectedUserId,
+          productId: id,
+          type: 'decrement',
+        }),
+      );
+    }
+  }, [dispatch, id, selectedUserId]);
 
   const handleClickIncrementQuantity = useCallback(() => {
-    dispatch(
-      changeQuantityById({
-        id,
-        type: "increment",
-      })
-    );
-  }, [dispatch, id]);
+    if (selectedUserId !== undefined) {
+      dispatch(
+        changeQuantityById({
+          userId: selectedUserId,
+          productId: id,
+          type: 'increment',
+        }),
+      );
+    }
+  }, [dispatch, id, selectedUserId]);
 
   const isDisableDecrease = useMemo(() => {
     return stock <= 1 || selectedQuantityTransactionById === 1;
@@ -83,17 +99,20 @@ const CartCard = ({
             </p>
           </div>
           <div className="flex flex-col items-center mt-4 space-x-4 text-gray-100 sm:flex-row">
-            <p className="text-xl before:mr-1 font-bold sm:text-2xl">{price}</p>
+            <p className="text-xl before:mr-1 font-bold sm:text-2xl">
+              {numberWithCurrency(price)}
+            </p>
           </div>
         </div>
 
-        <div className="flex flex-col justify-between mt-4 sm:space-y-6 sm:mt-0 sm:block">
-          <div className="flex items-center justify-center text-gray-100 bg-gray-800 border border-gray-700 rounded w-min">
-            <button
-              onClick={handleClickDecrementQuantity}
-              type="button"
-              disabled={isDisableDecrease}
-              className={`
+        <div className="flex sm:flex-col justify-between mt-4 sm:space-y-6 sm:mt-0 w-full h-full">
+          <div className="flex items-center sm:justify-end w-full">
+            <div className="flex items-center justify-center text-gray-100 bg-gray-800 border border-gray-700 rounded w-min">
+              <button
+                onClick={handleClickDecrementQuantity}
+                type="button"
+                disabled={isDisableDecrease}
+                className={`
                rounded-l
                 py-1
                  px-3.5 
@@ -101,30 +120,29 @@ const CartCard = ({
                   hover:bg-gray-900
                    hover:text-white
                    ${
-                     isDisableDecrease ? "cursor-not-allowed" : "cursor-pointer"
+                     isDisableDecrease ? 'cursor-not-allowed' : 'cursor-pointer'
                    }
-                   ${isDisableDecrease ? "bg-gray-700" : ""}
+                   ${isDisableDecrease ? 'bg-gray-700' : ''}
                    `}
-            >
-              -
-            </button>
-            <span className="w-8 text-xs text-center text-gray-100 outline-none cursor-default">
-              {selectedQuantityTransactionById}
-            </span>
-            <button
-              disabled={isDisableIncrease}
-              onClick={handleClickIncrementQuantity} // changeQuantity(product, "increment")
-              type="button"
-              className={`px-3 py-1 duration-100 rounded-r  ${
-                isDisableIncrease ? "cursor-not-allowed " : "cursor-pointer"
-              } hover:text-white hover:bg-gray-900 `}
-            >
-              +
-            </button>
+              >
+                -
+              </button>
+              <span className="w-8 text-xs text-center text-gray-100 outline-none cursor-default">
+                {selectedQuantityTransactionById}
+              </span>
+              <button
+                disabled={isDisableIncrease}
+                onClick={handleClickIncrementQuantity} // changeQuantity(product, "increment")
+                type="button"
+                className={`px-3 py-1 duration-100 rounded-r  ${
+                  isDisableIncrease ? 'cursor-not-allowed ' : 'cursor-pointer'
+                } hover:text-white hover:bg-gray-900 `}
+              >
+                +
+              </button>
+            </div>
           </div>
-
-          {/* For Desktop */}
-          <div className="relative items-center hidden space-x-4 text-gray-100 sm:flex">
+          <div className="flex relative items-center justify-end space-x-4 text-gray-100">
             <TrashIcon
               onClick={handleClickRemoveFromCart}
               title="Remove From Cart"

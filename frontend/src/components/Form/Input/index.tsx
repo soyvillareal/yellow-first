@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
-import { Controller, Path, useFormContext } from "react-hook-form";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useMemo, useState } from 'react';
+import { Controller, Path, useFormContext } from 'react-hook-form';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
-import { IInputLabel } from "./InputLabel.types";
+import { IInputLabel } from './InputLabel.types';
 
 function InputLabel<
   TFieldValues extends Record<string, string>,
@@ -26,8 +26,8 @@ function InputLabel<
   const hasError = errors[id];
 
   const inputType = useMemo(() => {
-    if (type === "password") {
-      return showPassword ? "text" : "password";
+    if (type === 'password') {
+      return showPassword ? 'text' : 'password';
     }
     return type;
   }, [type, showPassword]);
@@ -48,7 +48,7 @@ function InputLabel<
             >
               {label}
             </label>
-            {type === "password" &&
+            {type === 'password' &&
               (showPassword ? (
                 <EyeIcon
                   onClick={() => setShowPassword(false)}

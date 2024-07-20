@@ -1,14 +1,21 @@
-import { useEffect } from "react";
-// import { BooksContext } from "../../contexts/BooksProvider";
+import { useEffect, useState } from 'react';
+import { Transition } from '@headlessui/react';
+import { Pagination } from 'react-headless-pagination';
 
-import ProductCard from "../../components/products/ProductCard";
-import Loader from "../../components/loader/Loader";
-import { Transition } from "@headlessui/react";
-import { useLazyGetProductsQuery } from "@helpers/features/product/product.api";
-import { EPaginationOrder } from "@helpers/types";
+import { useLazyGetProductsQuery } from '@helpers/features/product/product.api';
+import { EPaginationOrder } from '@helpers/types';
+import ChevronLeft from '@components/icons/ChevronLeft';
+import ChevronRight from '@components/icons/ChevronRight';
+
+import ProductCard from '../../components/products/ProductCard';
+import Loader from '../../components/loader/Loader';
 
 const Products = () => {
-  // const { booksState, allSortsAndFilters } = useContext(BooksContext);
+  const [page, setPage] = useState<number>(1);
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
 
   const [
     getProducts,
@@ -16,12 +23,12 @@ const Products = () => {
   ] = useLazyGetProductsQuery();
 
   useEffect(() => {
-    document.title = "Products | The Book Shelf";
+    document.title = 'Products | The Book Shelf';
 
     (async () => {
       try {
         await getProducts({
-          page: 1,
+          page,
           limit: 10,
           order: EPaginationOrder.DESC,
         });
@@ -29,12 +36,12 @@ const Products = () => {
         console.log(error);
       }
     })();
-  }, []);
+  }, [getProducts, page]);
 
   return isLoadingGetProducts ? (
     <Loader />
   ) : (
-    <div className="relative py-24 mt-16 ">
+    <div className="relative py-24 px-24 mt-16 ">
       <Transition
         appear={true}
         enter="transition-all ease-in-out duration-500 delay-[100ms]"
@@ -44,6 +51,7 @@ const Products = () => {
         leave="transition-all ease-in-out duration-300"
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
+        as="div"
       >
         {dataGetProducts?.data && dataGetProducts.data.content.length > 0 && (
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
@@ -60,6 +68,44 @@ const Products = () => {
             ))}
           </div>
         )}
+        <div className="flex items-center justify-center w-full">
+          <Pagination
+            totalPages={dataGetProducts?.data?.meta.pageCount || 0}
+            edgePageCount={1}
+            middlePagesSiblingCount={1}
+            currentPage={page}
+            setCurrentPage={handlePageChange}
+            className="flex flex-row items-center justify-center mt-8 w-1/3 space-x-5"
+            truncableText="..."
+            truncableClassName="flex items-center justify-center w-[38px] h-[38px] text-gray-100 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 focus:ring-opacity-50 bg-gray-800 rounded-full p-2 hover:bg-opacity-50 transition-all border cursor-pointer"
+          >
+            <Pagination.PrevButton
+              className="text-gray-100 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 focus:ring-opacity-50 bg-gray-800 rounded-full p-2 hover:bg-opacity-50 transition-all border cursor-pointer"
+              onClick={() => setPage((prev) => prev - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="size-5" />
+            </Pagination.PrevButton>
+
+            <nav className="flex justify-center flex-grow">
+              <ul className="flex items-center gap-2">
+                <Pagination.PageButton
+                  activeClassName="bg-cyan-700"
+                  inactiveClassName="!bg-gray-800"
+                  className="flex items-center justify-center w-[38px] h-[38px] text-gray-100 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 focus:ring-opacity-50 bg-gray-800 rounded-full p-2 hover:bg-opacity-50 transition-all border cursor-pointer"
+                />
+              </ul>
+            </nav>
+
+            <Pagination.NextButton
+              className="text-gray-100 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 focus:ring-opacity-50 bg-gray-800 rounded-full p-2 hover:bg-opacity-50 transition-all border cursor-pointer"
+              onClick={() => setPage((prev) => prev + 1)}
+              disabled={page === dataGetProducts?.data?.meta.pageCount}
+            >
+              <ChevronRight className="size-5" />
+            </Pagination.NextButton>
+          </Pagination>
+        </div>
       </Transition>
       {dataGetProducts &&
         dataGetProducts?.data &&

@@ -1,10 +1,25 @@
-import { TTransactionCart } from "./features/transaction/transaction.types";
-import { getStorage } from "./storage";
+import clsx, { ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-export const currencySite = "COP";
+import { TTransactionCart } from './features/transaction/transaction.types';
+import { getStorage } from './storage';
+
+export const currencySite = 'COP';
+
+const CARDS = {
+  visa: '^4',
+  amex: '^(34|37)',
+  mastercard: '^5[1-5]',
+  discover: '^6011',
+  unionpay: '^62',
+  troy: '^9792',
+  diners: '^(30[0-5]|36)',
+};
+
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 export const getJWT = () => {
-  const session = getStorage()?.getItem("session");
+  const session = getStorage()?.getItem('session');
 
   if (session) {
     return JSON.parse(session).jwt;
@@ -15,12 +30,12 @@ export const getJWT = () => {
 
 export const numberWithCurrency = (amount: string | number): string => {
   let amountNumber = amount as number;
-  if (typeof amount === "string") {
+  if (typeof amount === 'string') {
     amountNumber = parseInt(amount);
   }
 
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
     currency: currencySite,
   }).format(amountNumber);
 };
@@ -35,11 +50,25 @@ export const getTotalAmount = (items: TTransactionCart[]): number => {
   return total;
 };
 
-export const fixedRate = 900; // in COP
+export const fixedRate = 900.0; // in COP
 export const variablePercentage = 0.029; // 2.9%
 
 export const calculateRate = (amount: number) => {
-  const variableRate = amount * fixedRate;
-  const totalRate = variablePercentage + variableRate;
-  return totalRate;
+  const variableRate = fixedRate + amount;
+
+  const totalRate = (variableRate / 100) * variablePercentage * 100;
+
+  return amount + totalRate;
+};
+
+export const cardType = (cardNumber: string) => {
+  const number = cardNumber;
+  let re;
+  for (const [card, pattern] of Object.entries(CARDS)) {
+    re = new RegExp(pattern);
+    if (number.match(re) != null) {
+      return card;
+    }
+  }
+  return 'visa';
 };
