@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom';
 import { selectCartTransaction } from '@helpers/features/transaction/transaction.selector';
 import useAppSelector from '@hooks/redux/useAppSelector';
 import { selectUserId } from '@helpers/features/session/session.selector';
+import CartCard from '@components/shop/cart/CartCard';
+import CartCheckoutDetails from '@components/shop/cart/CartCheckoutDetails';
 import PageContainer from 'layouts/PageContainer';
-
-import CartCard from '../../components/shop/cart/CartCard';
-import CartCheckoutDetails from '../../components/shop/cart/CartCheckoutDetails';
 
 const Cart = () => {
   const { t } = useTranslation();
@@ -24,7 +23,7 @@ const Cart = () => {
     >
       {selectedCartTransaction.userId === selectedUserId &&
       selectedCartTransaction.products.length > 0 ? (
-        <div className="flex flex-col md:flex-row justify-center max-w-6xl px-6 mx-auto md:space-x-6 xl:px-0">
+        <div className="flex flex-col md:flex-row justify-center max-w-6xl sm:px-6 mx-auto md:space-x-6 xl:px-0">
           <div className="rounded-lg lg:w-2/3">
             {selectedCartTransaction.products.map((product) => (
               <CartCard

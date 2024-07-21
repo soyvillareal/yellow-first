@@ -27,16 +27,17 @@ import useAppDispatch from '@hooks/redux/useAppDispatch';
 import Address from '@components/shop/Address';
 
 import CardInfo from '../CardInfo';
+import MobileCheckoutDetails from '../MobileCheckoutDetails';
 
 const CartCheckoutDetails = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(false);
   const selectedCartTransaction = useAppSelector(selectCartTransaction);
   const selectedCard = useAppSelector(selectCard);
 
   const [totalAmount, setTotalAmount] = useState(0);
-  const navigate = useNavigate();
 
   const [payment, { isLoading: isLoadingPayment }] = usePaymentMutation();
 
@@ -91,75 +92,88 @@ const CartCheckoutDetails = () => {
   }, [dispatch]);
 
   return (
-    <div className="relative mb-20 lg:w-1/3">
-      <div className="sticky left-0 right-0 w-full min-w-[330px] p-6 mt-6 border rounded-lg shadow-md top-40 md:mt-0">
-        <div className="mb-6">
-          <span className="text-white font-bold text-xl">
-            {t('cart.purchaseSummary')}
-          </span>
-        </div>
-        <hr className="my-4 mx-[-24px]" />
-        <Address />
-        <hr className="my-4" />
-        {selectedCartTransaction.products.length > 0 &&
-          selectedCartTransaction.products.map(
-            ({ id, name, price, quantity }) => (
-              <div key={id} title={name} className="flex justify-between mb-2">
-                <p className="w-40 text-gray-100 truncate">{name}</p>{' '}
-                <span className="text-gray-600">X {quantity} </span>
-                <p className="text-gray-100 before:mr-1">
-                  {numberWithCurrency(price)}
-                </p>
-              </div>
-            ),
-          )}
+    <>
+      {showModal === false && (
+        <MobileCheckoutDetails
+          handleClickPayWithCard={handleClickPayWithCard}
+          handleClickPayment={handleClickPayment}
+          isLoadingPayment={isLoadingPayment}
+        />
+      )}
+      <div id="checkoutDetails" className="relative mb-20 lg:w-1/3">
+        <div className="sticky left-0 right-0 w-full min-w-[330px] p-6 mt-6 border rounded-lg shadow-md top-40 md:mt-0">
+          <div className="mb-6">
+            <span className="text-white font-bold text-xl">
+              {t('cart.purchaseSummary')}
+            </span>
+          </div>
+          <hr className="my-4 mx-[-24px]" />
+          <Address />
+          <hr className="my-4" />
+          {selectedCartTransaction.products.length > 0 &&
+            selectedCartTransaction.products.map(
+              ({ id, name, price, quantity }) => (
+                <div
+                  key={id}
+                  title={name}
+                  className="flex justify-between mb-2"
+                >
+                  <p className="w-40 text-gray-100 truncate">{name}</p>{' '}
+                  <span className="text-gray-600">X {quantity} </span>
+                  <p className="text-gray-100 before:mr-1">
+                    {numberWithCurrency(price)}
+                  </p>
+                </div>
+              ),
+            )}
 
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-100">{t('cart.subTotal')}</p>
-          <p className="text-gray-100 before:mr-1">
-            {numberWithCurrency(totalAmount)}
-          </p>
-        </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-100">{t('cart.baseRate')}</p>
-          <p className="text-gray-100 before:mr-1">
-            {numberWithCurrency(fixedRate)} +{' '}
-            {`${(variablePercentage * 100).toFixed(1)}%`}
-          </p>
-        </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-100">{t('cart.shippingFee')}</p>
-          <p className="text-gray-100 before:mr-1">{numberWithCurrency(0)}</p>
-        </div>
-        <hr className="my-4" />
-        <div className="flex justify-between text-gray-100">
-          <p className="text-lg font-bold">{t('cart.total')}</p>
-          <div>
-            <p className="mb-1 text-lg before:mr-1 font-bold">
-              {numberWithCurrency(calculateRate(totalAmount))}
+          <div className="flex justify-between mb-2">
+            <p className="text-gray-100">{t('cart.subTotal')}</p>
+            <p className="text-gray-100 before:mr-1">
+              {numberWithCurrency(totalAmount)}
             </p>
           </div>
+          <div className="flex justify-between mb-2">
+            <p className="text-gray-100">{t('cart.baseRate')}</p>
+            <p className="text-gray-100 before:mr-1">
+              {numberWithCurrency(fixedRate)} +{' '}
+              {`${(variablePercentage * 100).toFixed(1)}%`}
+            </p>
+          </div>
+          <div className="flex justify-between mb-2">
+            <p className="text-gray-100">{t('cart.shippingFee')}</p>
+            <p className="text-gray-100 before:mr-1">{numberWithCurrency(0)}</p>
+          </div>
+          <hr className="my-4" />
+          <div className="flex justify-between text-gray-100">
+            <p className="text-lg font-bold">{t('cart.total')}</p>
+            <div>
+              <p className="mb-1 text-lg before:mr-1 font-bold">
+                {numberWithCurrency(calculateRate(totalAmount))}
+              </p>
+            </div>
+          </div>
+          {selectedCard.cardInfo === null ? (
+            <CustomButton onClick={handleClickPayWithCard} variant="default">
+              {t('cart.payWithCard')}
+            </CustomButton>
+          ) : (
+            <ButtonLoading
+              className="mt-4"
+              onClick={handleClickPayment}
+              variant="payment"
+              loading={isLoadingPayment}
+            >
+              {t('cart.pay')}
+            </ButtonLoading>
+          )}
+          {selectedCard.cardInfo === null && (
+            <CardDialog onClose={() => setShowModal(false)} open={showModal} />
+          )}
+          <CardInfo handleClickEditCard={handleClickEditCard} />
         </div>
-        {selectedCard.cardInfo === null ? (
-          <CustomButton onClick={handleClickPayWithCard} variant="default">
-            {t('cart.payWithCard')}
-          </CustomButton>
-        ) : (
-          <ButtonLoading
-            className="mt-4"
-            onClick={handleClickPayment}
-            variant="payment"
-            loading={isLoadingPayment}
-          >
-            {t('cart.pay')}
-          </ButtonLoading>
-        )}
-        {selectedCard.cardInfo === null && (
-          <CardDialog onClose={() => setShowModal(false)} open={showModal} />
-        )}
-        <CardInfo handleClickEditCard={handleClickEditCard} />
       </div>
-    </div>
+    </>
   );
 };
 

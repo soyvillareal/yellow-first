@@ -8,9 +8,8 @@
     width: 100%;
 
     @media screen and (max-width: 480px) {
-        max-width: 310px;
         height: 220px;
-        width: 90%;
+        width: 100%;
     }
 
     @media screen and (max-width: 360px) {
@@ -224,7 +223,7 @@
         text-overflow: ellipsis;
         text-transform: uppercase;
         @media screen and (max-width: 480px) {
-            font-size: 16px;
+            font-size: 12px;
         }
     }
     &__nameItem {
@@ -250,7 +249,7 @@
         }
 
         @media screen and (max-width: 360px) {
-            font-size: 19px;
+            font-size: 14px;
             margin-bottom: 10px;
             padding: 10px 10px;
         }
@@ -298,7 +297,7 @@
         cursor: pointer;
 
         @media screen and (max-width: 480px) {
-            font-size: 16px;
+            font-size: 12px;
         }
     }
 

@@ -59,10 +59,10 @@ const Navbar = () => {
               {selectedIsUserLoggedIn && (
                 <>
                   <span
-                    className="block w-px h-6 ml-4 bg-gray-700 lg:ml-6"
+                    className="hidden md:block w-px h-6 ml-4 bg-gray-700 lg:ml-6"
                     aria-hidden="true"
                   />
-                  <div className="flow-root ml-4 lg:ml-6 min-w-[120px] whitespace-nowrap">
+                  <div className="flow-root ml-4 lg:ml-6 md:min-w-[120px] whitespace-nowrap">
                     <Logout />
                   </div>
                 </>
@@ -82,7 +82,7 @@ const Navbar = () => {
                         {t('navbar.logIn')}
                       </span>
                       <BiLogIn
-                        title="log in"
+                        title={t('navbar.logIn')}
                         className="flex-shrink-0 w-6 h-6 md:ml-2 text-gray-100 group-hover:text-white"
                         aria-hidden="true"
                       />
