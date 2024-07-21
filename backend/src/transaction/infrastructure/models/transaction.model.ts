@@ -8,13 +8,13 @@ import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/tok
 
 @Entity({ name: 'transactions' })
 export class TransactionModel extends BaseEntity implements ITransactionEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'uuid', nullable: false })
   userId: string;
 
-  @Column({ type: 'varchar', length: 30, nullable: false })
+  @Column({ type: 'varchar', length: 30, unique: true, nullable: false })
   gatewayId: string;
 
   @Column({ type: 'uuid', nullable: false })

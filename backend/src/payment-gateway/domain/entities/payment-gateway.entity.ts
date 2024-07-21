@@ -298,5 +298,5 @@ export interface IGatewayEvent {
 }
 
 export interface IGatewayEventHeaders extends Record<string, string> {
-  'X-Event-Checksum': string;
+  'x-event-checksum': string;
 }

@@ -1,8 +1,13 @@
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
 import { usersRepository } from 'src/users/domain/repository/users.repository';
+import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
+import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
+import { websocketRepository } from 'src/transaction/domain/repository/transaction.repository';
+import { TGetProductById } from 'src/product/domain/entities/product.entity';
 
 import { PaymentGatewayUseCase } from '../../payment-gateway/application/payment-gateway.usecase';
 import { productRepository } from '../../product/domain/repository/product.repository';
@@ -16,10 +21,6 @@ import {
   IUpdateTransactionResponse,
 } from '../domain/entities/transaction.entity';
 import { CardData, TransactionPrice } from '../domain/valueobject/transaction.value';
-import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
-import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
-import moment from 'moment';
-import { TGetProductById } from 'src/product/domain/entities/product.entity';
 
 export class TransactionUseCase {
   protected readonly commonUseCase: CommonUseCase;
@@ -30,6 +31,7 @@ export class TransactionUseCase {
     private readonly userRepository: usersRepository,
     private readonly paymentGatewayRepository: paymentGatewayRepository,
     private readonly gatewayTokenRepository: gatewayTokenRepository,
+    private readonly websocketRepository: websocketRepository,
     private readonly configService: ConfigService,
   ) {
     this.commonUseCase = new CommonUseCase(this.configService);
@@ -165,7 +167,7 @@ export class TransactionUseCase {
   }
 
   async webHookTransaction(checksum: string, { event, data, timestamp }: IGatewayEvent): Promise<IUpdateTransactionResponse> {
-    const isValid = await this.commonUseCase.verifySignature(checksum, {
+    const isValid = this.commonUseCase.verifySignature(checksum, {
       transaction: {
         id: data.transaction.id,
         status: data.transaction.status,
@@ -191,13 +193,13 @@ export class TransactionUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
+    const transaction = await this.transactionRepository.getTransactionByGatewayId(data.transaction.id);
+
+    if (transaction === null || transaction === undefined) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
     if (data.transaction.status !== 'APPROVED') {
-      const transaction = await this.transactionRepository.getTransactionByGatewayId(data.transaction.id);
-
-      if (transaction === null || transaction === undefined) {
-        throw new Error('Whoops! Something went wrong.');
-      }
-
       const product = await this.productRepository.getProductById(transaction.productId);
 
       if (product === null || product === undefined) {
@@ -214,6 +216,10 @@ export class TransactionUseCase {
       }
     }
 
+    this.websocketRepository.notifyTransactionUpdate(transaction.userId, {
+      transactionId: data.transaction.id,
+      status: data.transaction.status,
+    });
     return {
       recieve: true,
     };

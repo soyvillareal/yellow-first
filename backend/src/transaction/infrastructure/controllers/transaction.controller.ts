@@ -23,11 +23,12 @@ import { ICardTokenizationResponse, IUpdateTransactionResponse } from 'src/trans
 
 import { TransactionService } from '../services/transaction.service';
 import { TransactionUseCase } from '../../application/transaction.usecase';
-import { CardTokenizeDto, CreatePaymentDto, GatewayEventDto } from '../dtos/transaction.dto';
+import { CardTokenizeDto, CreatePaymentDto } from '../dtos/transaction.dto';
 import { ConfigService } from '@nestjs/config';
-import { IGatewayEventHeaders } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
+import { IGatewayEvent, IGatewayEventHeaders } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
 import { ValidateTokenGuard } from '../guard/transaction.guard';
+import { TransactionsWebsockets } from '../websockets/transaction.websoket';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -43,6 +44,7 @@ export class TransactionController {
     private readonly userService: UsersService,
     private readonly paymentGatewayService: PaymentGatewayService,
     private readonly gatewayTokenService: GatewayTokenService,
+    private readonly transactionsWebsockets: TransactionsWebsockets,
     private readonly configService: ConfigService,
   ) {
     this.transactionUseCase = new TransactionUseCase(
@@ -51,6 +53,7 @@ export class TransactionController {
       this.userService,
       this.paymentGatewayService,
       this.gatewayTokenService,
+      this.transactionsWebsockets,
       this.configService,
     );
   }
@@ -117,11 +120,11 @@ export class TransactionController {
     tags: ['Transactions'],
   })
   async updateTransaction(
-    @Body() body: GatewayEventDto,
+    @Body() body: IGatewayEvent,
     @Headers() headers: IGatewayEventHeaders,
   ): Promise<ApiResponseCase<IUpdateTransactionResponse>> {
     try {
-      const response = await this.transactionUseCase.webHookTransaction(headers['X-Event-Checksum'], {
+      const response = await this.transactionUseCase.webHookTransaction(headers['x-event-checksum'], {
         event: body.event,
         data: body.data,
         environment: body.environment,

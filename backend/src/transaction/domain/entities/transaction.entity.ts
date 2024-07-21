@@ -1,3 +1,5 @@
+import { TTransactionStatus } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
+
 export enum ETransactionStatus {
   APPROVED = 'APPROVED',
   PENDING = 'PENDING',
@@ -6,7 +8,7 @@ export enum ETransactionStatus {
 }
 
 export interface ITransactionEntity {
-  id: number;
+  id: string;
   userId: string;
   gatewayId: string;
   gatewayTokenId: string;
@@ -56,7 +58,13 @@ export interface ICardTokenizationResponse {
 }
 
 export interface IGetTransactionByGatewayId {
+  userId: string;
   productId: string;
   amount: number;
   quantity: number;
+}
+
+export interface INotifyTransactionUpdate {
+  transactionId: string;
+  status: TTransactionStatus;
 }

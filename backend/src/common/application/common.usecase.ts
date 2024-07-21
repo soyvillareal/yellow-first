@@ -27,7 +27,13 @@ export class CommonUseCase {
     };
   }
 
-  public extractJWTToken(req: Request): string | undefined {
+  public extractJWTToken(req: Request | string | undefined): string | undefined {
+    if (req === undefined) {
+      return '';
+    }
+    if (typeof req === 'string') {
+      return req?.split(' ')[1];
+    }
     return req.headers.authorization?.split(' ')[1];
   }
 
@@ -38,22 +44,19 @@ export class CommonUseCase {
     }, {});
   };
 
-  public async generateSignature({ reference, amountInCents, currency }: IGenerateSignature): Promise<string> {
+  public generateSignature({ reference, amountInCents, currency }: IGenerateSignature): string {
     const integrityKey = this.configRepository.get<string>('config.integrity_key', {
       infer: true,
     });
 
     const concatenatedString = reference + amountInCents + currency + integrityKey;
 
-    const encondedText = new TextEncoder().encode(concatenatedString);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encondedText);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = crypto.createHash('sha256').update(concatenatedString).digest('hex');
 
     return hashHex;
   }
 
-  public async verifySignature(
+  public verifySignature(
     signature: string,
     payload: {
       transaction: {
@@ -63,7 +66,7 @@ export class CommonUseCase {
       };
       timestamp: number;
     },
-  ): Promise<boolean> {
+  ): boolean {
     const eventsKey = this.configRepository.get<string>('config.events_key', {
       infer: true,
     });
@@ -71,10 +74,7 @@ export class CommonUseCase {
     const concatenatedString =
       payload.transaction.id + payload.transaction.status + payload.transaction.amountInCents + payload.timestamp + eventsKey;
 
-    const encondedText = new TextEncoder().encode(concatenatedString);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', encondedText);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = crypto.createHash('sha256').update(concatenatedString).digest('hex');
 
     return hashHex === signature;
   }

@@ -19,6 +19,7 @@ import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/servic
 import { HttpModule } from '@nestjs/axios';
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
+import { TransactionsWebsockets } from '../websockets/transaction.websoket';
 
 @Module({
   imports: [
@@ -35,7 +36,15 @@ import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/tok
     }),
   ],
   controllers: [TransactionController],
-  providers: [TransactionService, UsersService, ProductService, LogsService, GatewayTokenService, PaymentGatewayService],
+  providers: [
+    TransactionService,
+    TransactionsWebsockets,
+    UsersService,
+    ProductService,
+    LogsService,
+    GatewayTokenService,
+    PaymentGatewayService,
+  ],
   exports: [],
 })
 export class TransactionModule {}

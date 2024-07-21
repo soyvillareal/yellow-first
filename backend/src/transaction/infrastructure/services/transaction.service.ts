@@ -83,6 +83,7 @@ export class TransactionService implements transactionRepository {
     try {
       const foundTransaction = await this.transactionModel.findOne({
         select: {
+          userId: true,
           productId: true,
           amount: true,
           quantity: true,
