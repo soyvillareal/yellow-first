@@ -19,11 +19,16 @@ export default defineConfig({
     checker({ typescript: true, overlay: false, terminal: true }),
   ],
   build: {
-    outDir: "build",
+    outDir: 'build',
   },
   optimizeDeps: {
     esbuildOptions: {
-      plugins: [esbuildCommonjs(["react-s3"])],
+      plugins: [esbuildCommonjs(['react-s3'])],
     },
+  },
+  server: {
+    host: '192.168.1.5',
+    port: 3000, // Puedes especificar otro puerto si lo deseas
+    open: true, // Abre el navegador automáticamente (opcional)
   },
 });

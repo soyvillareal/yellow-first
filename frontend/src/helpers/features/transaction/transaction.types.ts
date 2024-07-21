@@ -77,3 +77,10 @@ export interface IPaymentRequest {
   tokenId: string;
   installments: number;
 }
+
+export interface IGetTransactionByIdResponse {
+  amount: number;
+}
+export interface IGetTransactionByIdRequest {
+  transactionId: string;
+}

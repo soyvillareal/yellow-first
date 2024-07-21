@@ -55,18 +55,19 @@ const AddToCartButton = ({
       }
     }
   }, [
-    dispatch,
-    navigate,
     selectedIsUserLoggedIn,
-    isInTheCart,
     selectedUserId,
+    t,
+    navigate,
     location,
+    dispatch,
     id,
     name,
     description,
     image,
     price,
     stock,
+    isInTheCart,
   ]);
 
   return (

@@ -6,15 +6,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-500 focus:ring-4 focus:outline-none hover:bg-cyan-600 focus:ring-cyan-600',
+          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-500 focus:ring-4 focus:outline-none enabled:hover:bg-cyan-600 enabled:focus:ring-cyan-600',
         primary:
-          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-600 focus:ring-4 focus:outline-none hover:bg-cyan-700 focus:ring-cyan-700',
+          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-600 focus:ring-4 focus:outline-none enabled:hover:bg-cyan-700 enabled:focus:ring-cyan-700',
         secondary:
-          'inline-flex items-center justify-center gap-2 py-1.5 px-3 font-semibold text-gray-100 hover:text-slate-950 text-sm/6 bg-transparent border border-gray-100 focus:outline-none hover:bg-gray-100',
+          'inline-flex items-center justify-center gap-2 py-1.5 px-3 font-semibold text-gray-100 enabled:hover:text-slate-950 text-sm/6 bg-transparent border border-gray-100 enabled:focus:outline-none enabled:hover:bg-gray-100',
         outline:
-          'inline-flex items-center gap-2 py-1.5 px-3 font-semibold text-gray-100 hover:text-slate-950 text-sm/6 bg-transparent border border-gray-100 focus:outline-none hover:bg-gray-100',
+          'inline-flex items-center gap-2 py-1.5 px-3 font-semibold text-gray-100 enabled:hover:text-slate-950 text-sm/6 bg-transparent border border-gray-100 focus:outline-none enabled:hover:bg-gray-100',
         payment:
-          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-green-500 focus:ring-4 focus:outline-none hover:bg-green-600 focus:ring-green-600',
+          'w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-green-500 focus:ring-4 focus:outline-none enabled:hover:bg-green-600 focus:ring-green-600',
         dialog:
           'inline-flex items-center gap-2 py-1.5 px-3 font-semibold text-white text-sm/6 bg-gray-700 data-[hover]:bg-gray-600 focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700',
       },

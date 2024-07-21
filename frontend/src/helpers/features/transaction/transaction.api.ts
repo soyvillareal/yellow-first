@@ -6,6 +6,8 @@ import { RTKTags } from '@helpers/functions';
 import {
   ICardTokenizeRequest,
   ICardTokenizeResponse,
+  IGetTransactionByIdRequest,
+  IGetTransactionByIdResponse,
   IPaymentRequest,
 } from './transaction.types';
 
@@ -39,7 +41,20 @@ export const transactionApi = api.injectEndpoints({
       }),
       invalidatesTags: [RTKTags.GetProducts],
     }),
+    getTransactionById: builder.query<
+      IAPIResponse<IGetTransactionByIdResponse>,
+      IGetTransactionByIdRequest
+    >({
+      query: (transactionId) => ({
+        url: `${env.VITE_APP_BASE_API_URL}/transaction/${transactionId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useCardTokenizeMutation, usePaymentMutation } = transactionApi;
+export const {
+  useCardTokenizeMutation,
+  usePaymentMutation,
+  useLazyGetTransactionByIdQuery,
+} = transactionApi;

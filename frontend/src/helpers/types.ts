@@ -68,3 +68,10 @@ export interface ISEOPage {
     creator?: string;
   };
 }
+
+export enum ETransactionStatus {
+  APPROVED = 'APPROVED',
+  PENDING = 'PENDING',
+  DECLINED = 'DECLINED',
+  VOIDED = 'VOIDED',
+}

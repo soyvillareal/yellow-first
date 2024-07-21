@@ -5,6 +5,11 @@
       "subtitle": "Tu carrito",
       "description": "Tus productos en el carrito."
     },
+    "transaction": {
+      "title": "Transacción",
+      "subtitle": "Estado de tu transacción",
+      "description": "Aquí puedes ver el estado de tu transacción"
+    },
     "login": {
       "title": "Iniciar sesión",
       "subtitle": "Inicia sesión en tu cuenta",
@@ -59,6 +64,17 @@
       "cardNotValid": "Esta tarjeta no es válida, por favor intenta con otra",
       "paymentNotSuccessful": "¡El pago no fue exitoso, por favor intenta de nuevo!",
       "plaseSelectCard": "Por favor, selecciona una tarjeta"
+    }
+  },
+  "transaction": {
+    "amount": "Monto: {{amount}}",
+    "verifyingTransaction": "Verificando transacción...",
+    "succesfulTransaction": "¡Transacción exitosa!",
+    "transactionCanceled": "¡Transacción cancelada!",
+    "somethingWentWrongWithYourPayment": "¡Algo salió mal con tu pago!",
+    "error": {
+      "yourTransactionHasBeenCancelled": "Tu transacción ha sido cancelada, por favor intenta de nuevo.",
+      "itLooksLikeThereWasProblemWithYouPayment": "Parece que hubo un problema con tu pago, por favor intenta de nuevo."
     }
   },
   "login": {

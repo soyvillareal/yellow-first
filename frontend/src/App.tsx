@@ -10,7 +10,7 @@ import CanActivate from './helpers/middlewares/CanActivate';
 import Products from './pages/Products';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
-import ThankYou from './pages/ThankYou';
+import Transaction from './pages/Transaction';
 import PageNotFound from './pages/PageNotFound';
 
 function App() {
@@ -33,10 +33,10 @@ function App() {
             }
           />
           <Route
-            path="thank-you"
+            path="transaction/:transactionId"
             element={
               <CanActivate>
-                <ThankYou />
+                <Transaction />
               </CanActivate>
             }
           />

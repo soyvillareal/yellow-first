@@ -5,6 +5,11 @@
       "subtitle": "Your Cart",
       "description": "Your cart items."
     },
+    "transaction": {
+      "title": "Transaction",
+      "subtitle": "Your transaction status",
+      "description": "Here you can see the status of your transaction"
+    },
     "login": {
       "title": "Login",
       "subtitle": "Sign in to your account",
@@ -59,6 +64,17 @@
       "cardNotValid": "This card is not valid, please try with another one",
       "paymentNotSuccessful": "The payment was not successful, please try again",
       "plaseSelectCard": "Please, select a card"
+    }
+  },
+  "transaction": {
+    "amount": "Amount: {{amount}}",
+    "verifyingTransaction": "Verifying transaction...",
+    "succesfulTransaction": "Succesful transaction!",
+    "transactionCanceled": "Transaction canceled!",
+    "somethingWentWrongWithYourPayment": "Something went wrong with your payment!",
+    "error": {
+      "yourTransactionHasBeenCancelled": "Your transaction has been cancelled, please try again.",
+      "itLooksLikeThereWasProblemWithYouPayment": "It looks like there was a problem with your payment, please try again."
     }
   },
   "login": {
