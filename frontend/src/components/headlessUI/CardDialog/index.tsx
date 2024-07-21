@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { isNotEmpty } from 'ramda-adjunct';
@@ -14,21 +15,17 @@ import useAppSelector from '@hooks/redux/useAppSelector';
 
 import { ICardDialogInputs, ICardDialogProps } from './CardDialog.types';
 import ButtonLoading from '../ButtonLoading';
+import { cardDialogInitialValues } from './CardDialog.constants';
 
 const CardDialog = ({ open, onClose }: ICardDialogProps) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [errorCode, setErrorCode] = useState('');
 
   const selectedUserId = useAppSelector(selectUserId);
 
   const methods = useForm<ICardDialogInputs>({
-    defaultValues: {
-      cardNumber: '',
-      cardHolder: '',
-      cardMonth: moment().format('MM'),
-      cardYear: moment().format('YYYY'),
-      cardCvv: '',
-    },
+    defaultValues: cardDialogInitialValues,
   });
 
   const allFields = useWatch({ control: methods.control });
@@ -98,7 +95,7 @@ const CardDialog = ({ open, onClose }: ICardDialogProps) => {
               as="h3"
               className="text-base/7 px-2 pb-4 font-medium text-white"
             >
-              Card information
+              {t('cart.cardInformation')}
             </DialogTitle>
             <div className="flex">
               <FancyCard
@@ -108,15 +105,15 @@ const CardDialog = ({ open, onClose }: ICardDialogProps) => {
                       className="inline-flex items-center gap-2 rounded-md bg-red-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-red-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-red-700"
                       onClick={onClose}
                     >
-                      Cancelar
+                      {t('cart.cancel')}
                     </Button>
                     <ButtonLoading
-                      type="submit"
                       className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
                       loading={isLoadingCardTokenize}
                       variant="dialog"
+                      type="submit"
                     >
-                      Agregar tarjeta
+                      {t('cart.addCard')}
                     </ButtonLoading>
                   </div>
                 }
@@ -124,7 +121,7 @@ const CardDialog = ({ open, onClose }: ICardDialogProps) => {
             </div>
             {isNotEmpty(errorCode) && (
               <p className="mt-2 text-sm text-center text-red-600">
-                Esta tarjeta no es válida, por favor intenta con otra.
+                {t('cart.erro.cardNotValid')}
               </p>
             )}
           </DialogPanel>

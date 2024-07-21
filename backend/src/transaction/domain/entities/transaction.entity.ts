@@ -54,3 +54,9 @@ export interface ICardTokenizationResponse {
   expYear: string;
   cardHolder: string;
 }
+
+export interface IGetTransactionByGatewayId {
+  productId: string;
+  amount: number;
+  quantity: number;
+}

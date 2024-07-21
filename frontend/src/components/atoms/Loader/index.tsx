@@ -1,13 +1,17 @@
+import { useTranslation } from 'react-i18next';
+
 import './Loader.css';
 
 const Loader = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 z-50 flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gray-950 opacity-90">
       <div className="preloader">
         <svg
           className="cart"
           role="img"
-          aria-label="Shopping cart line animation"
+          aria-label={t('atoms.cartLineAnimation')}
           viewBox="0 0 128 128"
           width="128px"
           height="128px"
@@ -56,10 +60,10 @@ const Loader = () => {
         </svg>
         <div className="text-center preloader__text">
           <p className="text-gray-100 preloader__msg">
-            Bringing you the Goods.
+            {t('atoms.bringingGoods')}
           </p>
           <p className="text-gray-100 preloader__msg preloader__msg--last">
-            Conjuring the Literary Wonders.
+            {t('atoms.conjuringMagic')}
           </p>
         </div>
       </div>

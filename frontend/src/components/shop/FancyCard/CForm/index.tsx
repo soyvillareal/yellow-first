@@ -1,4 +1,5 @@
 import { ChangeEvent, LegacyRef, PropsWithChildren, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Field, Label } from '@headlessui/react';
 
 import InputLabel from '@components/headlessUI/Form/InputLabel';
@@ -27,6 +28,7 @@ export default function CForm({
   children,
   buttons,
 }: PropsWithChildren<ICFormProps>) {
+  const { t } = useTranslation();
   const [cardNumber, setCardNumber] = useState('');
   const handleFormChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -86,7 +88,7 @@ export default function CForm({
           onFocus={(e) => onCardInputFocus(e, 'cardNumber')}
           onBlur={onCardInputBlur}
           value={cardNumber}
-          label="Card Number"
+          label={t('cart.cardNumber')}
         />
         <InputLabel
           ref={cardHolderRef as LegacyRef<HTMLInputElement>}
@@ -98,7 +100,7 @@ export default function CForm({
           onChange={handleFormChange}
           onFocus={(e) => onCardInputFocus(e, 'cardHolder')}
           onBlur={onCardInputBlur}
-          label="Card Holder"
+          label={t('cart.cardHolder')}
         />
 
         <div className="flex gap-2 justify-between px-4">
@@ -107,7 +109,7 @@ export default function CForm({
               htmlFor="cardMonth"
               className="text-sm/6 font-medium text-white"
             >
-              Expiration Date
+              {t('cart.expirationDate')}
             </Label>
             <div className="flex">
               <SelectLabel
@@ -146,12 +148,12 @@ export default function CForm({
               className="input w-full"
               type="tel"
               name="cardCvv"
-              maxLength={4}
+              maxLength={3}
               autoComplete="off"
               onChange={handleFormChange}
               onFocus={onCvvFocus}
               onBlur={onCvvBlur}
-              label="CVV"
+              label={t('cart.cvv')}
             />
           </div>
         </div>

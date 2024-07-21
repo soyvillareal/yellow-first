@@ -1,4 +1,5 @@
 import { CSSProperties, LegacyRef, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import './styles.scss';
 
@@ -26,6 +27,7 @@ const Card = ({
   cardHolderRef,
   cardDateRef,
 }: ICardProps) => {
+  const { t } = useTranslation();
   const [style, setStyle] = useState<CSSProperties | undefined>(undefined);
 
   const useCardType = useMemo(() => {
@@ -126,17 +128,17 @@ const Card = ({
               className="card-item__info"
               onClick={() => onCardElementClick('cardHolder')}
             >
-              <div className="card-item__holder">Card Holder</div>
+              <div className="card-item__holder">{t('cart.cardHolder')}</div>
               <div className="card-item__name">
                 <AnimatePresence>
-                  {cardHolder === 'FULL NAME' ? (
+                  {cardHolder === t('cart.fullName') ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.25 }}
                     >
-                      FULL NAME
+                      {t('cart.fullName')}
                     </motion.div>
                   ) : (
                     cardHolder.split('').map((val, index) => (
@@ -160,7 +162,9 @@ const Card = ({
               className="card-item__date"
               onClick={() => onCardElementClick('cardDate')}
             >
-              <label className="card-item__dateTitle">Expires</label>
+              <label className="card-item__dateTitle">
+                {t('cart.expires')}
+              </label>
               <AnimatePresence mode="wait">
                 <motion.label
                   key={cardMonth}
@@ -200,7 +204,7 @@ const Card = ({
         </div>
         <div className="card-item__band" />
         <div className="card-item__cvv">
-          <div className="card-item__cvvTitle">CVV</div>
+          <div className="card-item__cvvTitle">{t('cart.cvv')}</div>
           <div className="card-item__cvvBand">
             <AnimatePresence>
               {cardCvv.split('').map((_val, index) => (

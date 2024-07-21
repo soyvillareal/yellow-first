@@ -1,5 +1,88 @@
 {
+  "SEO": {
+    "cart": {
+      "title": "Cart",
+      "subtitle": "Your Cart",
+      "description": "Your cart items."
+    },
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account",
+      "description": "Enjoy all the benefits of your account."
+    },
+    "pageNotFound": {
+      "title": "404",
+      "subtitle": "Page not found",
+      "description": "This page is broken or was removed!"
+    },
+    "products": {
+      "title": "Products",
+      "subtitle": "All products you need",
+      "description": "Find all the products you need. From books to stationery, we have it all."
+    }
+  },
+  "atoms": {
+    "cartLineAnimation": "Shopping cart line animation",
+    "bringingGoods": "Bringing you the Goods",
+    "conjuringMagic": "Conjuring the Magic"
+  },
+  "navbar": {
+    "logOut": "Log out",
+    "logIn": "Log in"
+  },
   "cart": {
-    "purchaseSummary": "Purchase summary"
+    "purchaseSummary": "Purchase summary",
+    "expirationDate": "Expiration date",
+    "cardNumber": "Card number",
+    "cardHolder": "Card holder",
+    "cvv": "CVV",
+    "cardInformation": "Card information",
+    "cancel": "Cancel",
+    "addCard": "Add card",
+    "sendToHome": "Send to home",
+    "goToCart": "Go to cart",
+    "addToCart": "Add to cart",
+    "editCard": "Edit card",
+    "removeFromCart": "Remove from cart",
+    "subTotal": "Subtotal",
+    "baseRate": "Base rate",
+    "shippingFee": "Shipping fee",
+    "total": "Total",
+    "payWithCard": "Pay with card",
+    "pay": "Pay",
+    "fullName": "Full name",
+    "expires": "Expires",
+    "cartIsEmpty": "Your cart is empty!",
+    "shopNow": "Shop now",
+    "error": {
+      "logInToContinue": "Log in to continue",
+      "cardNotValid": "This card is not valid, please try with another one",
+      "paymentNotSuccessful": "The payment was not successful, please try again",
+      "plaseSelectCard": "Please, select a card"
+    }
+  },
+  "login": {
+    "signInYourAccount": "Sign in to your account",
+    "yourUsername": "Your username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "dontHaveAnAccountYet": "Don't have an account yet?",
+    "createAccount": "Create Account",
+    "error": {
+      "incorrectUsernameOrPassword": "Incorrect username and/or password"
+    }
+  },
+  "pageNotFound": {
+    "title": "Page not found",
+    "description": "Oops! It looks like this page doesn't exist or has been deleted.",
+    "backHome": "Back to home"
+  },
+  "products": {
+    "warehouseIsEmpty": "Oops! Looks like our warehouse is empty.",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "error": {
+      "failedFetchProducts": "Failed to fetch products!"
+    }
   }
 }

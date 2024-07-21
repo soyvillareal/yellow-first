@@ -1,3 +1,5 @@
+import { TFunction } from 'i18next';
+
 import { EPaginationOrder } from '@helpers/types';
 
 export const initialProductFilter = {
@@ -28,13 +30,13 @@ export const limitProductOptions = [
   },
 ];
 
-export const sortProductOptions = [
+export const sortProductOptions = (t: TFunction) => [
   {
-    label: 'Newest',
+    label: t('products.newest'),
     value: EPaginationOrder.DESC,
   },
   {
-    label: 'Oldest',
+    label: t('products.oldest'),
     value: EPaginationOrder.ASC,
   },
 ];

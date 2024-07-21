@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 
@@ -21,6 +22,7 @@ const AddToCartButton = ({
   price,
   stock,
 }: IGetProductsResponse) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const selectedIsUserLoggedIn = useAppSelector(selectIsUserLoggedIn);
@@ -39,7 +41,7 @@ const AddToCartButton = ({
 
   const handleClickAddToCart = useCallback(() => {
     if (selectedIsUserLoggedIn === false) {
-      toast.error('Log in to continue.');
+      toast.error(t('cart.error.logInToContinue'));
       navigate('/login', { state: { from: location } });
     } else if (selectedUserId !== undefined) {
       dispatch(
@@ -90,7 +92,9 @@ const AddToCartButton = ({
           />
         </svg>
       )}
-      <span>{isInTheCart ? 'GO TO CART' : 'ADD TO CART'}</span>
+      <span className="uppercase">
+        {t(`cart.${isInTheCart ? 'goToCart' : 'addToCart'}`)}
+      </span>
     </CustomButton>
   );
 };

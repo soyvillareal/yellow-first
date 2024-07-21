@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { isNotEmpty } from 'ramda-adjunct';
@@ -14,8 +15,10 @@ import ButtonLoading from '@components/headlessUI/ButtonLoading';
 import PageContainer from 'layouts/PageContainer';
 
 import { ISigninInputs } from './Login.types';
+import { loginInitialValues } from './Login.constants';
 
 const Login = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const selectedIsUserLoggedIn = useAppSelector(selectIsUserLoggedIn);
@@ -33,10 +36,7 @@ const Login = () => {
     useAuthSessionMutation();
 
   const methods = useForm<ISigninInputs>({
-    defaultValues: {
-      username: '',
-      password: '',
-    },
+    defaultValues: loginInitialValues,
   });
 
   const allFields = useWatch({ control: methods.control });
@@ -49,7 +49,6 @@ const Login = () => {
       }).unwrap();
 
       // Load session into the store
-
       if (session.data !== undefined) {
         dispatch(setSession(session.data));
         // On success login
@@ -69,9 +68,9 @@ const Login = () => {
   return (
     <PageContainer
       seo={{
-        title: 'Login',
-        subtitle: 'Sign in to your account',
-        description: 'Sign in to your account!',
+        title: t('SEO.login.title'),
+        subtitle: t('SEO.login.subtitle'),
+        description: t('SEO.login.description'),
       }}
     >
       <section>
@@ -79,7 +78,7 @@ const Login = () => {
           <div className="w-full bg-gray-800 border border-gray-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-100 md:text-2xl">
-                Sign in to your account
+                {t('login.signInYourAccount')}
               </h1>
 
               <Form
@@ -90,7 +89,7 @@ const Login = () => {
                 <InputLabel
                   id="username"
                   type="text"
-                  label="Your username"
+                  label={t('login.yourUsername')}
                   placeholder="abc@email.com"
                   autoComplete="username"
                   required
@@ -98,14 +97,14 @@ const Login = () => {
                 <InputLabel
                   id="password"
                   type="password"
-                  label="Password"
+                  label={t('login.password')}
                   placeholder="••••••••"
                   autoComplete="password"
                   required
                 />
                 {isNotEmpty(errorCode) && (
                   <p className="!mt-[10px] text-sm text-left text-red-600">
-                    * Usuario y/o contraseña incorrectos
+                    * {t('login.error.incorrectUsernameOrPassword')}
                   </p>
                 )}
                 <ButtonLoading
@@ -113,15 +112,15 @@ const Login = () => {
                   className="w-full px-5 py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-900 focus:ring-4 focus:outline-none hover:bg-cyan-950 focus:ring-cyan-950"
                   loading={isLoadingAuthSession}
                 >
-                  Sign in
+                  {t('login.signIn')}
                 </ButtonLoading>
                 <p className="text-sm font-light text-gray-400">
-                  Don't have an account yet?
+                  {t('login.dontHaveAnAccountYet')}
                   <Link
                     to="#"
                     className="ml-1 font-medium text-gray-100 hover:underline"
                   >
-                    Create Account
+                    {t('login.createAccount')}
                   </Link>
                 </p>
               </Form>

@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { BiLogIn } from 'react-icons/bi';
@@ -8,11 +9,12 @@ import { selectIsUserLoggedIn } from '@helpers/features/session/session.selector
 import { selectCartTransaction } from '@helpers/features/transaction/transaction.selector';
 import CustomSelect from '@components/headlessUI/CustomSelect';
 import i18n, { languages } from '@helpers/i18n';
-import { languageLabels } from '@helpers/constants';
+import { configSite, languageLabels } from '@helpers/constants';
 
 import Logout from './Logout';
 
 const Navbar = () => {
+  const { t } = useTranslation();
   const [language, setLanguage] = useState(i18n.resolvedLanguage);
   const selectedIsUserLoggedIn = useAppSelector(selectIsUserLoggedIn);
   const selectedCartTransaction = useAppSelector(selectCartTransaction);
@@ -33,8 +35,12 @@ const Navbar = () => {
           <div className="flex items-center justify-between w-full">
             <div className="flex overflow-hidden sm:ml-4 lg:ml-0 w-full">
               <NavLink className="flex" to="/">
-                <span className="sr-only">Yellow First</span>
-                <img className="size-12" src="/logo.png" alt="Yellow First" />
+                <span className="sr-only">{configSite.name}</span>
+                <img
+                  className="size-12"
+                  src="/logo.png"
+                  alt={configSite.name}
+                />
               </NavLink>
             </div>
             <div className="flex items-center justify-end">
@@ -56,7 +62,7 @@ const Navbar = () => {
                     className="block w-px h-6 ml-4 bg-gray-700 lg:ml-6"
                     aria-hidden="true"
                   />
-                  <div className="flow-root ml-4 lg:ml-6 min-w-[120px]">
+                  <div className="flow-root ml-4 lg:ml-6 min-w-[120px] whitespace-nowrap">
                     <Logout />
                   </div>
                 </>
@@ -70,9 +76,11 @@ const Navbar = () => {
                   <div className="flow-root ml-4 lg:ml-6 md:mr-4">
                     <NavLink
                       to="login"
-                      className="flex items-center justify-center p-2 px-3 py-2 -m-2 text-sm font-medium text-gray-100 rounded-lg bg-gray-50 bg-opacity-10 hover:bg-transparent hover:text-white group md:min-w-[120px]"
+                      className="flex items-center justify-center p-2 px-3 py-2 -m-2 text-sm font-medium text-gray-100 rounded-lg bg-gray-50 bg-opacity-10 hover:bg-transparent hover:text-white group md:min-w-[120px] whitespace-nowrap"
                     >
-                      <span className="hidden md:block">Log In</span>
+                      <span className="hidden md:block">
+                        {t('navbar.logIn')}
+                      </span>
                       <BiLogIn
                         title="log in"
                         className="flex-shrink-0 w-6 h-6 md:ml-2 text-gray-100 group-hover:text-white"

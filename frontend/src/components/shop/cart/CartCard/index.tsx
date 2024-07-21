@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 
@@ -10,7 +11,7 @@ import {
 import useAppSelector from '@hooks/redux/useAppSelector';
 import { selectQuantityTransactionById } from '@helpers/features/transaction/transaction.selector';
 import { selectUserId } from '@helpers/features/session/session.selector';
-import { numberWithCurrency } from '@helpers/constants';
+import { cn, numberWithCurrency } from '@helpers/constants';
 
 const CartCard = ({
   id,
@@ -20,6 +21,7 @@ const CartCard = ({
   price,
   stock,
 }: IGetProductsResponse) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const selectedUserId = useAppSelector(selectUserId);
   const selectedQuantityTransactionById = useAppSelector(
@@ -103,18 +105,12 @@ const CartCard = ({
                 onClick={handleClickDecrementQuantity}
                 type="button"
                 disabled={isDisableDecrease}
-                className={`
-               rounded-l
-                py-1
-                 px-3.5 
-                 duration-100
-                  hover:bg-gray-900
-                   hover:text-white
-                   ${
-                     isDisableDecrease ? 'cursor-not-allowed' : 'cursor-pointer'
-                   }
-                   ${isDisableDecrease ? 'bg-gray-700' : ''}
-                   `}
+                className={cn(
+                  'rounded-l py-1 px-3.5 duration-100 hover:bg-gray-900 hover:text-white',
+                  isDisableDecrease
+                    ? 'cursor-not-allowed bg-gray-700'
+                    : 'cursor-pointer',
+                )}
               >
                 -
               </button>
@@ -123,11 +119,12 @@ const CartCard = ({
               </span>
               <button
                 disabled={isDisableIncrease}
-                onClick={handleClickIncrementQuantity} // changeQuantity(product, "increment")
+                onClick={handleClickIncrementQuantity}
                 type="button"
-                className={`px-3 py-1 duration-100 rounded-r  ${
-                  isDisableIncrease ? 'cursor-not-allowed ' : 'cursor-pointer'
-                } hover:text-white hover:bg-gray-900 `}
+                className={cn(
+                  'px-3 py-1 duration-100 rounded-r hover:text-white hover:bg-gray-900',
+                  isDisableIncrease ? 'cursor-not-allowed ' : 'cursor-pointer',
+                )}
               >
                 +
               </button>
@@ -136,8 +133,8 @@ const CartCard = ({
           <div className="flex relative items-center justify-end space-x-4 text-gray-100">
             <TrashIcon
               onClick={handleClickRemoveFromCart}
-              title="Remove From Cart"
-              className="w-8 h-8 p-2 text-red-400 duration-150 bg-gray-800 border border-gray-700 rounded-full cursor-pointer hover:text-red-500"
+              title={t('cart.removeFromCart')}
+              className="w-8 h-8 p-2 text-red-400 duration-150 bg-gray-800 border border-gray-700 rounded-full cursor-pointer shadow-xl hover:text-white hover:bg-rose-600"
             />
           </div>
         </div>

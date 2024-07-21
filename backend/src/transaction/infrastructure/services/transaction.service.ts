@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isNotEmpty } from 'class-validator';
 
-import { ETransactionStatus, ITransactionEntity, TCreateTransaction } from 'src/transaction/domain/entities/transaction.entity';
+import {
+  ETransactionStatus,
+  IGetTransactionByGatewayId,
+  ITransactionEntity,
+  TCreateTransaction,
+} from 'src/transaction/domain/entities/transaction.entity';
 import { transactionRepository } from 'src/transaction/domain/repository/transaction.repository';
 
 import { TransactionModel } from '../models/transaction.model';
@@ -71,7 +76,28 @@ export class TransactionService implements transactionRepository {
 
       return tokenExists > 0;
     } catch (error) {
-      console.log(error);
+      return null;
+    }
+  }
+  async getTransactionByGatewayId(gatewayId: string): Promise<IGetTransactionByGatewayId | undefined | null> {
+    try {
+      const foundTransaction = await this.transactionModel.findOne({
+        select: {
+          productId: true,
+          amount: true,
+          quantity: true,
+        },
+        where: {
+          gatewayId,
+        },
+      });
+
+      if (foundTransaction === null) {
+        return undefined;
+      }
+
+      return foundTransaction;
+    } catch (error) {
       return null;
     }
   }

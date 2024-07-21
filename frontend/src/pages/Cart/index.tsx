@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { selectCartTransaction } from '@helpers/features/transaction/transaction.selector';
@@ -9,15 +10,16 @@ import CartCard from '../../components/shop/cart/CartCard';
 import CartCheckoutDetails from '../../components/shop/cart/CartCheckoutDetails';
 
 const Cart = () => {
+  const { t } = useTranslation();
   const selectedCartTransaction = useAppSelector(selectCartTransaction);
   const selectedUserId = useAppSelector(selectUserId);
 
   return (
     <PageContainer
       seo={{
-        title: 'Cart',
-        subtitle: 'Your Cart',
-        description: 'Your cart items.',
+        title: t('SEO.cart.title'),
+        subtitle: t('SEO.cart.subtitle'),
+        description: t('SEO.cart.description'),
       }}
     >
       {selectedCartTransaction.userId === selectedUserId &&
@@ -42,13 +44,13 @@ const Cart = () => {
         <div className="grid h-60 place-items-center">
           <div className="space-y-4">
             <p className="my-4 text-2xl font-semibold tracking-wide text-gray-100">
-              Cart is Empty.
+              {t('cart.cartIsEmpty')}
             </p>
             <Link
-              to="/products"
+              to="/"
               className="w-full px-5 block py-2.5 text-xs lg:text-sm font-medium text-center text-gray-100 rounded-lg bg-cyan-900 focus:ring-4 focus:outline-none hover:bg-cyan-950 focus:ring-cyan-950"
             >
-              SHOP NOW
+              {t('cart.shopNow')}
             </Link>
           </div>
         </div>

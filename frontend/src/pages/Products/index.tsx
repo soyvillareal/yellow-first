@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Transition } from '@headlessui/react';
 import { Pagination } from 'react-headless-pagination';
 import toast from 'react-hot-toast';
@@ -20,6 +21,7 @@ import { IProductFilterState } from './Products.types';
 import ProductsSkeleton from './ProductsSkeleton';
 
 const Products = () => {
+  const { t } = useTranslation();
   const [filter, setFilter] =
     useState<IProductFilterState>(initialProductFilter);
 
@@ -43,10 +45,10 @@ const Products = () => {
           order: filter.order,
         });
       } catch (error) {
-        toast.error('Failed to fetch products!');
+        toast.error(t('products.error.failedFetchProducts'));
       }
     })();
-  }, [getProducts, page, filter]);
+  }, [t, getProducts, page, filter]);
 
   const handleChangeLimit = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -73,15 +75,14 @@ const Products = () => {
   return (
     <PageContainer
       seo={{
-        title: 'Products',
-        subtitle: 'All products you need',
-        description:
-          'Find all the products you need. From books to stationery, we have it all.',
+        title: t('SEO.products.title'),
+        subtitle: t('SEO.products.subtitle'),
+        description: t('SEO.products.description'),
         keywords: ['products', 'books', 'stationery'],
       }}
     >
       <div className="w-full mb-4">
-        <div className="flex flex-row items-center justify-end ml-auto gap-4 max-w-[320px]">
+        <div className="flex flex-row items-center justify-end ml-auto gap-4 max-w-[360px]">
           <CustomSelect
             id="limit"
             className="w-1/5"
@@ -93,7 +94,7 @@ const Products = () => {
           <CustomSelect
             id="order"
             className="w-1/3"
-            options={sortProductOptions}
+            options={sortProductOptions(t)}
             onChange={handleChangeSort}
             value={filter.order}
             disabled={isFetchingGetProducts}
@@ -178,7 +179,7 @@ const Products = () => {
           dataGetProducts.data.meta.itemCount === 0 && (
             <div className="flex justify-center my-20 sm:my-32">
               <p className="text-2xl text-center text-gray-100 sm:text-4xl">
-                Oops! Looks like our Book Shelf is empty. 😟
+                {t('products.warehouseIsEmpty')}
               </p>
             </div>
           )}

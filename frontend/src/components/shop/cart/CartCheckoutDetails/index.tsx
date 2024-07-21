@@ -44,7 +44,7 @@ const CartCheckoutDetails = () => {
     (async () => {
       try {
         if (selectedCard.cardInfo?.tokenId === undefined) {
-          return toast.error('Por favor, seleccione una tarjeta');
+          return toast.error(t('cart.error.plaseSelectCard'));
         }
 
         const paymentResponse = await payment({
@@ -62,13 +62,14 @@ const CartCheckoutDetails = () => {
           dispatch(clearCart());
           dispatch(clearCard());
         } else {
-          toast.error('Pago fallido');
+          toast.error(t('cart.error.paymentNotSuccessful'));
         }
       } catch (error) {
-        toast.error('Pago fallido');
+        toast.error(t('cart.error.paymentNotSuccessful'));
       }
     })();
   }, [
+    t,
     payment,
     dispatch,
     navigate,
@@ -114,25 +115,25 @@ const CartCheckoutDetails = () => {
           )}
 
         <div className="flex justify-between mb-2">
-          <p className="text-gray-100">Subtotal</p>
+          <p className="text-gray-100">{t('cart.subTotal')}</p>
           <p className="text-gray-100 before:mr-1">
             {numberWithCurrency(totalAmount)}
           </p>
         </div>
         <div className="flex justify-between mb-2">
-          <p className="text-gray-100">Tarifa base</p>
+          <p className="text-gray-100">{t('cart.baseRate')}</p>
           <p className="text-gray-100 before:mr-1">
             {numberWithCurrency(fixedRate)} +{' '}
             {`${(variablePercentage * 100).toFixed(1)}%`}
           </p>
         </div>
         <div className="flex justify-between mb-2">
-          <p className="text-gray-100">Tarifa de envío</p>
+          <p className="text-gray-100">{t('cart.shippingFee')}</p>
           <p className="text-gray-100 before:mr-1">{numberWithCurrency(0)}</p>
         </div>
         <hr className="my-4" />
         <div className="flex justify-between text-gray-100">
-          <p className="text-lg font-bold">Total</p>
+          <p className="text-lg font-bold">{t('cart.total')}</p>
           <div>
             <p className="mb-1 text-lg before:mr-1 font-bold">
               {numberWithCurrency(calculateRate(totalAmount))}
@@ -141,7 +142,7 @@ const CartCheckoutDetails = () => {
         </div>
         {selectedCard.cardInfo === null ? (
           <CustomButton onClick={handleClickPayWithCard} variant="default">
-            Pagar con tarjeta
+            {t('cart.payWithCard')}
           </CustomButton>
         ) : (
           <ButtonLoading
@@ -150,7 +151,7 @@ const CartCheckoutDetails = () => {
             variant="payment"
             loading={isLoadingPayment}
           >
-            Pagar
+            {t('cart.pay')}
           </ButtonLoading>
         )}
         {selectedCard.cardInfo === null && (

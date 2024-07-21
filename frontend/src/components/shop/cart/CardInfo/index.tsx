@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { selectCard } from '@helpers/features/transaction/transaction.selector';
 import useAppSelector from '@hooks/redux/useAppSelector';
@@ -7,6 +8,7 @@ import CustomButton from '@components/headlessUI/CustomButton';
 import { ICardInfoProps } from './CardInfo.types';
 
 const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
+  const { t } = useTranslation();
   const selectedCard = useAppSelector(selectCard);
 
   const useCardType = useMemo(() => {
@@ -21,7 +23,7 @@ const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
             <div className="flex flex-row items-center justify-between mb-6">
               <div className="flex flex-col items-start">
                 <span className="text-sm font-medium text-white">
-                  Cardholder Name
+                  {t('cart.cardHolder')}
                 </span>
                 <span className="text-lg font-medium text-gray-400">
                   {selectedCard.cardInfo?.cardHolder}
@@ -37,7 +39,7 @@ const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
             </div>
             <div className="flex flex-col items-start justify-between mb-6">
               <span className="text-sm font-medium text-white">
-                Card Number
+                {t('cart.cardNumber')}
               </span>
               <span className="text-lg font-medium text-gray-400">
                 **** **** **** {selectedCard.cardInfo?.lastFour}
@@ -46,7 +48,7 @@ const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
             <div className="flex flex-row items-center justify-between">
               <div className="flex flex-col items-start">
                 <span className="text-sm font-medium text-white">
-                  Expiration Date
+                  {t('cart.expirationDate')}
                 </span>
                 <span className="text-lg font-medium text-gray-400">
                   {selectedCard.cardInfo?.expMonth}/
@@ -54,7 +56,9 @@ const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
                 </span>
               </div>
               <div className="flex flex-col items-start">
-                <span className="text-sm font-medium text-white">CVV</span>
+                <span className="text-sm font-medium text-white">
+                  {t('cart.cvv')}
+                </span>
                 <span className="text-lg font-medium text-gray-400">***</span>
               </div>
             </div>
@@ -65,7 +69,7 @@ const CardInfo = ({ handleClickEditCard }: ICardInfoProps) => {
             onClick={handleClickEditCard}
             variant="secondary"
           >
-            Editar tarjeta
+            {t('cart.editCard')}
           </CustomButton>
         </div>
       </div>

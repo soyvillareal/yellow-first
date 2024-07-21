@@ -178,23 +178,44 @@ export class TransactionUseCase {
       throw new Error('Invalid webhook signature!');
     }
 
-    if (event === 'transaction.updated') {
-      const updatedTransaction = await this.transactionRepository.updateTransactionStatus(
-        data.transaction.id,
-        ETransactionStatus[data.transaction.status],
-      );
+    if (event !== 'transaction.updated') {
+      throw new Error('Invalid webhook event!');
+    }
 
-      if (updatedTransaction === false) {
+    const updatedTransaction = await this.transactionRepository.updateTransactionStatus(
+      data.transaction.id,
+      ETransactionStatus[data.transaction.status],
+    );
+
+    if (updatedTransaction === false) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    if (data.transaction.status !== 'APPROVED') {
+      const transaction = await this.transactionRepository.getTransactionByGatewayId(data.transaction.id);
+
+      if (transaction === null || transaction === undefined) {
         throw new Error('Whoops! Something went wrong.');
       }
 
-      return {
-        recieve: true,
-      };
+      const product = await this.productRepository.getProductById(transaction.productId);
+
+      if (product === null || product === undefined) {
+        throw new Error('Whoops! Something went wrong.');
+      }
+
+      const updatedStock = await this.productRepository.updateStockInProduct(
+        transaction.productId,
+        product.stock + transaction.quantity,
+      );
+
+      if (updatedStock === null || updatedStock === false) {
+        throw new Error('Whoops! Something went wrong.');
+      }
     }
 
     return {
-      recieve: false,
+      recieve: true,
     };
   }
 }

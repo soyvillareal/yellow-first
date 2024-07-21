@@ -1,5 +1,88 @@
 {
+  "SEO": {
+    "cart": {
+      "title": "Carrito",
+      "subtitle": "Tu carrito",
+      "description": "Tus productos en el carrito."
+    },
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Inicia sesión en tu cuenta",
+      "description": "Disfruta de todos los beneficios de tu cuenta."
+    },
+    "pageNotFound": {
+      "title": "404",
+      "subtitle": "Página no encontrada",
+      "description": "¡Esta página está rota o fue eliminada!"
+    },
+    "products": {
+      "title": "Productos",
+      "subtitle": "Todos los productos que necesitas",
+      "description": "Encuentra todos los productos que necesitas. Desde libros hasta artículos de papelería, lo tenemos todo."
+    }
+  },
+  "atoms": {
+    "cartLineAnimation": "Animación de línea de carrito de compras",
+    "bringingGoods": "Trayendote los productos",
+    "conjuringMagic": "Conjurando la magia"
+  },
+  "navbar": {
+    "logOut": "Salir",
+    "logIn": "Iniciar sesión"
+  },
   "cart": {
-    "purchaseSummary": "Resumen de compra"
+    "purchaseSummary": "Resumen de compra",
+    "expirationDate": "Fecha de vencimiento",
+    "cardNumber": "Número de tarjeta",
+    "cardHolder": "Titular de la tarjeta",
+    "cvv": "CVV",
+    "cardInformation": "Información de la tarjeta",
+    "cancel": "Cancelar",
+    "addCard": "Agregar tarjeta",
+    "sendToHome": "Enviar a domicilio",
+    "goToCart": "Ir al carrito",
+    "addToCart": "Agregar al carrito",
+    "editCard": "Editar tarjeta",
+    "removeFromCart": "Eliminar del carrito",
+    "subTotal": "Subtotal",
+    "baseRate": "Tarifa base",
+    "shippingFee": "Tarifa de envío",
+    "total": "Total",
+    "payWithCard": "Pagar con tarjeta",
+    "pay": "Pagar",
+    "fullName": "Nombre completo",
+    "expires": "Expira",
+    "cartIsEmpty": "¡Tu carrito está vacío!",
+    "shopNow": "Comprar ahora",
+    "error": {
+      "logInToContinue": "Inicia sesión para continuar",
+      "cardNotValid": "Esta tarjeta no es válida, por favor intenta con otra",
+      "paymentNotSuccessful": "¡El pago no fue exitoso, por favor intenta de nuevo!",
+      "plaseSelectCard": "Por favor, selecciona una tarjeta"
+    }
+  },
+  "login": {
+    "signInYourAccount": "Inicia sesión en tu cuenta",
+    "yourUsername": "Tu nombre de usuario",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "dontHaveAnAccountYet": "¿Aún no tienes una cuenta?",
+    "createAccount": "Crear cuenta",
+    "error": {
+      "incorrectUsernameOrPassword": "Nombre de usuario y/o contraseña incorrectos"
+    }
+  },
+  "pageNotFound": {
+    "title": "Página no encontrada",
+    "description": "¡Ups! Parece que esta página no existe o ha sido eliminada",
+    "backHome": "Volver al inicio"
+  },
+  "products": {
+    "warehouseIsEmpty": "¡Ups! Parece que nuestro almacén está vacío.",
+    "newest": "Más nuevos",
+    "oldest": "Más antiguos",
+    "error": {
+      "failedFetchProducts": "¡Error al cargar los productos!"
+    }
   }
 }
