@@ -14,7 +14,7 @@ const Address = () => {
           <h2 className="text-lg font-bold text-gray-100 sm:text-xl">
             {t('cart.sendToHome')}
           </h2>
-          <p>
+          <p className="text-gray-400">
             {selectedUserData?.firstAddress}, {selectedUserData?.secondAddress}
           </p>
         </div>

@@ -107,7 +107,7 @@ const CartCheckoutDetails = () => {
               {t('cart.purchaseSummary')}
             </span>
           </div>
-          <hr className="my-4 mx-[-24px]" />
+          <hr className="my-4 -mx-6" />
           <Address />
           <hr className="my-4" />
           {selectedCartTransaction.products.length > 0 &&
@@ -120,35 +120,36 @@ const CartCheckoutDetails = () => {
                 >
                   <p className="w-40 text-gray-100 truncate">{name}</p>{' '}
                   <span className="text-gray-600">X {quantity} </span>
-                  <p className="text-gray-100 before:mr-1">
+                  <p className="text-gray-400 before:mr-1">
                     {numberWithCurrency(price)}
                   </p>
                 </div>
               ),
             )}
 
+          <hr className="my-4" />
           <div className="flex justify-between mb-2">
             <p className="text-gray-100">{t('cart.subTotal')}</p>
-            <p className="text-gray-100 before:mr-1">
+            <p className="text-gray-400 before:mr-1">
               {numberWithCurrency(totalAmount)}
             </p>
           </div>
           <div className="flex justify-between mb-2">
             <p className="text-gray-100">{t('cart.baseRate')}</p>
-            <p className="text-gray-100 before:mr-1">
+            <p className="text-gray-400 before:mr-1">
               {numberWithCurrency(fixedRate)} +{' '}
               {`${(variablePercentage * 100).toFixed(1)}%`}
             </p>
           </div>
           <div className="flex justify-between mb-2">
             <p className="text-gray-100">{t('cart.shippingFee')}</p>
-            <p className="text-gray-100 before:mr-1">{numberWithCurrency(0)}</p>
+            <p className="text-gray-400 before:mr-1">{numberWithCurrency(0)}</p>
           </div>
           <hr className="my-4" />
-          <div className="flex justify-between text-gray-100">
-            <p className="text-lg font-bold">{t('cart.total')}</p>
+          <div className="flex justify-between mb-2">
+            <p className="text-lg font-bold text-gray-100">{t('cart.total')}</p>
             <div>
-              <p className="mb-1 text-lg before:mr-1 font-bold">
+              <p className="mb-1 text-lg before:mr-1 font-bold text-gray-400">
                 {numberWithCurrency(calculateRate(totalAmount))}
               </p>
             </div>

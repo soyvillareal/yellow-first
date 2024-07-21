@@ -64,7 +64,7 @@ const MobileCheckoutDetails = ({
             {t('cart.purchaseSummary')}
           </span>
         </div>
-        <hr className="my-4 mx-[-24px]" />
+        <hr className="my-4 -mx-6" />
         <div className="flex justify-between mb-2">
           <p className="text-gray-100">{t('cart.subTotal')}</p>
           <p className="text-gray-100 before:mr-1">

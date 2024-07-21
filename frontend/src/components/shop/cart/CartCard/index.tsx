@@ -106,7 +106,7 @@ const CartCard = ({
                 type="button"
                 disabled={isDisableDecrease}
                 className={cn(
-                  'rounded-l py-1 px-3.5 duration-100 hover:bg-gray-900 hover:text-white',
+                  'rounded-l py-1 px-3.5 duration-100 hover:bg-gray-900 hover:text-white select-none',
                   isDisableDecrease
                     ? 'cursor-not-allowed bg-gray-700'
                     : 'cursor-pointer',
@@ -122,7 +122,7 @@ const CartCard = ({
                 onClick={handleClickIncrementQuantity}
                 type="button"
                 className={cn(
-                  'px-3 py-1 duration-100 rounded-r hover:text-white hover:bg-gray-900',
+                  'px-3 py-1 duration-100 rounded-r hover:text-white hover:bg-gray-900 select-none',
                   isDisableIncrease ? 'cursor-not-allowed ' : 'cursor-pointer',
                 )}
               >
