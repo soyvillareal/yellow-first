@@ -7,7 +7,7 @@ import { CommonUseCase } from 'src/common/application/common.usecase';
 import { ConfigService } from '@nestjs/config';
 import { TSession } from 'src/session/domain/entities/session.entity';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
+import { SessionService } from 'src/session/infrastructure/services/session.service';
 
 @WebSocketGateway({
   cors: {
@@ -25,7 +25,7 @@ export class TransactionsWebsockets implements websocketRepository {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly sessionService: SessionService,
     private readonly configService: ConfigService,
   ) {
     this.commonUseCase = new CommonUseCase(this.configService);
@@ -51,7 +51,7 @@ export class TransactionsWebsockets implements websocketRepository {
           client.disconnect(true);
         }
 
-        const foundUser = await this.usersService.userExistsById(payload.data.id);
+        const foundUser = await this.sessionService.userExistsById(payload.data.id);
 
         if (foundUser === null) {
           client.disconnect(true);

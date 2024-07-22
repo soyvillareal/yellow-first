@@ -9,7 +9,7 @@ import { SessionService } from 'src/session/infrastructure/services/session.serv
 import { TSession } from 'src/session/domain/entities/session.entity';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
+export class LoggedAuthGuard extends AuthGuard('jwt') implements CanActivate {
   private readonly commonUseCase: CommonUseCase;
   constructor(
     private readonly jwtService: JwtService,
@@ -36,23 +36,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         }),
       });
 
-      if (payload?.data !== undefined) {
-        if (payload?.data?.id === undefined) {
-          throw new UnauthorizedException('Invalid token');
-        }
-
-        const foundUser = await this.sessionService.userExistsById(payload.data.id);
-
-        if (foundUser === null) {
-          throw new UnauthorizedException('Ups! Something went wrong, please try again');
-        }
-
-        if (foundUser === false) {
-          throw new UnauthorizedException('Invalid token');
-        }
+      if (payload?.data?.id === undefined) {
+        throw new UnauthorizedException('User not logged in!');
       }
 
-      req.user = payload;
+      const foundUser = await this.sessionService.userExistsById(payload.data.id);
+
+      if (foundUser === null) {
+        throw new UnauthorizedException('Ups! Something went wrong, please try again');
+      }
+
+      if (foundUser === false) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
       return true;
     } catch (error) {
       throw new UnauthorizedException(error?.message || 'Invalid token');

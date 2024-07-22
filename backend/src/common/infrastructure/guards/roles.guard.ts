@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { ERoles } from 'src/users/domain/entities/users.entity';
+import { ERoles } from 'src/session/domain/entities/session.entity';
 import { CommonUseCase } from 'src/common/application/common.usecase';
 import { TAuthSessionData } from 'src/session/domain/entities/session.entity';
 

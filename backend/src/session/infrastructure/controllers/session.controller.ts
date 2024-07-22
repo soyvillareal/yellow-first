@@ -5,7 +5,7 @@ import { RequestWithUser } from 'passport-saml/lib/passport-saml/types';
 
 import { ApiResponseCase } from 'src/common/domain/entities/common.entity';
 import { TAuthSessionResponse } from 'src/session/domain/entities/session.entity';
-import { IGetInfoByUsername } from 'src/users/domain/entities/users.entity';
+import { IGetInfoByUsername } from 'src/session/domain/entities/session.entity';
 import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
 import { CommonService } from 'src/common/infrastructure/services/common.service';
 
@@ -13,7 +13,6 @@ import { SessionService } from '../services/session.service';
 import { SessionUseCase } from '../../application/session.usecase';
 import { AnonymousSessionDto, authSessionDto, authSessionResponseDto } from '../dtos/session.dto';
 import { TokenValidationPipe } from '../core/session.pipe';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
 
 @ApiTags('Sessions')
 @Controller('session')
@@ -23,10 +22,9 @@ export class SessionController {
 
   constructor(
     private readonly sessionService: SessionService,
-    private readonly userService: UsersService,
     private readonly configService: ConfigService,
   ) {
-    this.sessionUseCase = new SessionUseCase(this.sessionService, this.userService, this.configService);
+    this.sessionUseCase = new SessionUseCase(this.sessionService, this.configService);
   }
 
   @Post('auth')

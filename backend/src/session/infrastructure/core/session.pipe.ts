@@ -3,15 +3,15 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import bcrypt from 'bcrypt';
 
-import { UsersService } from 'src/users/infrastructure/services/users.service';
+import { SessionService } from 'src/session/infrastructure/services/session.service';
 import { ICredentialsToken } from 'src/session/domain/entities/session.entity';
-import { IGetInfoByUsername } from 'src/users/domain/entities/users.entity';
+import { IGetInfoByUsername } from 'src/session/domain/entities/session.entity';
 
 import { authSessionDto } from '../dtos/session.dto';
 
 @Injectable()
 export class TokenValidationPipe implements PipeTransform {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly sessionService: SessionService) {}
 
   async transform(credentials: ICredentialsToken): Promise<IGetInfoByUsername> {
     const planCredentialsClass = plainToClass(authSessionDto, credentials);
@@ -25,7 +25,7 @@ export class TokenValidationPipe implements PipeTransform {
       throw new HttpException({ message: messages }, HttpStatus.BAD_REQUEST);
     }
 
-    const userFound = await this.usersService.getInfoByUsername(credentials.username);
+    const userFound = await this.sessionService.getInfoByUsername(credentials.username);
 
     if (userFound === null) {
       throw new HttpException('Ups! Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);

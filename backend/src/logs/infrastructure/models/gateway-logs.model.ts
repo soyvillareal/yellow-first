@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { IGatewayLogsEntity } from 'src/logs/domain/entities/logs.entity';
-import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
+import { TPartialRequest } from 'src/common/domain/entities/common.entity';
 
 import { LogsModel } from './logs.model';
 

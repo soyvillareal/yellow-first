@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';

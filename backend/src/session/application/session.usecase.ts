@@ -3,18 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment-timezone';
 
-import { IGetInfoByUsername } from 'src/users/domain/entities/users.entity';
+import { IGetInfoByUsername } from 'src/session/domain/entities/session.entity';
 
 import { sessionRepository } from '../domain/repository/session.repository';
 import { ESessionType, IAnonymousSessionPayload, TAuthSessionResponse, TSession } from '../domain/entities/session.entity';
-import { usersRepository } from 'src/users/domain/repository/users.repository';
 export class SessionUseCase {
   private readonly sessionDurationInHoursAnonumous = 720; // 30 days
   private readonly sessionDurationInHoursAuth = 24; // 1 day
 
   constructor(
     private readonly sessionRepository: sessionRepository,
-    private readonly userRepository: usersRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -35,7 +33,7 @@ export class SessionUseCase {
 
     const expiredAt = moment().add(this.sessionDurationInHoursAuth, 'hours').toDate();
 
-    const user = await this.userRepository.getInfoByUsername(username);
+    const user = await this.sessionRepository.getInfoByUsername(username);
 
     const signSession: TSession = {
       id: sessionId,

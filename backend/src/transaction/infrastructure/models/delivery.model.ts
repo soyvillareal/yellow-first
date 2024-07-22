@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 import { IDeliveryEntity } from '../../domain/entities/transaction.entity';
 import { TransactionModel } from './transaction.model';

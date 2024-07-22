@@ -20,7 +20,7 @@ import { ApiResponseCase, IHeaderUserTokenData } from 'src/common/domain/entitie
 import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/services/payment-gateway.service';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
+import { SessionService } from 'src/session/infrastructure/services/session.service';
 import {
   ICardTokenizationResponse,
   ICreatePaymentResponse,
@@ -38,6 +38,7 @@ import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services
 import { ValidateTokenGuard } from '../guard/transaction.guard';
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
 import { paramsWithUUIDDto } from 'src/common/infrastructure/dtos/common.dto';
+import { LoggedAuthGuard } from 'src/common/infrastructure/guards/logged.guard';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -49,7 +50,7 @@ export class TransactionController {
   constructor(
     private readonly transactionService: TransactionService,
     private readonly productService: ProductService,
-    private readonly userService: UsersService,
+    private readonly sessionService: SessionService,
     private readonly paymentGatewayService: PaymentGatewayService,
     private readonly gatewayTokenService: GatewayTokenService,
     private readonly transactionsWebsockets: TransactionsWebsockets,
@@ -58,7 +59,7 @@ export class TransactionController {
     this.transactionUseCase = new TransactionUseCase(
       this.transactionService,
       this.productService,
-      this.userService,
+      this.sessionService,
       this.paymentGatewayService,
       this.gatewayTokenService,
       this.transactionsWebsockets,
@@ -69,6 +70,7 @@ export class TransactionController {
   @Post('payment')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @UseGuards(LoggedAuthGuard)
   @UseGuards(ValidateTokenGuard)
   @ApiOperation({
     summary: 'Genera un pago',
@@ -98,13 +100,14 @@ export class TransactionController {
   }
 
   @Post('card-tokenize')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(LoggedAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Crea una transacción',
     description: 'Este servicio creará una transacción.',
     tags: ['Transactions'],
   })
-  @UseGuards(JwtAuthGuard)
   async cardTokenize(
     @Body() body: CardTokenizeDto,
     @Req() req: IHeaderUserTokenData,
@@ -160,6 +163,8 @@ export class TransactionController {
   }
 
   @Get('/config')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(LoggedAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Obtiene la configuración de una transacción',
@@ -180,13 +185,14 @@ export class TransactionController {
   }
 
   @Get('/:id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(LoggedAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Obtiene una transacción por id',
     description: 'Este servicio obtendrá una transacción por id.',
     tags: ['Transactions'],
   })
-  @UseGuards(JwtAuthGuard)
   async getTransactionByid(
     @Param() param: paramsWithUUIDDto,
     @Req() req: IHeaderUserTokenData,

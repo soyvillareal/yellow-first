@@ -8,7 +8,7 @@ import {
   TAuthSessionData,
   TAuthSessionResponse,
 } from 'src/session/domain/entities/session.entity';
-import { ERoles } from 'src/users/domain/entities/users.entity';
+import { ERoles } from 'src/session/domain/entities/session.entity';
 
 export class authSessionDto implements ICredentialsToken {
   @IsNotEmpty({

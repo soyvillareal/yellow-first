@@ -1,4 +1,44 @@
-import { IUsersEntity } from 'src/users/domain/entities/users.entity';
+export enum ERoles {
+  ADMIN = 'admin',
+  CLIENT = 'client',
+}
+
+export interface IUsersEntity {
+  id: string;
+  email: string;
+  username: string;
+  password: string;
+  role: ERoles;
+  firstAddress: string;
+  secondAddress: string;
+  state: string;
+  city: string;
+  pincode: string;
+  phoneCode: string;
+  phoneNumber: string;
+  updatedAt: Date;
+  createdAt: Date;
+}
+export type TGetInfoUser = Pick<
+  IUsersEntity,
+  'email' | 'phoneCode' | 'phoneNumber' | 'firstAddress' | 'secondAddress' | 'state' | 'city' | 'pincode'
+>;
+
+export type IGetInfoByUsername = Pick<
+  IUsersEntity,
+  | 'id'
+  | 'email'
+  | 'username'
+  | 'password'
+  | 'role'
+  | 'firstAddress'
+  | 'secondAddress'
+  | 'state'
+  | 'city'
+  | 'pincode'
+  | 'phoneCode'
+  | 'phoneNumber'
+>;
 
 export interface ISeedAnonymousSession {
   seed: string;

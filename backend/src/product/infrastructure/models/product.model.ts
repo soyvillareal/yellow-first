@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { IProductEntity } from 'src/product/domain/entities/product.entity';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 @Entity({ name: 'products' })
 export class ProductModel implements IProductEntity {

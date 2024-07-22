@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
 
 import { IParamsWithUUID } from 'src/common/domain/entities/common.entity';
-import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
+import { ApiResponseCase } from 'src/common/domain/entities/common.entity';
 
 export class apiResponseDto<T> implements ApiResponseCase<T> {
   @ApiProperty({

@@ -17,7 +17,7 @@ import {
   ITransactionsResponse,
   TResponseOkOrError,
 } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
-import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
+import { TPartialRequest } from 'src/common/domain/entities/common.entity';
 
 @Injectable()
 export class PaymentGatewayService implements paymentGatewayRepository {

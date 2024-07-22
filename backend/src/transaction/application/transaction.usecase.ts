@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
-import { usersRepository } from 'src/users/domain/repository/users.repository';
+import { sessionRepository } from 'src/session/domain/repository/session.repository';
 import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
 import { websocketRepository } from 'src/transaction/domain/repository/transaction.repository';
@@ -30,7 +30,7 @@ export class TransactionUseCase {
   constructor(
     private readonly transactionRepository: transactionRepository,
     private readonly productRepository: productRepository,
-    private readonly userRepository: usersRepository,
+    private readonly sessionRepository: sessionRepository,
     private readonly paymentGatewayRepository: paymentGatewayRepository,
     private readonly gatewayTokenRepository: gatewayTokenRepository,
     private readonly websocketRepository: websocketRepository,
@@ -41,7 +41,7 @@ export class TransactionUseCase {
   }
 
   async createPayment(userId: string, { products, tokenId, installments }: ICreatePaymentPayload): Promise<string> {
-    const user = await this.userRepository.getInfoById(userId);
+    const user = await this.sessionRepository.getInfoById(userId);
 
     if (user === null || user === undefined) {
       throw new Error('Whoops! Something went wrong.');
@@ -260,7 +260,7 @@ export class TransactionUseCase {
       }
     }
 
-    const user = await this.userRepository.getInfoById(transactionProduct.userId);
+    const user = await this.sessionRepository.getInfoById(transactionProduct.userId);
 
     if (user === null || user === undefined) {
       throw new Error('Whoops! Something went wrong.');

@@ -1,7 +1,7 @@
 import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import bcrypt from 'bcrypt';
 
-import { ERoles, IUsersEntity } from 'src/users/domain/entities/users.entity';
+import { ERoles, IUsersEntity } from 'src/session/domain/entities/session.entity';
 
 @Entity({ name: 'users' })
 export class UsersModel extends BaseEntity implements IUsersEntity {

@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { ELogPriority, ILogsEntity } from 'src/logs/domain/entities/logs.entity';
-import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { TPartialRequest } from 'src/common/domain/entities/common.entity';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 @Entity({ name: 'logs' })
 export class LogsModel implements ILogsEntity {

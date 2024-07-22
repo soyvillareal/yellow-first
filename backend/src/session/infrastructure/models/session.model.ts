@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { ESessionType, ISessionEntity } from 'src/session/domain/entities/session.entity';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 @Entity({ name: 'sessions' })
 export class SessionModel implements ISessionEntity {

@@ -8,8 +8,8 @@ import config from 'src/environments';
 import { TransactionService } from '../services/transaction.service';
 import { TransactionModel } from '../models/transaction.model';
 import { TransactionController } from '../controllers/transaction.controller';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { SessionService } from 'src/session/infrastructure/services/session.service';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
 import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
@@ -19,6 +19,8 @@ import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/servic
 import { HttpModule } from '@nestjs/axios';
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
+import { SessionModel } from 'src/session/infrastructure/models/session.model';
+
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
 import { TransactionProductsModel } from '../models/transaction-products.model';
 import { DeliveryModel } from '../models/delivery.model';
@@ -33,6 +35,7 @@ import { TransactionConfigModel } from '../models/transaction-config.model';
       TransactionConfigModel,
       DeliveryModel,
       UsersModel,
+      SessionModel,
       ProductModel,
       LogsModel,
       GatewayTokenModel,
@@ -52,7 +55,7 @@ import { TransactionConfigModel } from '../models/transaction-config.model';
   providers: [
     TransactionService,
     TransactionsWebsockets,
-    UsersService,
+    SessionService,
     ProductService,
     LogsService,
     GatewayTokenService,

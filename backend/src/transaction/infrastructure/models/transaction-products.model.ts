@@ -4,7 +4,7 @@ import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
 import { ITransactionProductsEntity } from '../../domain/entities/transaction.entity';
 import { TransactionModel } from './transaction.model';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 @Entity({ name: 'transactions_products' })
 export class TransactionProductsModel extends BaseEntity implements ITransactionProductsEntity {

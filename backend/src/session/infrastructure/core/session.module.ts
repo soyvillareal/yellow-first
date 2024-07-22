@@ -4,16 +4,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
 import config from 'src/environments';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
 import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
+import { SessionService } from 'src/session/infrastructure/services/session.service';
 
 import { SessionModel } from '../models/session.model';
 import { SessionController } from '../controllers/session.controller';
-import { SessionService } from '../services/session.service';
 
 @Module({
   imports: [
@@ -29,7 +28,7 @@ import { SessionService } from '../services/session.service';
     }),
   ],
   controllers: [SessionController],
-  providers: [UsersService, SessionService, LogsService, CommonService],
-  exports: [],
+  providers: [SessionService, LogsService, CommonService],
+  exports: [SessionService],
 })
 export class TokensModule {}

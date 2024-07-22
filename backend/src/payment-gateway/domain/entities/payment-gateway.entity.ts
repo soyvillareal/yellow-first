@@ -1,4 +1,4 @@
-import { TPartialRequest } from 'src/framework/domain/entities/framework.entity';
+import { TPartialRequest } from 'src/common/domain/entities/common.entity';
 
 export type TCardTypes = 'CARD' | 'NEQUI' | 'BANCOLOMBIA' | 'BANCOLOMBIA_TRANSFER' | 'CLAVE' | 'DAVIPLATA';
 

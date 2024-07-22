@@ -5,12 +5,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokensModule } from 'src/session/infrastructure/core/session.module';
-import { UsersModule } from 'src/users/infrastructure/core/users.module';
 import { PaymentGatewayModule } from 'src/payment-gateway/infrastructure/core/payment-gateway.module';
 import { TransactionModule } from 'src/transaction/infrastructure/core/transaction.module';
 import { LogsModule } from 'src/logs/infrastructure/core/logs.module';
-import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { UsersModel } from 'src/users/infrastructure/models/users.model';
+import { UsersModel } from 'src/session/infrastructure/models/users.model';
 import { TransactionModel } from 'src/transaction/infrastructure/models/transaction.model';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { ProductsModule } from 'src/product/infrastructure/core/product.module';
@@ -25,7 +23,6 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
     DatabaseModule,
     ProductsModule,
     TokensModule,
-    UsersModule,
     LogsModule,
     TransactionModule,
     PaymentGatewayModule,
@@ -62,7 +59,7 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
     ]),
   ],
   controllers: [],
-  providers: [JwtAuthGuard, UsersService, ProductService],
+  providers: [JwtAuthGuard, ProductService],
   exports: [JwtAuthGuard],
 })
 export class AppModule {}
