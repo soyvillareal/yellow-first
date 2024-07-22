@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { TTransactionCart } from './features/transaction/transaction.types';
 import { getStorage } from './storage';
-import { ELanguages } from './types';
+import { ELanguages, ICalculateRateConfig } from './types';
 
 export const configSite = {
   name: 'Yellow First',
@@ -61,15 +61,16 @@ export const getTotalAmount = (items: TTransactionCart[]): number => {
   return total;
 };
 
-export const fixedRate = 900.0; // in COP
-export const variablePercentage = 0.029; // 2.9%
+export const calculateRate = (
+  config: ICalculateRateConfig | undefined,
+  amount: number,
+): number => {
+  const variableRate = (config?.fixedRate || 0) + amount;
 
-export const calculateRate = (amount: number) => {
-  const variableRate = fixedRate + amount;
+  const totalRate =
+    (variableRate / 100) * (config?.variablePercentage || 0) * 100;
 
-  const totalRate = (variableRate / 100) * variablePercentage * 100;
-
-  return amount + totalRate;
+  return Math.floor(amount + totalRate);
 };
 
 export const cardType = (cardNumber: string) => {

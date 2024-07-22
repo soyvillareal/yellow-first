@@ -8,7 +8,9 @@ import {
   ICardTokenizeResponse,
   IGetTransactionByIdRequest,
   IGetTransactionByIdResponse,
+  IGetTransactionConfigResponse,
   IPaymentRequest,
+  IPaymentResponse,
 } from './transaction.types';
 
 export const transactionApi = api.injectEndpoints({
@@ -29,7 +31,7 @@ export const transactionApi = api.injectEndpoints({
         },
       }),
     }),
-    payment: builder.mutation<IAPIResponse, IPaymentRequest>({
+    payment: builder.mutation<IAPIResponse<IPaymentResponse>, IPaymentRequest>({
       query: ({ products, tokenId, installments }) => ({
         url: `${env.VITE_APP_BASE_API_URL}/transaction/payment`,
         method: 'POST',
@@ -45,8 +47,17 @@ export const transactionApi = api.injectEndpoints({
       IAPIResponse<IGetTransactionByIdResponse>,
       IGetTransactionByIdRequest
     >({
-      query: (transactionId) => ({
+      query: ({ transactionId }) => ({
         url: `${env.VITE_APP_BASE_API_URL}/transaction/${transactionId}`,
+        method: 'GET',
+      }),
+    }),
+    getTransactionConfig: builder.query<
+      IAPIResponse<IGetTransactionConfigResponse>,
+      void
+    >({
+      query: () => ({
+        url: `${env.VITE_APP_BASE_API_URL}/transaction/config`,
         method: 'GET',
       }),
     }),
@@ -57,4 +68,5 @@ export const {
   useCardTokenizeMutation,
   usePaymentMutation,
   useLazyGetTransactionByIdQuery,
+  useGetTransactionConfigQuery,
 } = transactionApi;

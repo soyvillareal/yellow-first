@@ -21,7 +21,7 @@ const ProductsSkeleton = ({ itemsCount = 10 }: IProductsSkeletonProps) => {
         {fillArray(itemsCount).map((_, index) => (
           <div
             key={index}
-            className="flex flex-col items-center self-start border border-gray-700 rounded-lg bg-gray-900 hover:bg-gray-800 hover:border hover:border-gray-900 animate-pulse "
+            className="flex flex-col items-center self-start border border-gray-700 rounded-lg bg-gray-900 hover:bg-gray-800 hover:border hover:border-gray-900 animate-pulse"
           >
             <div className="w-full relative p-4">
               <div className="bg-slate-700 w-full h-56 rounded-t-lg lg:h-80" />

@@ -1,3 +1,5 @@
+import { ETransactionStatus } from '@helpers/types';
+
 import { IGetProductsResponse } from '../product/product.types';
 
 export type TTransactionCart = IGetProductsResponse & {
@@ -72,6 +74,10 @@ export interface IPaymentProducts {
   quantity: number;
 }
 
+export interface IPaymentResponse {
+  transactionId: string;
+}
+
 export interface IPaymentRequest {
   products: IPaymentProducts[];
   tokenId: string;
@@ -80,7 +86,14 @@ export interface IPaymentRequest {
 
 export interface IGetTransactionByIdResponse {
   amount: number;
+  status: ETransactionStatus;
 }
 export interface IGetTransactionByIdRequest {
   transactionId: string;
+}
+
+export interface IGetTransactionConfigResponse {
+  fixedRate: number;
+  variablePercentage: number;
+  shippingFee: number;
 }

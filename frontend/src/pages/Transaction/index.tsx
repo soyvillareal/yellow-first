@@ -2,33 +2,39 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import PageContainer from 'layouts/PageContainer';
 import CustomButton from '@components/headlessUI/CustomButton';
 import { subscribeToTransactionUpdates } from '@helpers/sockets/transactions';
 import { ISubscribeToTransactionUpdates } from '@helpers/sockets/sockets.types';
 import { ETransactionStatus } from '@helpers/types';
 import { cn, numberWithCurrency } from '@helpers/constants';
 import { useLazyGetTransactionByIdQuery } from '@helpers/features/transaction/transaction.api';
+import {
+  clearCard,
+  clearCart,
+} from '@helpers/features/transaction/transaction.slice';
+import useAppDispatch from '@hooks/redux/useAppDispatch';
+import PageContainer from 'layouts/PageContainer';
 
 import { messageByStatus } from './Transaction.contants';
 
 const Transaction = () => {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const { transactionId } = useParams();
   const [transactionData, setTransactionData] =
     useState<ISubscribeToTransactionUpdates | null>(null);
   const navigate = useNavigate();
 
+  const [
+    getTransactionById,
+    { data: dataGetTransactionById, isLoading: isLoadingGetTransactionById },
+  ] = useLazyGetTransactionByIdQuery();
+
   useEffect(() => {
     subscribeToTransactionUpdates((transaction) => {
       setTransactionData(transaction);
     });
   }, []);
-
-  const [
-    getTransactionById,
-    { data: dataGetTransactionById, isLoading: isLoadingGetTransactionById },
-  ] = useLazyGetTransactionByIdQuery();
 
   useEffect(() => {
     (async () => {
@@ -40,11 +46,14 @@ const Transaction = () => {
         await getTransactionById({
           transactionId,
         }).unwrap();
+
+        dispatch(clearCart());
+        dispatch(clearCard());
       } catch (error) {
         navigate('/404');
       }
     })();
-  }, [getTransactionById, navigate, transactionId]);
+  }, [getTransactionById, dispatch, navigate, transactionId]);
 
   const handleClick = useCallback(() => {
     navigate('/');
@@ -52,18 +61,29 @@ const Transaction = () => {
 
   const transactionIsPending = useMemo(() => {
     return (
-      transactionData === null ||
-      transactionData?.status === ETransactionStatus.PENDING
+      (transactionData === null ||
+        transactionData?.status === ETransactionStatus.PENDING) &&
+      dataGetTransactionById?.data?.status === ETransactionStatus.PENDING
     );
-  }, [transactionData]);
+  }, [transactionData, dataGetTransactionById]);
 
   const transactionStatus: ETransactionStatus = useMemo(() => {
+    if (dataGetTransactionById?.data?.status !== ETransactionStatus.PENDING) {
+      return dataGetTransactionById?.data?.status || ETransactionStatus.PENDING;
+    }
     return transactionData?.status || ETransactionStatus.PENDING;
-  }, [transactionData]);
+  }, [transactionData, dataGetTransactionById]);
 
   const transactionMessages = useMemo(() => {
-    return messageByStatus(t)[transactionStatus];
-  }, [t, transactionStatus]);
+    if (transactionData === null && dataGetTransactionById?.data?.status) {
+      return messageByStatus(t)[dataGetTransactionById?.data?.status];
+    } else if (transactionData) {
+      return messageByStatus(t)[
+        transactionData.status || ETransactionStatus.PENDING
+      ];
+    }
+    return messageByStatus(t)[ETransactionStatus.PENDING];
+  }, [t, transactionData, dataGetTransactionById?.data?.status]);
 
   return (
     <PageContainer
@@ -74,7 +94,7 @@ const Transaction = () => {
       }}
       loading={isLoadingGetTransactionById}
     >
-      <div className="px-6 isolate pt-14 lg:px-8">
+      <div className="md:px-6 isolate pt-14 lg:px-8">
         <div
           className="absolute inset-x-0 overflow-hidden -top-40 -z-10 transform-gpu blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -94,7 +114,7 @@ const Transaction = () => {
             </div>
             <h1
               className={cn(
-                'text-4xl text-gradient-to-tr opacity-80 font-bold tracking-tight  text-transparent bg-clip-text bg-gradient-to-tr from-[#ff4694] to-[#776fff]',
+                'text-2xl sm:text-4xl text-gradient-to-tr opacity-80 font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-tr from-[#ff4694] to-[#776fff]',
                 [
                   ETransactionStatus.DECLINED,
                   ETransactionStatus.VOIDED,
@@ -111,7 +131,7 @@ const Transaction = () => {
               </p>
             )}
             <p className="mt-6 text-lg leading-8 text-gray-100">
-              {t('transaction.amout', {
+              {t('transaction.amount', {
                 replace: {
                   amount: numberWithCurrency(
                     dataGetTransactionById?.data?.amount || 0,
@@ -121,7 +141,7 @@ const Transaction = () => {
             </p>
             <div className="flex items-center justify-center mt-10 gap-x-6">
               <CustomButton
-                className="w-full sm:w-1/4"
+                className="w-full w-30 sm:w-1/4"
                 onClick={handleClick}
                 variant="primary"
                 disabled={transactionIsPending}

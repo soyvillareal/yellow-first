@@ -6,18 +6,12 @@ import {
   selectCartTransaction,
 } from '@helpers/features/transaction/transaction.selector';
 import useAppSelector from '@hooks/redux/useAppSelector';
-import {
-  calculateRate,
-  cn,
-  fixedRate,
-  getTotalAmount,
-  numberWithCurrency,
-  variablePercentage,
-} from '@helpers/constants';
+import { cn, getTotalAmount, numberWithCurrency } from '@helpers/constants';
 import CustomButton from '@components/headlessUI/CustomButton';
 import ButtonLoading from '@components/headlessUI/ButtonLoading';
 
 import { IMobileCheckoutDetailsProps } from './MobileCheckoutDetails.types';
+import CardConfig from '../CardConfig';
 
 const MobileCheckoutDetails = ({
   handleClickPayWithCard,
@@ -71,26 +65,7 @@ const MobileCheckoutDetails = ({
             {numberWithCurrency(totalAmount)}
           </p>
         </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-100">{t('cart.baseRate')}</p>
-          <p className="text-gray-100 before:mr-1">
-            {numberWithCurrency(fixedRate)} +{' '}
-            {`${(variablePercentage * 100).toFixed(1)}%`}
-          </p>
-        </div>
-        <div className="flex justify-between mb-2">
-          <p className="text-gray-100">{t('cart.shippingFee')}</p>
-          <p className="text-gray-100 before:mr-1">{numberWithCurrency(0)}</p>
-        </div>
-        <hr className="my-4" />
-        <div className="flex justify-between text-gray-100">
-          <p className="text-lg font-bold">{t('cart.total')}</p>
-          <div>
-            <p className="mb-1 text-lg before:mr-1 font-bold">
-              {numberWithCurrency(calculateRate(totalAmount))}
-            </p>
-          </div>
-        </div>
+        <CardConfig totalAmount={totalAmount} />
         {selectedCard.cardInfo === null ? (
           <CustomButton onClick={handleClickPayWithCard} variant="default">
             {t('cart.payWithCard')}

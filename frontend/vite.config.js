@@ -27,8 +27,8 @@ export default defineConfig({
     },
   },
   server: {
-    host: '192.168.1.5',
-    port: 3000, // Puedes especificar otro puerto si lo deseas
-    open: true, // Abre el navegador automáticamente (opcional)
+    host: '192.168.1.5', // Specify the host to use (default: 'localhost')
+    port: 3000, // Specify the port to use (default: 3000)
+    open: true, // Open the browser on server start (default: false)
   },
 });

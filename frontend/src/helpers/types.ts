@@ -69,6 +69,11 @@ export interface ISEOPage {
   };
 }
 
+export interface ICalculateRateConfig {
+  fixedRate: number;
+  variablePercentage: number;
+}
+
 export enum ETransactionStatus {
   APPROVED = 'APPROVED',
   PENDING = 'PENDING',

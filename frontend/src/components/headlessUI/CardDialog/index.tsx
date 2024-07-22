@@ -121,7 +121,7 @@ const CardDialog = ({ open, onClose }: ICardDialogProps) => {
             </div>
             {isNotEmpty(errorCode) && (
               <p className="mt-2 text-sm text-center text-red-600">
-                {t('cart.erro.cardNotValid')}
+                {t('cart.error.cardNotValid')}
               </p>
             )}
           </DialogPanel>
