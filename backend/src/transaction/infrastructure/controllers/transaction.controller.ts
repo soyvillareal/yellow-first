@@ -12,7 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/common/infrastructure/guards/jwt.guard';
 
@@ -31,14 +31,22 @@ import {
 
 import { TransactionService } from '../services/transaction.service';
 import { TransactionUseCase } from '../../application/transaction.usecase';
-import { CardTokenizeDto, CreatePaymentDto } from '../dtos/transaction.dto';
+import {
+  CardTokenizeDto,
+  CreatePaymentDto,
+  GatewayEventDto,
+  GetTransactionConfigDto,
+  TransactionByIdResponseDto,
+  UpdateTransactionDto,
+} from '../dtos/transaction.dto';
 import { ConfigService } from '@nestjs/config';
 import { IGatewayEvent, IGatewayEventHeaders } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
-import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
+import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/gateway-token.service';
 import { ValidateTokenGuard } from '../guard/transaction.guard';
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
 import { paramsWithUUIDDto } from 'src/common/infrastructure/dtos/common.dto';
 import { LoggedAuthGuard } from 'src/common/infrastructure/guards/logged.guard';
+import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -73,9 +81,28 @@ export class TransactionController {
   @UseGuards(LoggedAuthGuard)
   @UseGuards(ValidateTokenGuard)
   @ApiOperation({
-    summary: 'Genera un pago',
-    description: 'Este servicio generará un pago.',
+    summary: 'Generar una transacción',
+    description: 'Este servicio toma los productos y el monto para luego generar una transacción.',
     tags: ['Transactions'],
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.OK,
+    description: 'Payment created successfully!',
+    dataDto: CreatePaymentDto,
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.BAD_REQUEST,
+    description: 'El producto no tiene existencias o stock suficiente',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', enum: [HttpStatus.BAD_REQUEST] },
+        message: {
+          type: 'string',
+          enum: ['Product out of stock!'],
+        },
+      },
+    },
   })
   async createPayment(
     @Body() body: CreatePaymentDto,
@@ -104,9 +131,14 @@ export class TransactionController {
   @UseGuards(LoggedAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Crea una transacción',
-    description: 'Este servicio creará una transacción.',
+    summary: 'Tokeniza una tarjeta',
+    description: 'Este servicio obtiene los datos de una tarjeta y la tokeniza.',
     tags: ['Transactions'],
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.OK,
+    description: 'Tarjeta tokenizada correctamente!',
+    dataDto: CardTokenizeDto,
   })
   async cardTokenize(
     @Body() body: CardTokenizeDto,
@@ -126,17 +158,24 @@ export class TransactionController {
         data: cardTokenized,
       };
     } catch (error) {
-      console.error(error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Post('update-transaction')
+  @Post('webhook')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Actualiza una transacción',
     description: 'Este servicio actualizará una transacción mediante un webhook.',
     tags: ['Transactions'],
+  })
+  @ApiBody({
+    type: GatewayEventDto,
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.OK,
+    description: '¡Trasacción actualizada correctamente!',
+    dataDto: UpdateTransactionDto,
   })
   async webHookTransaction(
     @Body() body: IGatewayEvent,
@@ -167,9 +206,28 @@ export class TransactionController {
   @UseGuards(LoggedAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Obtiene la configuración de una transacción',
+    summary: 'Configuración de una transacción',
     description: 'Este servicio obtendrá la configuración de una transacción.',
     tags: ['Transactions'],
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.OK,
+    description: '¡Configuración de transacción encontrada correctamente!',
+    dataDto: GetTransactionConfigDto,
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.BAD_REQUEST,
+    description: '¡Configuración de transacción no encontrada!',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', enum: [HttpStatus.BAD_REQUEST] },
+        message: {
+          type: 'string',
+          enum: ['Transaction config not found!'],
+        },
+      },
+    },
   })
   async getTransactionConfig(): Promise<ApiResponseCase<IGetTransactionConfig>> {
     try {
@@ -190,8 +248,27 @@ export class TransactionController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Obtiene una transacción por id',
-    description: 'Este servicio obtendrá una transacción por id.',
+    description: 'Este servicio obtiene la información de una transacción por id',
     tags: ['Transactions'],
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.OK,
+    description: '¡Transacción encontrada correctamente!',
+    dataDto: TransactionByIdResponseDto,
+  })
+  @DApiResponseCase({
+    statusCode: HttpStatus.BAD_REQUEST,
+    description: '¡Transacción no encontrada!',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', enum: [HttpStatus.BAD_REQUEST] },
+        message: {
+          type: 'string',
+          enum: ['Transaction not found!'],
+        },
+      },
+    },
   })
   async getTransactionByid(
     @Param() param: paramsWithUUIDDto,

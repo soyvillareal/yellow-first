@@ -1,4 +1,4 @@
-import { IGatewayTokenEntity, TCreateGatewayToken, TGetLastTokenById } from '../entities/token.entity';
+import { IGatewayTokenEntity, TCreateGatewayToken, TGetLastTokenById } from '../entities/gateway-token.entity';
 
 export interface gatewayTokenRepository {
   createToken: (payload: TCreateGatewayToken) => Promise<IGatewayTokenEntity | null>;

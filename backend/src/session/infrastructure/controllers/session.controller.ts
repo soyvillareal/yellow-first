@@ -30,10 +30,10 @@ export class SessionController {
   @Post('auth')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Genenerar un token',
+    summary: 'Iniciar sesión, con un usuario y contraseña',
     description:
-      'Este servicio generará un token, el token generado será necesario para realizar cualquier petición a la API. <br /> <br /> <strong>Tener en cuenta:</strong> <br /><br /><b>1.</b> El token generado tendrá una duración de 6 horas.<br /><br /> <b>2.</b> Si se le ha indicado que usted tiene un límite de tokens a generar por día, no podrá generar más tokens hasta el siguiente día.',
-    tags: ['Tokens'],
+      'Este servicio generará un token, el token generado será necesario para realizar cualquier petición a la API. <br /> <br /> <strong>Tener en cuenta:</strong> <br /><br /><b>1.</b> El token generado tendrá una duración de 6 horas.',
+    tags: ['Sessions'],
   })
   @ApiBody({ type: authSessionDto })
   @DApiResponseCase({
@@ -51,20 +51,6 @@ export class SessionController {
         message: {
           type: 'string',
           enum: ['Invalid username or password!'],
-        },
-      },
-    },
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.TOO_MANY_REQUESTS,
-    description: 'Has excedido el limite de tokens generados',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', enum: [HttpStatus.TOO_MANY_REQUESTS] },
-        message: {
-          type: 'string',
-          enum: ['You have exceeded the limit of tokens'],
         },
       },
     },
@@ -94,10 +80,10 @@ export class SessionController {
   @Post('anonymous')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Genenerar un token',
+    summary: 'Generar un token anonimo para realizar peticiones autenticadas',
     description:
-      'Este servicio generará un token, el token generado será necesario para realizar cualquier petición a la API. <br /> <br /> <strong>Tener en cuenta:</strong> <br /><br /><b>1.</b> El token generado tendrá una duración de 6 horas.<br /><br /> <b>2.</b> Si se le ha indicado que usted tiene un límite de tokens a generar por día, no podrá generar más tokens hasta el siguiente día.',
-    tags: ['Tokens'],
+      'Este servicio generará un token, el token generado será necesario para realizar cualquier petición a la API. <br /> <br /> <strong>Tener en cuenta:</strong> <br /><br /><b>1.</b> El token generado tendrá una duración de 6 horas.',
+    tags: ['Sessions'],
   })
   @ApiBody({ type: authSessionDto })
   @DApiResponseCase({
@@ -106,29 +92,15 @@ export class SessionController {
     dataDto: authSessionResponseDto,
   })
   @DApiResponseCase({
-    statusCode: HttpStatus.UNAUTHORIZED,
-    description: 'El usuario o la contraseña son incorrectos',
+    statusCode: HttpStatus.BAD_REQUEST,
+    description: 'Falló la creación de la sesión, intente nuevamente',
     schema: {
       type: 'object',
       properties: {
         statusCode: { type: 'number', enum: [HttpStatus.UNAUTHORIZED] },
         message: {
           type: 'string',
-          enum: ['Invalid username or password!'],
-        },
-      },
-    },
-  })
-  @DApiResponseCase({
-    statusCode: HttpStatus.TOO_MANY_REQUESTS,
-    description: 'Has excedido el limite de tokens generados',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', enum: [HttpStatus.TOO_MANY_REQUESTS] },
-        message: {
-          type: 'string',
-          enum: ['You have exceeded the limit of tokens'],
+          enum: ['Failed to create session!'],
         },
       },
     },

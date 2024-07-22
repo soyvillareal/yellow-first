@@ -276,7 +276,7 @@ export interface IGatewayEventTransaction {
   status: TTransactionStatus;
   shipping_address: string | null;
   payment_link_id: number | null;
-  payment_source_id: null;
+  payment_source_id: number | null;
 }
 
 export interface IGatewayEventSignature {

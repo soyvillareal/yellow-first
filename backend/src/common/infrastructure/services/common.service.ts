@@ -3,7 +3,6 @@ import { Observable, from } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { isEmpty } from 'class-validator';
 
-import { TWebhookLeadResponse } from 'src/product/domain/entities/product.entity';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
 import { IGenerateLog, IResponseApi } from 'src/common/domain/entities/common.entity';
 import { commonRepository } from 'src/common/domain/repository/common.repository';
@@ -13,7 +12,7 @@ import { ELogPriority } from 'src/logs/domain/entities/logs.entity';
 export class CommonService<T> implements commonRepository<T> {
   constructor(private readonly logsService: LogsService) {}
 
-  public generateLog = async ({ statusCode, request, response, webhookData, forcePriority }: IGenerateLog): Promise<void> => {
+  public generateLog = async ({ statusCode, request, response, forcePriority }: IGenerateLog): Promise<void> => {
     try {
       let priority = forcePriority || ELogPriority.CRITICAL;
 
@@ -27,7 +26,7 @@ export class CommonService<T> implements commonRepository<T> {
         }
       }
 
-      const logData = await this.logsService.createLog({
+      await this.logsService.createLog({
         userId: request?.user?.data?.id || null,
         request: {
           headers: request.headers,
@@ -62,15 +61,6 @@ export class CommonService<T> implements commonRepository<T> {
         response,
         priority,
       });
-
-      if (webhookData !== undefined && webhookData !== null) {
-        await this.logsService.createWebHookLog({
-          logId: logData.id,
-          request: webhookData.request,
-          type: webhookData.type,
-          response: webhookData.response,
-        });
-      }
     } catch (error) {
       console.log(error);
     }
@@ -111,17 +101,10 @@ export class CommonService<T> implements commonRepository<T> {
         const request = ctx.getRequest();
         const response = ctx.getResponse();
 
-        let webhookData: TWebhookLeadResponse = null;
-
-        if (request?.hasOwnProperty('webhookData') === true) {
-          webhookData = request.webhookData;
-        }
-
         await this.generateLog({
           statusCode: response.statusCode,
           request,
           response: items.data,
-          webhookData,
         });
 
         return {

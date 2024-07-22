@@ -3,7 +3,7 @@ import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryG
 import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
-import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
+import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/gateway-token.model';
 import { TransactionProductsModel } from './transaction-products.model';
 
 @Entity({ name: 'transactions' })

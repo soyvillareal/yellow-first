@@ -6,31 +6,12 @@ import { IDApiResponseCase } from 'src/common/domain/entities/common.entity';
 
 import { apiResponseDto } from '../dtos/common.dto';
 
-export function IsUnderscoreSeparatedLetters(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
-    registerDecorator({
-      name: 'IsUnderscoreSeparatedLetters',
-      target: object.constructor,
-      propertyName: propertyName,
-      constraints: [],
-      options: validationOptions,
-      validator: {
-        validate(value: string) {
-          return typeof value === 'string' && /^([a-zA-Z]+_)*[a-zA-Z]+$/.test(value);
-        },
-        defaultMessage() {
-          return 'The text ($value) is not underscore separated letters only';
-        },
-      },
-    });
-  };
-}
-
 export const DApiResponseCase = <DataDto extends Type<unknown>>({
   statusCode,
   description,
   schema,
   dataDto,
+  type = 'object',
 }: IDApiResponseCase<DataDto, Pick<ApiResponseSchemaHost, 'schema'>['schema']>) => {
   if (dataDto === undefined) {
     return applyDecorators(
@@ -53,10 +34,17 @@ export const DApiResponseCase = <DataDto extends Type<unknown>>({
           { $ref: getSchemaPath(apiResponseDto) },
           {
             properties: {
-              data: {
-                type: 'array',
-                items: { $ref: getSchemaPath(dataDto) },
-              },
+              data:
+                type === 'array'
+                  ? {
+                      type: 'array',
+                      items: {
+                        $ref: getSchemaPath(dataDto),
+                      },
+                    }
+                  : {
+                      $ref: getSchemaPath(dataDto),
+                    },
             },
           },
         ],

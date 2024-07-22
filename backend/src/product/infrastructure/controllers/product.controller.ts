@@ -38,7 +38,7 @@ export class ProductController {
   })
   @DApiResponseCase({
     statusCode: HttpStatus.OK,
-    description: 'Productos obtenidos correctamente!',
+    description: '¡Productos obtenidos correctamente!',
     dataDto: productPaginatedDto,
   })
   async getProducts(@Query() query: PageOptionsDto): Promise<ApiResponseCase<IPageMetaResponse<TGetProduct[]>>> {

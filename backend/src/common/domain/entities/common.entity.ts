@@ -1,7 +1,6 @@
 import { Request } from 'express';
 
 import { ELogPriority } from 'src/logs/domain/entities/logs.entity';
-import { TWebhookLeadResponse } from 'src/product/domain/entities/product.entity';
 import { TSession } from 'src/session/domain/entities/session.entity';
 
 export enum EOrderType {
@@ -61,6 +60,7 @@ export interface IDApiResponseCase<T, K> {
   description?: string;
   dataDto?: T;
   schema?: K;
+  type?: 'array' | 'object';
 }
 
 export interface IParamsWithUUID {
@@ -100,6 +100,5 @@ export interface IGenerateLog {
   statusCode: number;
   request: IHeaderUserTokenData;
   response?: any;
-  webhookData?: TWebhookLeadResponse | null;
   forcePriority?: ELogPriority;
 }

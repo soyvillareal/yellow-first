@@ -12,13 +12,12 @@ import { SessionService } from 'src/session/infrastructure/services/session.serv
 import { UsersModel } from 'src/session/infrastructure/models/users.model';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
-import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/services/payment-gateway.service';
 import { HttpModule } from '@nestjs/axios';
-import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
-import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
+import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/gateway-token.service';
+import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/gateway-token.model';
 import { SessionModel } from 'src/session/infrastructure/models/session.model';
 
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
@@ -39,7 +38,6 @@ import { TransactionConfigModel } from '../models/transaction-config.model';
       ProductModel,
       LogsModel,
       GatewayTokenModel,
-      GatewayLogsModel,
     ]),
     JwtModule.registerAsync({
       inject: [config.KEY],

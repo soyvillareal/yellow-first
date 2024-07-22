@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, Repository } from 'typeorm';
 
-import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
-import { IGatewayTokenEntity, TCreateGatewayToken, TGetLastTokenById } from 'src/payment-gateway/domain/entities/token.entity';
+import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/gateway-token.repository';
+import {
+  IGatewayTokenEntity,
+  TCreateGatewayToken,
+  TGetLastTokenById,
+} from 'src/payment-gateway/domain/entities/gateway-token.entity';
 
-import { GatewayTokenModel } from '../models/token.model';
+import { GatewayTokenModel } from '../models/gateway-token.model';
 import moment from 'moment';
 
 @Injectable()

@@ -1,11 +1,11 @@
-import { ConfigService } from '@nestjs/config';
-import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
+import { v4 as uuidv4 } from 'uuid';
+import { ConfigService } from '@nestjs/config';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
 import { sessionRepository } from 'src/session/domain/repository/session.repository';
 import { IGatewayEvent } from 'src/payment-gateway/domain/entities/payment-gateway.entity';
-import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/token.repository';
+import { gatewayTokenRepository } from 'src/payment-gateway/domain/repository/gateway-token.repository';
 import { websocketRepository } from 'src/transaction/domain/repository/transaction.repository';
 import { TGetProductById } from 'src/product/domain/entities/product.entity';
 
@@ -93,12 +93,6 @@ export class TransactionUseCase {
 
     const gatewayPrice = new TransactionPrice(totalWithConfig);
     const transactionReference = uuidv4();
-
-    console.log('testing: ', {
-      totalWithConfig,
-      total,
-      gatewayPrice: gatewayPrice.getGatewayPrice(),
-    });
 
     const signature = this.commonUseCase.generateSignature({
       amountInCents: gatewayPrice.getGatewayPrice(),

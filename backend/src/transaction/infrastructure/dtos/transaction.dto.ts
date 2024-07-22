@@ -2,11 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min, ValidateNested } from 'class-validator';
 import moment from 'moment-timezone';
+import {
+  IGatewayEvent,
+  IGatewayEventData,
+  IGatewayEventSignature,
+  IGatewayEventTransaction,
+  TCardTypes,
+  TTransactionStatus,
+} from 'src/payment-gateway/domain/entities/payment-gateway.entity';
 
 import {
   ICardTokenizationPayload,
   ICreatePaymentPayload,
   ICreatePaymentProducts,
+  IGetTransactionConfig,
+  ITransactionByIdResponse,
+  IUpdateTransactionResponse,
 } from 'src/transaction/domain/entities/transaction.entity';
 
 export class CreatePaymentProductsDto implements ICreatePaymentProducts {
@@ -124,4 +135,244 @@ export class CardTokenizeDto implements ICardTokenizationPayload {
   @IsString()
   @IsNotEmpty()
   cardHolder: string;
+}
+
+export class GetTransactionConfigDto implements IGetTransactionConfig {
+  @ApiProperty({
+    nullable: false,
+    description: 'Tasa fija de la transacción',
+    type: 'number',
+    example: 1000,
+  })
+  fixedRate: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Porcentaje variable de la transacción',
+    type: 'float',
+    example: 0.05,
+  })
+  variablePercentage: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Tarifa de envío',
+    type: 'number',
+    example: 5000,
+  })
+  shippingFee: number;
+}
+
+export class TransactionByIdResponseDto implements ITransactionByIdResponse {
+  @ApiProperty({
+    nullable: false,
+    description: 'Id de la transacción',
+    type: 'uuid',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+  })
+  amount: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Estado de la transacción',
+    type: 'enum',
+    example: 'APPROVED',
+    enum: ['APPROVED', 'DECLINED', 'PENDING', 'VOIDED'],
+  })
+  status: TTransactionStatus;
+}
+
+export class GatewayEventTransaction implements IGatewayEventTransaction {
+  @ApiProperty({
+    nullable: false,
+    description: 'Id de la transacción',
+    type: 'string',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+  })
+  id: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Monto de la transacción en centavos',
+    type: 'number',
+    example: 100000,
+  })
+  amount_in_cents: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Referencia de la transacción',
+    type: 'string',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+  })
+  reference: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Email del cliente',
+    type: 'string',
+    example: 'john.doe@gmail.com',
+  })
+  customer_email: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Moneda de la transacción',
+    type: 'string',
+    example: 'COP',
+  })
+  currency: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Tipo de método de pago',
+    type: 'enum',
+    example: 'CARD',
+    enum: ['CARD', 'NEQUI', 'BANCOLOMBIA', 'BANCOLOMBIA_TRANSFER', 'CLAVE', 'DAVIPLATA'],
+  })
+  payment_method_type: TCardTypes;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'URL de redirección de la transacción',
+    type: 'string',
+    example: 'https://example.com',
+  })
+  redirect_url: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Estado de la transacción',
+    type: 'enum',
+    example: 'APPROVED',
+    enum: ['APPROVED', 'DECLINED', 'PENDING', 'VOIDED'],
+  })
+  status: TTransactionStatus;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Dirección de envío de la transacción',
+    type: 'string',
+    example: 'Calle 123 # 45-67',
+  })
+  shipping_address: string;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Enlace de pago de la transacción',
+    type: 'null',
+    example: null,
+  })
+  payment_link_id: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Fuente de pago de la transacción',
+    type: 'number',
+    example: 4567,
+  })
+  payment_source_id: number | null;
+}
+
+export class GatewayEventDataDto implements IGatewayEventData {
+  @ApiProperty({
+    nullable: false,
+    description: 'Datos de la transacción',
+    type: GatewayEventTransaction,
+    example: {
+      id: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+      status: 'APPROVED',
+      amount_in_cents: 100,
+    },
+  })
+  transaction: IGatewayEventTransaction;
+}
+
+export class GatewayEventSignatureDto implements IGatewayEventSignature {
+  @ApiProperty({
+    nullable: false,
+    description: 'Propiedades del evento',
+    type: 'array',
+    example: ['transaction.id', 'transaction.status', 'transaction.amount_in_cents'],
+  })
+  properties: ['transaction.id', 'transaction.status', 'transaction.amount_in_cents'];
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Checksum del evento',
+    type: 'string',
+    example: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+  })
+  checksum: string;
+}
+
+export class GatewayEventDto implements IGatewayEvent {
+  @ApiProperty({
+    nullable: false,
+    description: 'Evento de la transacción',
+    type: 'enum',
+    example: 'transaction.updated',
+    enum: ['transaction.updated', 'nequi_token.updated'],
+  })
+  event: 'transaction.updated' | 'nequi_token.updated';
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Datos del evento',
+    type: GatewayEventDataDto,
+    example: {
+      transaction: {
+        id: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+        status: 'APPROVED',
+        amount_in_cents: 100000,
+      },
+    },
+  })
+  data: IGatewayEventData;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Ambiente del evento',
+    type: 'enum',
+    example: 'test',
+    enum: ['test', 'prod'],
+  })
+  environment: 'test' | 'prod';
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Firma del evento',
+    type: GatewayEventSignatureDto,
+    example: {
+      properties: ['transaction.id', 'transaction.status', 'transaction.amount_in_cents'],
+      checksum: 'f7b3b3b3-1b3b-4b3b-8b3b-1b3b3b3b3b3b',
+    },
+  })
+  signature: IGatewayEventSignature;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Timestamp del evento',
+    type: 'number',
+    example: 1633824610,
+  })
+  timestamp: number;
+
+  @ApiProperty({
+    nullable: false,
+    description: 'Fecha en la que se envió el evento',
+    type: 'string',
+    example: '2021-10-10T10:10:10.000Z',
+  })
+  sent_at: string;
+}
+
+export class UpdateTransactionDto implements IUpdateTransactionResponse {
+  @ApiProperty({
+    nullable: false,
+    description: 'Transacción actualizada',
+    type: 'boolean',
+    example: true,
+  })
+  recieve: boolean;
 }

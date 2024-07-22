@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { IGatewayTokenEntity } from 'src/payment-gateway/domain/entities/token.entity';
+import { IGatewayTokenEntity } from 'src/payment-gateway/domain/entities/gateway-token.entity';
 import { UsersModel } from 'src/session/infrastructure/models/users.model';
 
 @Entity({ name: 'gateway_tokens' })

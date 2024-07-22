@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { IHeaderUserTokenData } from 'src/common/domain/entities/common.entity';
-import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
+import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/gateway-token.service';
 import { TransactionService } from '../services/transaction.service';
 
 @Injectable()
