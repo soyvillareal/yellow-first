@@ -2,10 +2,10 @@ import { Controller, Get, HttpCode, HttpException, HttpStatus, Query, UseGuards,
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { TGetProduct } from 'src/product/domain/entities/product.entity';
-import { JwtAuthGuard } from 'src/framework/infrastructure/guards/jwt.guard';
-import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
+import { JwtAuthGuard } from 'src/common/infrastructure/guards/jwt.guard';
+import { ApiResponseCase } from 'src/common/domain/entities/common.entity';
 import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { PageOptionsDto } from 'src/common/infrastructure/dtos/page-options.dto';
 import { IPageMetaResponse } from 'src/common/domain/entities/common.entity';
 
@@ -17,7 +17,7 @@ import { ConfigService } from '@nestjs/config';
 @ApiTags('Products')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@UseInterceptors(FrameworkService)
+@UseInterceptors(CommonService)
 @Controller('product')
 export class ProductController {
   private readonly productUseCase: ProductUseCase;

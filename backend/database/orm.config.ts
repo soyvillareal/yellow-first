@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 import { DataSourceOptions } from 'typeorm/data-source';
 
-import { config, database } from 'src/framework/application/config';
+import { config, database } from 'src/environments';
 
 ConfigModule.forRoot({
   envFilePath: `.env.${config.node_env}`,

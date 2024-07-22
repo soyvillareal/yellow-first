@@ -64,7 +64,7 @@ export class TransactionsWebsockets implements websocketRepository {
 
       client.data.user = payload;
       if (payload.data.id) {
-        const newClients: string[] = this.clients.get(payload.data.id) || [];
+        const newClients: string[] = this.clients.get(payload.data.id) || [client.id];
         if (this.clients.has(payload.data.id) === true) {
           newClients.push(client.id);
         }
@@ -76,7 +76,7 @@ export class TransactionsWebsockets implements websocketRepository {
   }
 
   handleDisconnect(client: Socket) {
-    const userId = client.data.user.data.id;
+    const userId = client.data?.user?.data?.id;
     const clientId = client.id;
     if (this.clients.has(userId) === true) {
       const clients = this.clients.get(userId);

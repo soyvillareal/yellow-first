@@ -6,7 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as basicAuth from 'express-basic-auth';
 import moment from 'moment-timezone';
 
-import { AppModule } from './framework/infrastructure/core/app.module';
+import { AppModule } from './common/infrastructure/core/app.module';
 
 async function bootstrap() {
   const customFormat = ':method :url';

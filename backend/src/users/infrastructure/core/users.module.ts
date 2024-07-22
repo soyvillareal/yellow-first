@@ -3,9 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
-import config from 'src/framework/application/config';
+import config from 'src/environments';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
 import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
 import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
@@ -28,7 +27,7 @@ import { UsersService } from '../services/users.service';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, CommonService, LogsService, FrameworkService],
+  providers: [UsersService, CommonService, LogsService],
   exports: [],
 })
 export class UsersModule {}

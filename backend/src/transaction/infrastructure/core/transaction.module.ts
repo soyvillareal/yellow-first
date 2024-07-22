@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
-import config from 'src/framework/application/config';
+import config from 'src/environments';
 
 import { TransactionService } from '../services/transaction.service';
 import { TransactionModel } from '../models/transaction.model';
@@ -20,11 +20,24 @@ import { HttpModule } from '@nestjs/axios';
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
+import { TransactionProductsModel } from '../models/transaction-products.model';
+import { DeliveryModel } from '../models/delivery.model';
+import { TransactionConfigModel } from '../models/transaction-config.model';
 
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([TransactionModel, UsersModel, ProductModel, LogsModel, GatewayTokenModel, GatewayLogsModel]),
+    TypeOrmModule.forFeature([
+      TransactionModel,
+      TransactionProductsModel,
+      TransactionConfigModel,
+      DeliveryModel,
+      UsersModel,
+      ProductModel,
+      LogsModel,
+      GatewayTokenModel,
+      GatewayLogsModel,
+    ]),
     JwtModule.registerAsync({
       inject: [config.KEY],
       useFactory: (configServie: ConfigType<typeof config>) => {

@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
-import config from 'src/framework/application/config';
+import config from 'src/environments';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
 import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
@@ -29,7 +29,7 @@ import { SessionService } from '../services/session.service';
     }),
   ],
   controllers: [SessionController],
-  providers: [UsersService, SessionService, LogsService, FrameworkService],
+  providers: [UsersService, SessionService, LogsService, CommonService],
   exports: [],
 })
 export class TokensModule {}

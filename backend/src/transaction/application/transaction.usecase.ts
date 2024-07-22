@@ -18,6 +18,8 @@ import {
   ICardTokenizationPayload,
   ICardTokenizationResponse,
   ICreatePaymentPayload,
+  IGetTransactionConfig,
+  ITransactionByIdResponse,
   IUpdateTransactionResponse,
 } from '../domain/entities/transaction.entity';
 import { CardData, TransactionPrice } from '../domain/valueobject/transaction.value';
@@ -38,7 +40,7 @@ export class TransactionUseCase {
     this.paymentGatewayUseCase = new PaymentGatewayUseCase(this.paymentGatewayRepository);
   }
 
-  async createPayment(userId: string, { products, tokenId, installments }: ICreatePaymentPayload): Promise<void> {
+  async createPayment(userId: string, { products, tokenId, installments }: ICreatePaymentPayload): Promise<string> {
     const user = await this.userRepository.getInfoById(userId);
 
     if (user === null || user === undefined) {
@@ -48,6 +50,12 @@ export class TransactionUseCase {
     const cardToken = await this.gatewayTokenRepository.getTokenById(tokenId);
 
     if (cardToken === null || cardToken === undefined) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    const transactionConfig = await this.transactionRepository.getTransactionConfig();
+
+    if (transactionConfig === null) {
       throw new Error('Whoops! Something went wrong.');
     }
 
@@ -75,10 +83,24 @@ export class TransactionUseCase {
       total += parseInt(foundProduct.price) * product.quantity;
     }
 
-    const gatewayPrice = new TransactionPrice(total);
+    const totalWithConfig = this.commonUseCase.calculateRate(
+      {
+        fixedRate: parseInt(transactionConfig.fixedRate),
+        variablePercentage: parseFloat(transactionConfig.variablePercentage),
+      },
+      total,
+    );
+
+    const gatewayPrice = new TransactionPrice(totalWithConfig);
     const transactionReference = uuidv4();
 
-    const signature = await this.commonUseCase.generateSignature({
+    console.log('testing: ', {
+      totalWithConfig,
+      total,
+      gatewayPrice: gatewayPrice.getGatewayPrice(),
+    });
+
+    const signature = this.commonUseCase.generateSignature({
       amountInCents: gatewayPrice.getGatewayPrice(),
       currency: 'COP',
       reference: transactionReference,
@@ -97,22 +119,41 @@ export class TransactionUseCase {
       },
     });
 
+    const createdTransaction = await this.transactionRepository.createTransaction({
+      userId,
+      gatewayTokenId: cardToken.id,
+      gatewayId: transactionId,
+      reference: transactionReference,
+      totalAmount: totalWithConfig,
+      phoneCode: user.phoneCode,
+      phoneNumber: user.phoneNumber,
+      firstAddress: user.firstAddress,
+      secondAddress: user.secondAddress,
+      state: user.state,
+      city: user.city,
+      pincode: user.pincode,
+    });
+
+    if (createdTransaction === null) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
 
       const foundProduct = foundProducts[product.id];
 
-      const createdTransaction = await this.transactionRepository.createTransaction({
+      const createdTransactionProduct = await this.transactionRepository.createTransactionProduct({
         userId,
-        gatewayTokenId: cardToken.id,
-        gatewayId: transactionId,
-        reference: transactionReference,
+        transactionId: createdTransaction.id,
         productId: product.id,
+        gatewayId: transactionId,
         quantity: product.quantity,
         amount: parseInt(foundProduct.price),
       });
 
-      if (createdTransaction === null) {
+      if (createdTransactionProduct === null) {
+        await this.transactionRepository.deleteTransactionById(createdTransaction.id);
         throw new Error('Whoops! Something went wrong.');
       }
 
@@ -121,9 +162,12 @@ export class TransactionUseCase {
       const updatedStockInArticle = await this.productRepository.updateStockInProduct(product.id, newStock);
 
       if (updatedStockInArticle === false) {
+        await this.transactionRepository.deleteTransactionById(createdTransaction.id);
         throw new Error('Whoops! Something went wrong.');
       }
     }
+
+    return createdTransaction.id;
   }
 
   async cardTokenization(
@@ -193,22 +237,22 @@ export class TransactionUseCase {
       throw new Error('Whoops! Something went wrong.');
     }
 
-    const transaction = await this.transactionRepository.getTransactionByGatewayId(data.transaction.id);
+    const transactionProduct = await this.transactionRepository.getTransactionProductByGatewayId(data.transaction.id);
 
-    if (transaction === null || transaction === undefined) {
+    if (transactionProduct === null || transactionProduct === undefined) {
       throw new Error('Whoops! Something went wrong.');
     }
 
     if (data.transaction.status !== 'APPROVED') {
-      const product = await this.productRepository.getProductById(transaction.productId);
+      const product = await this.productRepository.getProductById(transactionProduct.productId);
 
       if (product === null || product === undefined) {
         throw new Error('Whoops! Something went wrong.');
       }
 
       const updatedStock = await this.productRepository.updateStockInProduct(
-        transaction.productId,
-        product.stock + transaction.quantity,
+        transactionProduct.productId,
+        product.stock + transactionProduct.quantity,
       );
 
       if (updatedStock === null || updatedStock === false) {
@@ -216,12 +260,70 @@ export class TransactionUseCase {
       }
     }
 
-    this.websocketRepository.notifyTransactionUpdate(transaction.userId, {
-      transactionId: data.transaction.id,
+    const user = await this.userRepository.getInfoById(transactionProduct.userId);
+
+    if (user === null || user === undefined) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    const delivery = await this.transactionRepository.createDelivery({
+      userId: transactionProduct.userId,
+      transactionId: transactionProduct.transactionId,
+      phoneCode: user.phoneCode,
+      phoneNumber: user.phoneNumber,
+      firstAddress: user.firstAddress,
+      secondAddress: user.secondAddress,
+      state: user.state,
+      city: user.city,
+      pincode: user.pincode,
+    });
+
+    if (delivery === null) {
+      await this.transactionRepository.updateTransactionStatus(data.transaction.id, ETransactionStatus.VOIDED);
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    this.websocketRepository.notifyTransactionUpdate(transactionProduct.userId, {
+      transactionId: transactionProduct.transactionId,
       status: data.transaction.status,
     });
     return {
       recieve: true,
+    };
+  }
+
+  async getTransactionById(userId: string, transactionId: string): Promise<ITransactionByIdResponse> {
+    const transaction = await this.transactionRepository.getTransactionById(userId, transactionId);
+
+    if (transaction === null) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    if (transaction === undefined) {
+      throw new Error('Transaction not found!');
+    }
+
+    return {
+      amount: transaction.totalAmount,
+      status: transaction.status,
+    };
+  }
+
+  async getTransactionConfig(): Promise<IGetTransactionConfig> {
+    const config = await this.transactionRepository.getTransactionConfig();
+
+    if (config === null) {
+      throw new Error('Whoops! Something went wrong.');
+    }
+
+    if (config === undefined) {
+      throw new Error('Transaction config not found!');
+    }
+
+    return {
+      fixedRate: parseInt(config.fixedRate),
+      variablePercentage: parseFloat(config.variablePercentage),
+      shippingFee: parseFloat(config.shippingFee),
     };
   }
 }

@@ -17,7 +17,7 @@ import { ProductsModule } from 'src/product/infrastructure/core/product.module';
 import { DatabaseModule } from 'src/../database/database.module';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
-import config from '../../application/config';
+import config from 'src/environments';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Module({

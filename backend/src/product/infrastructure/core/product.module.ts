@@ -4,12 +4,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
-import config from 'src/framework/application/config';
+import config from 'src/environments';
 import { LogsService } from 'src/logs/infrastructure/services/logs.service';
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
 import { LogsModel } from 'src/logs/infrastructure/models/logs.model';
 import { GatewayLogsModel } from 'src/logs/infrastructure/models/gateway-logs.model';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
 
 import { ProductModel } from '../models/product.model';
@@ -31,7 +31,7 @@ import { ProductService } from '../services/product.service';
     }),
   ],
   controllers: [ProductController],
-  providers: [ProductService, UsersService, LogsService, FrameworkService],
+  providers: [ProductService, UsersService, LogsService, CommonService],
   exports: [],
 })
 export class ProductsModule {}

@@ -1,11 +1,11 @@
 import { Body, Controller, HttpCode, HttpException, HttpStatus, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
+import { ApiResponseCase } from 'src/common/domain/entities/common.entity';
 import { ICreateUserResponse } from 'src/users/domain/entities/users.entity';
-import { RoleAdminGuard } from 'src/framework/infrastructure/guards/roles.guard';
+import { RoleAdminGuard } from 'src/common/infrastructure/guards/roles.guard';
 import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 
 import { UsersUseCase } from '../../application/users.usecase';
 import { createUserDto } from '../dtos/users.dto';
@@ -16,7 +16,7 @@ import { UsersService } from '../services/users.service';
 @Controller('user')
 @ApiBearerAuth()
 @UseGuards(RoleAdminGuard)
-@UseInterceptors(FrameworkService)
+@UseInterceptors(CommonService)
 export class UsersController {
   private readonly usersUseCase: UsersUseCase;
 

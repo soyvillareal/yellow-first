@@ -34,6 +34,13 @@ export class UsersService implements usersRepository {
       const userFound = await this.userModel.findOne({
         select: {
           email: true,
+          phoneCode: true,
+          phoneNumber: true,
+          firstAddress: true,
+          secondAddress: true,
+          state: true,
+          city: true,
+          pincode: true,
         },
         where: { id },
       });

@@ -3,11 +3,11 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { RequestWithUser } from 'passport-saml/lib/passport-saml/types';
 
-import { ApiResponseCase } from 'src/framework/domain/entities/framework.entity';
+import { ApiResponseCase } from 'src/common/domain/entities/common.entity';
 import { TAuthSessionResponse } from 'src/session/domain/entities/session.entity';
 import { IGetInfoByUsername } from 'src/users/domain/entities/users.entity';
 import { DApiResponseCase } from 'src/common/infrastructure/decorators/common.decorator';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 
 import { SessionService } from '../services/session.service';
 import { SessionUseCase } from '../../application/session.usecase';
@@ -17,7 +17,7 @@ import { UsersService } from 'src/users/infrastructure/services/users.service';
 
 @ApiTags('Sessions')
 @Controller('session')
-@UseInterceptors(FrameworkService)
+@UseInterceptors(CommonService)
 export class SessionController {
   private readonly sessionUseCase: SessionUseCase;
 

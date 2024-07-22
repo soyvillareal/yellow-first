@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsString, IsUUID, Matches, Max, Min, ValidateNested } from 'class-validator';
 import moment from 'moment-timezone';
 
 import {
@@ -69,6 +69,9 @@ export class CreatePaymentDto implements ICreatePaymentPayload {
   })
   @IsInt({
     message: 'The installments must be a number',
+  })
+  @IsEnum([3, 6, 12, 24, 36], {
+    message: 'The installments must be 3, 6, 12, 24 or 36',
   })
   @ApiProperty({
     description: 'Número de cuotas de la transacción',

@@ -62,7 +62,7 @@ module.exports = {
   overrides: [
     {
       files: ['src/**/*.ts'],
-      excludedFiles: ['src/main.ts'],
+      excludedFiles: ['src/main.ts', 'src/environments.ts'],
       rules: {
         'hexagonal-architecture/enforce': ['error'],
       },

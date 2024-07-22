@@ -38,13 +38,12 @@ export class CardData {
 
 export class TransactionPrice {
   private readonly gatewayPrice: number;
-  private readonly decimalPrice = '00';
 
   constructor(apiPrice: number) {
     if (apiPrice < 1500) {
       throw new Error('The minimum amount of a transaction is $1,500 excluding taxes');
     }
-    this.gatewayPrice = parseInt(`${apiPrice}${this.decimalPrice}`);
+    this.gatewayPrice = Math.floor(apiPrice) * 100;
   }
 
   getGatewayPrice(): number {

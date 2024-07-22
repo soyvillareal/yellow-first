@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpCode,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -12,14 +14,20 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from 'src/framework/infrastructure/guards/jwt.guard';
+import { JwtAuthGuard } from 'src/common/infrastructure/guards/jwt.guard';
 
-import { ApiResponseCase, IHeaderUserTokenData } from 'src/framework/domain/entities/framework.entity';
-import { FrameworkService } from 'src/framework/infrastructure/services/framework.service';
+import { ApiResponseCase, IHeaderUserTokenData } from 'src/common/domain/entities/common.entity';
+import { CommonService } from 'src/common/infrastructure/services/common.service';
 import { PaymentGatewayService } from 'src/payment-gateway/infrastructure/services/payment-gateway.service';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { UsersService } from 'src/users/infrastructure/services/users.service';
-import { ICardTokenizationResponse, IUpdateTransactionResponse } from 'src/transaction/domain/entities/transaction.entity';
+import {
+  ICardTokenizationResponse,
+  ICreatePaymentResponse,
+  IGetTransactionConfig,
+  ITransactionByIdResponse,
+  IUpdateTransactionResponse,
+} from 'src/transaction/domain/entities/transaction.entity';
 
 import { TransactionService } from '../services/transaction.service';
 import { TransactionUseCase } from '../../application/transaction.usecase';
@@ -29,11 +37,11 @@ import { IGatewayEvent, IGatewayEventHeaders } from 'src/payment-gateway/domain/
 import { GatewayTokenService } from 'src/payment-gateway/infrastructure/services/token.service';
 import { ValidateTokenGuard } from '../guard/transaction.guard';
 import { TransactionsWebsockets } from '../websockets/transaction.websoket';
+import { paramsWithUUIDDto } from 'src/common/infrastructure/dtos/common.dto';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
-@UseInterceptors(FrameworkService)
+@UseInterceptors(CommonService)
 @Controller('transaction')
 export class TransactionController {
   private readonly transactionUseCase: TransactionUseCase;
@@ -60,15 +68,19 @@ export class TransactionController {
 
   @Post('payment')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @UseGuards(ValidateTokenGuard)
   @ApiOperation({
     summary: 'Genera un pago',
     description: 'Este servicio generará un pago.',
     tags: ['Transactions'],
   })
-  async createPayment(@Body() body: CreatePaymentDto, @Req() req: IHeaderUserTokenData): Promise<ApiResponseCase<void>> {
+  async createPayment(
+    @Body() body: CreatePaymentDto,
+    @Req() req: IHeaderUserTokenData,
+  ): Promise<ApiResponseCase<ICreatePaymentResponse>> {
     try {
-      await this.transactionUseCase.createPayment(req.user.data.id, {
+      const transactionId = await this.transactionUseCase.createPayment(req.user.data.id, {
         products: body.products,
         tokenId: body.tokenId,
         installments: body.installments,
@@ -76,6 +88,9 @@ export class TransactionController {
 
       return {
         message: 'Payment created successfully!',
+        data: {
+          transactionId,
+        },
       };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -89,6 +104,7 @@ export class TransactionController {
     description: 'Este servicio creará una transacción.',
     tags: ['Transactions'],
   })
+  @UseGuards(JwtAuthGuard)
   async cardTokenize(
     @Body() body: CardTokenizeDto,
     @Req() req: IHeaderUserTokenData,
@@ -119,7 +135,7 @@ export class TransactionController {
     description: 'Este servicio actualizará una transacción mediante un webhook.',
     tags: ['Transactions'],
   })
-  async updateTransaction(
+  async webHookTransaction(
     @Body() body: IGatewayEvent,
     @Headers() headers: IGatewayEventHeaders,
   ): Promise<ApiResponseCase<IUpdateTransactionResponse>> {
@@ -136,6 +152,54 @@ export class TransactionController {
       return {
         message: 'Transaction updated successfully!',
         data: response,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/config')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Obtiene la configuración de una transacción',
+    description: 'Este servicio obtendrá la configuración de una transacción.',
+    tags: ['Transactions'],
+  })
+  async getTransactionConfig(): Promise<ApiResponseCase<IGetTransactionConfig>> {
+    try {
+      const config = await this.transactionUseCase.getTransactionConfig();
+
+      return {
+        message: 'Transaction config found successfully!',
+        data: config,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Obtiene una transacción por id',
+    description: 'Este servicio obtendrá una transacción por id.',
+    tags: ['Transactions'],
+  })
+  @UseGuards(JwtAuthGuard)
+  async getTransactionByid(
+    @Param() param: paramsWithUUIDDto,
+    @Req() req: IHeaderUserTokenData,
+  ): Promise<ApiResponseCase<ITransactionByIdResponse>> {
+    try {
+      const transaction = await this.transactionUseCase.getTransactionById(req.user.data.id, param.id);
+
+      return {
+        message: 'Transaction found successfully!',
+        data: {
+          amount: transaction.amount,
+          status: transaction.status,
+        },
       };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

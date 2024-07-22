@@ -1,8 +1,13 @@
 import { Request } from 'express';
 import crypto from 'crypto';
 
-import { config } from 'src/framework/application/config';
-import { IGenerateSignature, IPageMetaParameters, IPageMetaResponse } from '../domain/entities/common.entity';
+import { config } from 'src/environments';
+import {
+  ICalculateRateConfig,
+  IGenerateSignature,
+  IPageMetaParameters,
+  IPageMetaResponse,
+} from '../domain/entities/common.entity';
 import { ConfigService } from '@nestjs/config';
 
 export class CommonUseCase {
@@ -77,5 +82,13 @@ export class CommonUseCase {
     const hashHex = crypto.createHash('sha256').update(concatenatedString).digest('hex');
 
     return hashHex === signature;
+  }
+
+  public calculateRate(config: ICalculateRateConfig, amount: number): number {
+    const variableRate = (config?.fixedRate || 0) + amount;
+
+    const totalRate = (variableRate / 100) * (config?.variablePercentage || 0) * 100;
+
+    return amount + totalRate;
   }
 }

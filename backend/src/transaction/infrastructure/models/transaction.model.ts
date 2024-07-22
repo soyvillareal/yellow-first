@@ -1,10 +1,10 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UsersModel } from 'src/users/infrastructure/models/users.model';
-import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
 import { ETransactionStatus, ITransactionEntity } from '../../domain/entities/transaction.entity';
 import { GatewayTokenModel } from 'src/payment-gateway/infrastructure/models/token.model';
+import { TransactionProductsModel } from './transaction-products.model';
 
 @Entity({ name: 'transactions' })
 export class TransactionModel extends BaseEntity implements ITransactionEntity {
@@ -23,37 +23,35 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
   @Column({ type: 'uuid', nullable: false })
   reference: string;
 
-  @Column({ type: 'uuid', nullable: false })
-  productId: string;
+  @Column({ type: 'numeric', precision: 10, scale: 0, nullable: false })
+  totalAmount: number;
 
   @Column({ type: 'enum', enum: ETransactionStatus, default: ETransactionStatus.PENDING, nullable: false })
   status: ETransactionStatus;
 
-  @Column({
-    type: 'int',
-    nullable: false,
-  })
-  quantity: number;
+  @Column({ type: 'varchar', length: 5, nullable: false, default: '+1' })
+  phoneCode: string;
 
-  @Column({ type: 'numeric', precision: 10, scale: 0, nullable: false })
-  amount: number;
+  @Column({ type: 'varchar', length: 15, nullable: true, default: null })
+  phoneNumber: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, default: null })
+  firstAddress: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, default: null })
+  secondAddress: string;
+
+  @Column({ type: 'varchar', length: 80, nullable: true, default: null })
+  state: string;
+
+  @Column({ type: 'varchar', length: 80, nullable: true, default: null })
+  city: string;
+
+  @Column({ type: 'varchar', length: 10, nullable: true, default: null })
+  pincode: string;
 
   @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP', nullable: false })
   createdAt: Date;
-
-  @ManyToOne(() => ProductModel, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'CASCADE',
-    nullable: false,
-    eager: false,
-    cascade: true,
-  })
-  @JoinColumn({
-    name: 'productId',
-    referencedColumnName: 'id',
-    foreignKeyConstraintName: 'fk_transaction_product',
-  })
-  products: ProductModel;
 
   @ManyToOne(() => UsersModel, {
     onDelete: 'RESTRICT',
@@ -82,4 +80,13 @@ export class TransactionModel extends BaseEntity implements ITransactionEntity {
     foreignKeyConstraintName: 'fk_transaction_gatewaytoken',
   })
   tokens: GatewayTokenModel;
+
+  @ManyToMany(() => TransactionProductsModel, (transactionProduct) => transactionProduct.transactions, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: false,
+    eager: false,
+    cascade: true,
+  })
+  transactionProducts: TransactionProductsModel[];
 }

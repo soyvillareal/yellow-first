@@ -22,7 +22,10 @@ export interface IUsersEntity {
 
 export type ICreateUser = Pick<IUsersEntity, 'email' | 'username' | 'password' | 'role'>;
 
-export type TGetInfoUser = Pick<IUsersEntity, 'email'>;
+export type TGetInfoUser = Pick<
+  IUsersEntity,
+  'email' | 'phoneCode' | 'phoneNumber' | 'firstAddress' | 'secondAddress' | 'state' | 'city' | 'pincode'
+>;
 
 export type IGetInfoByUsername = Pick<
   IUsersEntity,
