@@ -1,9 +1,8 @@
-version: "3"
+version: "3.8"
 services:
   database:
     image: postgres:15
     container_name: yellow-first-pg
-    env_file: dsadsadads
     ports:
       - "${DB_PORT}:${DB_PORT}"
     environment:
@@ -34,7 +33,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT_APP}:${PORT_APP}"
-    env_file: dsadsadads
     environment:
       TZ: ${TZ}
       CORS_ORIGIN: ${CORS_ORIGIN}
@@ -71,7 +69,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
-    env_file: dsadsadads
     environment:
       VITE_JWT_SECRET: jwtsaa
       VITE_APP_BASE_API_URL: http://192.168.1.5:4001

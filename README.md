@@ -73,6 +73,19 @@ EVENTS_KEY=stagtest_events_EXAMPLE
 
 ### Paso 2
 
+Usted debe asegurarse de que tiene las siguientes variables disponibles para el Frontend (dentro del directorio) y con los valores adecuados.
+
+```bash
+# Secret key for JWT
+VITE_JWT_SECRET=jwtExample
+# URL of the API
+VITE_APP_BASE_API_URL=http://localhost:4001
+# URL of the socket
+VITE_APP_BASE_SOCKET_URL=http://localhost:4001
+```
+
+### Paso 3
+
 ```bash
 # Instalar paquetes en el backend
 cd backend
