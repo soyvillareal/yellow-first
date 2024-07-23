@@ -15,7 +15,8 @@ jobs:
       - name: Upload coverage to Codecov about backend
         uses: codecov/codecov-action@v2
         with:
-          directory: ./coverage
-          files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./backend/coverage
+          files: ./backend/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella 
