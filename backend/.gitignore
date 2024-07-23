@@ -2,7 +2,6 @@ dist
 node_modules
 lib
 package-lock.json
-src/database/migrations/local
 
 # Ignore all .env files in the project root directory
 .env
