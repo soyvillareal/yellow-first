@@ -27,6 +27,7 @@ const config: Config.InitialOptions = {
     '!src/main.ts',
     '!**/node_modules/**',
   ],
+  collectCoverage: true,
   coverageReporters: ['lcov', 'text', 'text-summary'],
   coverageDirectory: 'coverage',
   testTimeout: 30000,

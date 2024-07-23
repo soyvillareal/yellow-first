@@ -34,7 +34,7 @@
     "seed:run:prod": "cross-env NODE_ENV=prod ts-node -r tsconfig-paths/register ./node_modules/typeorm-extension/dist/cli/index.js seed -d ./src/database/orm.config.ts",
     "prepare": "husky install",
     "test": "jest --runInBand",
-    "test:cov": "jest --coverage --maxWorkers=10 --detectOpenHandles --verbose",
+    "test:cov": "jest --coverage",
     "test:watch": "jest --coverage --watch --config --detectOpenHandles"
   },
   "lint-staged": {
