@@ -12,10 +12,10 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v2
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov about backend
         uses: codecov/codecov-action@v2
         with:
-          directory: ./coverage
-          files: ./coverage/lcov.info
+          directory: ./backend/coverage
+          files: ./backend/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella 
