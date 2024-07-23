@@ -1,5 +1,8 @@
 import { ConfigService, registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
+import SessionDataSeeder from './session/infrastructure/seeds/session.seed.service';
+import TransactionConfigDataSeeder from './transaction/infrastructure/seeds/transaction.seed.service';
+import ProductDataSeeder from './product/infrastructure/seeds/product.seed.service';
 
 const env = dotenvConfig({ path: `.env.${process.env.NODE_ENV}` });
 const configService = new ConfigService({ load: [() => env] });
@@ -35,7 +38,7 @@ export const database = {
       infer: true,
     })}/*{.ts,.js}`,
   ],
-  seeds: ['src/**/*.seed.service{.ts,.js}'],
+  seeds: [SessionDataSeeder, TransactionConfigDataSeeder, ProductDataSeeder],
   synchronize: IS_LOCAL, // never use TRUE in production!
   timezone: configService.get<string>('TZ', {
     infer: true,

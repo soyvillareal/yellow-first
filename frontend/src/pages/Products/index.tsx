@@ -25,7 +25,7 @@ const Products = () => {
   const [filter, setFilter] =
     useState<IProductFilterState>(initialProductFilter);
 
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
 
   const handlePageChange = (page: number) => {
     setPage(page);
@@ -40,7 +40,7 @@ const Products = () => {
     (async () => {
       try {
         await getProducts({
-          page,
+          page: page + 1,
           limit: filter.limit,
           order: filter.order,
         });

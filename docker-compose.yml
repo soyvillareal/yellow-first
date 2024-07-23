@@ -1,0 +1,92 @@
+version: "3"
+services:
+  database:
+    image: postgres:15
+    container_name: yellow-first-pg
+    env_file: dsadsadads
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    networks:
+      - pg-network
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pg-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    networks:
+      - pg-network
+    depends_on:
+      - database
+  backend:
+    container_name: backend
+    restart: on-failure
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_APP}:${PORT_APP}"
+    env_file: dsadsadads
+    environment:
+      TZ: ${TZ}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      SWAGGER_SUFFIX: ${SWAGGER_SUFFIX}
+      SWAGGER_USERNAME: ${SWAGGER_USERNAME}
+      SWAGGER_PASSWORD: ${SWAGGER_PASSWORD}
+      BODY_LIMIT: ${BODY_LIMIT}
+      PORT_APP: ${PORT_APP}
+      API_GATEWAY: ${API_GATEWAY}
+      PUBLIC_KEY: ${PUBLIC_KEY}
+      PRIVATE_KEY: ${PRIVATE_KEY}
+      INTEGRITY_KEY: ${INTEGRITY_KEY}
+      EVENTS_KEY: ${EVENTS_KEY}
+    depends_on:
+      - database
+    networks:
+      - app-network
+    volumes:
+      - .:/backend
+      - ./logs:/usr/src/backend/logs
+  frontend:
+    container_name: frontend
+    restart: on-failure
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    env_file: dsadsadads
+    environment:
+      VITE_JWT_SECRET: jwtsaa
+      VITE_APP_BASE_API_URL: http://192.168.1.5:4001
+      VITE_APP_BASE_SOCKET_URL: http://192.168.1.5:4001
+    volumes:
+      - html:/usr/share/nginx/html
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+  pg-network:
+
+volumes:
+  pg-data:
+  html:
