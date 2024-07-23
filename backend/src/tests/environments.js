@@ -1,0 +1,21 @@
+process.env.TZ = 'America/Bogota';
+process.env.CORS_ORIGIN = '*';
+process.env.DB_TYPE = 'postgres';
+process.env.DB_HOST = 'localhost';
+process.env.DB_PORT = 5432;
+process.env.DB_USER = 'postgres';
+process.env.DB_PASSWORD = '123456';
+process.env.DB_NAME = 'yellowfirst';
+process.env.JWT_SECRET_KEY = 'jwtExample';
+process.env.JWT_EXPIRES_IN = '6h';
+process.env.SWAGGER_SUFFIX = '/docs';
+process.env.SWAGGER_USERNAME = 'exampleUsername';
+process.env.SWAGGER_PASSWORD = 123456;
+process.env.BODY_LIMIT = '50mb';
+process.env.PORT_APP = 4001;
+
+process.env.API_GATEWAY = 'https://example.wompi.dev/v1';
+process.env.PUBLIC_KEY = 'pub_stagtest_EXAMPLE';
+process.env.PRIVATE_KEY = 'prv_stagtest_EXAMPLE';
+process.env.INTEGRITY_KEY = 'stagtest_integrity_EXAMPLE';
+process.env.EVENTS_KEY = 'stagtest_events_EXAMPLE';

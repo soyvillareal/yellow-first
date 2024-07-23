@@ -1,17 +1,16 @@
 import { Request } from 'express';
 import crypto from 'crypto';
 
-import { config } from 'src/environments';
 import {
   ICalculateRateConfig,
   IGenerateSignature,
   IPageMetaParameters,
   IPageMetaResponse,
 } from '../domain/entities/common.entity';
-import { ConfigService } from '@nestjs/config';
+import { configRepository } from '../domain/repository/common.repository';
 
 export class CommonUseCase {
-  constructor(private readonly configRepository: ConfigService<typeof config>) {}
+  constructor(private readonly configRepository: configRepository) {}
 
   public getSkipped(page: number, limit: number): number {
     return (page - 1) * limit;

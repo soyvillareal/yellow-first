@@ -74,14 +74,4 @@ export class PaymentGatewayUseCase {
 
     return creaatedTransaction.response.data.id;
   }
-
-  async checkTransactionStatus(transactionId: string): Promise<string> {
-    const transaction = await this.paymentGatewayRepository.getTransactionById(transactionId);
-
-    if ('error' in transaction.response) {
-      throw new Error('Whoops! Something went wrong.');
-    }
-
-    return transaction.response.data.status;
-  }
 }

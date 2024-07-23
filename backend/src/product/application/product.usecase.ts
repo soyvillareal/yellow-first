@@ -3,16 +3,16 @@ import { CommonUseCase } from 'src/common/application/common.usecase';
 
 import { TGetProduct } from '../domain/entities/product.entity';
 import { productRepository } from '../domain/repository/product.repository';
-import { ConfigService } from '@nestjs/config';
+import { configRepository } from 'src/common/domain/repository/common.repository';
 
 export class ProductUseCase {
   private readonly commonUseCase: CommonUseCase;
 
   constructor(
     private readonly productRepository: productRepository,
-    private readonly configService: ConfigService,
+    private readonly configRepository: configRepository,
   ) {
-    this.commonUseCase = new CommonUseCase(this.configService);
+    this.commonUseCase = new CommonUseCase(this.configRepository);
   }
 
   async getProducts({ limit, page, order }: IPageOptions): Promise<IPageMetaResponse<TGetProduct[]>> {

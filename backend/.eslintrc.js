@@ -12,7 +12,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['node_modules', '.eslintrc.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -62,7 +62,7 @@ module.exports = {
   overrides: [
     {
       files: ['src/**/*.ts'],
-      excludedFiles: ['src/main.ts', 'src/environments.ts'],
+      excludedFiles: ['src/main.ts', 'src/environments.ts', 'src/database/**/*.ts', '**/*.spec.ts', 'src/tests/**/*.ts'],
       rules: {
         'hexagonal-architecture/enforce': ['error'],
       },

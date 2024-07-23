@@ -12,7 +12,7 @@ import { UsersModel } from 'src/session/infrastructure/models/users.model';
 import { TransactionModel } from 'src/transaction/infrastructure/models/transaction.model';
 import { ProductService } from 'src/product/infrastructure/services/product.service';
 import { ProductsModule } from 'src/product/infrastructure/core/product.module';
-import { DatabaseModule } from 'src/../database/database.module';
+import { DatabaseModule } from 'src/database/database.module';
 import { ProductModel } from 'src/product/infrastructure/models/product.model';
 
 import config from 'src/environments';

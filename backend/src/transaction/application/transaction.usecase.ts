@@ -1,6 +1,5 @@
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
-import { ConfigService } from '@nestjs/config';
 
 import { CommonUseCase } from 'src/common/application/common.usecase';
 import { sessionRepository } from 'src/session/domain/repository/session.repository';
@@ -23,6 +22,7 @@ import {
   IUpdateTransactionResponse,
 } from '../domain/entities/transaction.entity';
 import { CardData, TransactionPrice } from '../domain/valueobject/transaction.value';
+import { configRepository } from 'src/common/domain/repository/common.repository';
 
 export class TransactionUseCase {
   protected readonly commonUseCase: CommonUseCase;
@@ -34,9 +34,9 @@ export class TransactionUseCase {
     private readonly paymentGatewayRepository: paymentGatewayRepository,
     private readonly gatewayTokenRepository: gatewayTokenRepository,
     private readonly websocketRepository: websocketRepository,
-    private readonly configService: ConfigService,
+    private readonly configRepository: configRepository,
   ) {
-    this.commonUseCase = new CommonUseCase(this.configService);
+    this.commonUseCase = new CommonUseCase(this.configRepository);
     this.paymentGatewayUseCase = new PaymentGatewayUseCase(this.paymentGatewayRepository);
   }
 
@@ -205,6 +205,10 @@ export class TransactionUseCase {
   }
 
   async webHookTransaction(checksum: string, { event, data, timestamp }: IGatewayEvent): Promise<IUpdateTransactionResponse> {
+    if (event !== 'transaction.updated') {
+      throw new Error('Invalid webhook event!');
+    }
+
     const isValid = this.commonUseCase.verifySignature(checksum, {
       transaction: {
         id: data.transaction.id,
@@ -216,10 +220,6 @@ export class TransactionUseCase {
 
     if (isValid === false) {
       throw new Error('Invalid webhook signature!');
-    }
-
-    if (event !== 'transaction.updated') {
-      throw new Error('Invalid webhook event!');
     }
 
     const updatedTransaction = await this.transactionRepository.updateTransactionStatus(

@@ -1,0 +1,21 @@
+name: Despliegue - Yellow First
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v2
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ./coverage
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella 

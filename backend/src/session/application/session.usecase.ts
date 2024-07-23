@@ -1,5 +1,4 @@
 import { sign } from 'jsonwebtoken';
-import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment-timezone';
 
@@ -7,13 +6,15 @@ import { IGetInfoByUsername } from 'src/session/domain/entities/session.entity';
 
 import { sessionRepository } from '../domain/repository/session.repository';
 import { ESessionType, IAnonymousSessionPayload, TAuthSessionResponse, TSession } from '../domain/entities/session.entity';
+import { configRepository } from 'src/common/domain/repository/common.repository';
+
 export class SessionUseCase {
   private readonly sessionDurationInHoursAnonumous = 720; // 30 days
   private readonly sessionDurationInHoursAuth = 24; // 1 day
 
   constructor(
     private readonly sessionRepository: sessionRepository,
-    private readonly configService: ConfigService,
+    private readonly configRepository: configRepository,
   ) {}
 
   async createAuthSession({
@@ -34,6 +35,10 @@ export class SessionUseCase {
     const expiredAt = moment().add(this.sessionDurationInHoursAuth, 'hours').toDate();
 
     const user = await this.sessionRepository.getInfoByUsername(username);
+
+    if (user === null) {
+      throw new Error('Failed to create session!');
+    }
 
     const signSession: TSession = {
       id: sessionId,
@@ -56,7 +61,7 @@ export class SessionUseCase {
 
     const jwt = sign(
       signSession,
-      this.configService.get<string>('config.secret_key', {
+      this.configRepository.get<string>('config.secret_key', {
         infer: true,
       }),
       { algorithm: 'HS256' },
@@ -93,7 +98,7 @@ export class SessionUseCase {
 
     const jwt = sign(
       signSession,
-      this.configService.get<string>('config.secret_key', {
+      this.configRepository.get<string>('config.secret_key', {
         infer: true,
       }),
       { algorithm: 'HS256' },
